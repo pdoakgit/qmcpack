@@ -39,7 +39,7 @@ namespace qmcplusplus
 {
 ///initialize the static data member
 //ParticleSetPool* QMCDriverFactory::ptclPool = new ParticleSetPool;
-QMCDriverFactory::QMCDriverFactory(Communicate* c) : MPIObjectBase(c), qmcSystem(0), qmcDriver(0), curRunType(DUMMY_RUN)
+QMCDriverFactory::QMCDriverFactory(Communicate* c) : MPIObjectBase(c), qmcSystem(0), curRunType(DUMMY_RUN)
 {
   ////create ParticleSetPool
   ptclPool = new ParticleSetPool(myComm);
@@ -173,9 +173,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
       }
       //pass to the new driver
       branchEngine = qmcDriver->getBranchEngine();
-      delete qmcDriver;
-      //set to 0 so that a new driver is created
-      qmcDriver = 0;
+      qmcDriver.reset(nullptr);
       //if the current qmc method is different from the previous one, append_run is set to false
       append_run = false;
     }
@@ -299,7 +297,7 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
     QMCOptimize* opt = new QMCOptimize(*qmcSystem, *primaryPsi, *primaryH, *hamPool, *psiPool, myComm);
     //ZeroVarianceOptimize *opt = new ZeroVarianceOptimize(*qmcSystem,*primaryPsi,*primaryH );
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
-    qmcDriver = opt;
+    qmcDriver = std::unique_ptr<QMCDriver>(opt);
   }
   else if (curRunType == LINEAR_OPTIMIZE_RUN)
   {
@@ -311,7 +309,7 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
         new QMCFixedSampleLinearOptimize(*qmcSystem, *primaryPsi, *primaryH, *hamPool, *psiPool, myComm);
     //ZeroVarianceOptimize *opt = new ZeroVarianceOptimize(*qmcSystem,*primaryPsi,*primaryH );
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
-    qmcDriver = opt;
+    qmcDriver = std::unique_ptr<QMCDriver>(opt);
   }
   else if (curRunType == CS_LINEAR_OPTIMIZE_RUN)
   {
@@ -324,12 +322,12 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
         new QMCCorrelatedSamplingLinearOptimize(*qmcSystem, *primaryPsi, *primaryH, *hamPool, *psiPool, myComm);
 #endif
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
-    qmcDriver = opt;
+    qmcDriver = std::unique_ptr<QMCDriver>(opt);
   }
   else if (curRunType == WF_TEST_RUN)
   {
     app_log() << "Testing wavefunctions." << std::endl;
-    qmcDriver = new WaveFunctionTester(*qmcSystem, *primaryPsi, *primaryH, *ptclPool, *psiPool, myComm);
+    qmcDriver = std::make_unique<WaveFunctionTester>(*qmcSystem, *primaryPsi, *primaryH, *ptclPool, *psiPool, myComm);
   }
   else
   {

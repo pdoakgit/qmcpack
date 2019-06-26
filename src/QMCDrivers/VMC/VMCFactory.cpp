@@ -32,7 +32,7 @@
 
 namespace qmcplusplus
 {
-QMCDriver* VMCFactory::create(MCWalkerConfiguration& w,
+    std::unique_ptr<QMCDriver> VMCFactory::create(MCWalkerConfiguration& w,
                               TrialWaveFunction& psi,
                               QMCHamiltonian& h,
                               ParticleSetPool& ptclpool,
@@ -42,15 +42,15 @@ QMCDriver* VMCFactory::create(MCWalkerConfiguration& w,
 {
   int np = omp_get_max_threads();
   //(SPACEWARP_MODE,MULTIPE_MODE,UPDATE_MODE)
-  QMCDriver* qmc = 0;
+  std::unique_ptr<QMCDriver> qmc;
 #ifdef QMC_CUDA
   if (VMCMode & 16)
-    qmc = new VMCcuda(w, psi, h, ppool, comm);
+      qmc = std::make_unique<VMCcuda>(w, psi, h, ppool, comm);
   else
 #endif
       if (VMCMode == 0 || VMCMode == 1) //(0,0,0) (0,0,1)
   {
-    qmc = new VMC(w, psi, h, ppool, comm);
+      qmc = std::make_unique<VMC>(w, psi, h, ppool, comm);
   }
   //else if(VMCMode == 2) //(0,1,0)
   //{
@@ -62,7 +62,7 @@ QMCDriver* VMCFactory::create(MCWalkerConfiguration& w,
   //}
   else if (VMCMode == 2 || VMCMode == 3)
   {
-    qmc = new CSVMC(w, psi, h, ppool, comm);
+      qmc = std::make_unique<CSVMC>(w, psi, h, ppool, comm);
   }
   //#if !defined(QMC_COMPLEX)
   //    else if(VMCMode == 6) //(1,1,0)

@@ -78,7 +78,7 @@ struct QMCDriverFactory : public MPIObjectBase
 
   /** current QMCDriver
    */
-  QMCDriver* qmcDriver;
+  std::unique_ptr<QMCDriver> qmcDriver;
 
   /** ParticleSet Pool
    */

@@ -29,7 +29,7 @@ private:
 public:
   VMCFactory(int vmode, xmlNodePtr cur) : VMCMode(vmode), myNode(cur) {}
 
-  QMCDriver* create(MCWalkerConfiguration& w,
+  std::unique_ptr<QMCDriver> create(MCWalkerConfiguration& w,
                     TrialWaveFunction& psi,
                     QMCHamiltonian& h,
                     ParticleSetPool& ptclpool,

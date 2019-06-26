@@ -28,7 +28,7 @@ private:
 public:
   DMCFactory(bool pbyp, bool gpu, xmlNodePtr cur) : PbyPUpdate(pbyp), myNode(cur), GPU(gpu) {}
 
-  QMCDriver* create(MCWalkerConfiguration& w,
+    std::unique_ptr<QMCDriver> create(MCWalkerConfiguration& w,
                     TrialWaveFunction& psi,
                     QMCHamiltonian& h,
                     HamiltonianPool& hpool,
