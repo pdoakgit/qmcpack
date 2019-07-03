@@ -25,6 +25,7 @@
 #include "Particle/ParticleSet.h"
 #include "Particle/Walker.h"
 #include "Utilities/IteratorUtility.h"
+#include "Particle/MCPopulation.hpp"
 //#include "Particle/Reptile.h"
 
 #ifdef QMC_CUDA
@@ -128,7 +129,10 @@ public:
 
   ///default constructor: copy only ParticleSet
   MCWalkerConfiguration(const MCWalkerConfiguration& mcw);
-
+  
+  ///Conversion Constructors
+  MCWalkerConfiguration(const MCPopulation& pop);
+  MCWalkerConfiguration& operator=(const MCPopulation& pop);
   ///default destructor
   ~MCWalkerConfiguration();
 

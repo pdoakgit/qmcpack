@@ -29,6 +29,7 @@
 #include "QMCApp/WaveFunctionPool.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"
 #include "Estimators/EstimatorManagerBase.h"
+#include "QMCDrivers/QMCDriverInterface.h"
 #include "QMCDrivers/GreenFunctionModifiers/DriftModifierBase.h"
 #include "QMCDrivers/SimpleFixedNodeBranch.h"
 #include "QMCDrivers/BranchIO.h"
@@ -64,7 +65,7 @@ class TraceManager;
  * @{
  * @brief abstract base class for QMC engines
  */
-class QMCDriver : public QMCTraits, public MPIObjectBase
+class QMCDriver : public QMCDriverInterface, public QMCTraits, public MPIObjectBase
 {
 public:
   /** enumeration coupled with QMCMode */
@@ -92,9 +93,15 @@ public:
   bool allow_traces;
   /// traces xml
   xmlNodePtr traces_xml;
-
+  
   /// Constructor.
   QMCDriver(MCWalkerConfiguration& w,
+            TrialWaveFunction& psi,
+            QMCHamiltonian& h,
+            WaveFunctionPool& ppool,
+            Communicate* comm);
+
+  QMCDriver(MCPopulation& pop,
             TrialWaveFunction& psi,
             QMCHamiltonian& h,
             WaveFunctionPool& ppool,
@@ -141,10 +148,6 @@ public:
   void putWalkers(std::vector<xmlNodePtr>& wset);
 
   inline void putTraces(xmlNodePtr txml) { traces_xml = txml; };
-
-  virtual bool run() = 0;
-
-  virtual bool put(xmlNodePtr cur) = 0;
 
   inline std::string getEngineName() const { return QMCType; }
 

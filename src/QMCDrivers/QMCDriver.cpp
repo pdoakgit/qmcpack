@@ -48,6 +48,7 @@ typedef int TraceManager;
 
 namespace qmcplusplus
 {
+
 QMCDriver::QMCDriver(MCWalkerConfiguration& w,
                      TrialWaveFunction& psi,
                      QMCHamiltonian& h,

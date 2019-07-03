@@ -15,6 +15,7 @@
 
 #include "QMCDrivers/VMC/VMCFactory.h"
 #include "QMCDrivers/VMC/VMC.h"
+#include "QMCDrivers/QMCDriverInterface.h"
 #include "QMCDrivers/CorrelatedSampling/CSVMC.h"
 #if defined(QMC_BUILD_COMPLETE)
 //REMOVE Broken warping

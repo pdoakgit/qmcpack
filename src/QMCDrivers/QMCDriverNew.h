@@ -2,24 +2,23 @@
 // This file is distributed under the University of Illinois/NCSA Open Source License.
 // See LICENSE file in top directory for details.
 //
-// Copyright (c) 2016 Jeongnim Kim and QMCPACK developers.
+// Copyright (c) 2019 QMCPACK developers.
 //
-// File developed by: Jeremy McMinnis, jmcminis@gmail.com, University of Illinois at Urbana-Champaign
-//                    Jeongnim Kim, jeongnim.kim@gmail.com, University of Illinois at Urbana-Champaign
-//                    Cynthia Gu, zg1@ornl.gov, Oak Ridge National Laboratory
-//                    Jaron T. Krogel, krogeljt@ornl.gov, Oak Ridge National Laboratory
-//                    Mark A. Berrill, berrillma@ornl.gov, Oak Ridge National Laboratory
+// File developed by: Peter Doak, doakpw@ornl.gov, Oak Ridge National Laboratory
 //
-// File created by: Jeongnim Kim, jeongnim.kim@gmail.com, University of Illinois at Urbana-Champaign
+// File refactored from: QMCDriver.h
 //////////////////////////////////////////////////////////////////////////////////////
 
 
 /**
- * @file QMCDriver.h
- * @brief Declaration of QMCDriver
+ * @file
+ * Declaration of QMCDriverNew
+ *
+ * This will replace QMCDriver once unified drivers are finished
+ * the general documentation from QMCDriver.h must be moved before then
  */
-#ifndef QMCPLUSPLUS_QMCDRIVER_H
-#define QMCPLUSPLUS_QMCDRIVER_H
+#ifndef QMCPLUSPLUS_QMCDRIVERNEW_H
+#define QMCPLUSPLUS_QMCDRIVERNEW_H
 
 #include "Configuration.h"
 #include "OhmmsData/ParameterSet.h"
@@ -37,37 +36,21 @@ class Communicate;
 
 namespace qmcplusplus
 {
-/** @defgroup QMCDrivers QMC Driver group
- * QMC drivers that implement QMC algorithms
- */
-
-/** @defgroup WalkerByWalker QMC Drivers using walker-by-walker update
- * @brief Move all the particles for each walker
- */
-
-/** @defgroup ParticleByParticle QMC Drivers using particle-by-particle update
- * @brief Move particle by particle
- */
-
-/** @defgroup MultiplePsi QMC Drivers for energy differences
- * @brief Umbrella sampling over multiple H/Psi
- *
- * This class of QMC drivers are suitable to evaluate
- * the energy differences of multiple H-Psi pairs.
- */
 
 //forward declarations: Do not include headers if not needed
-class MCWalkerConfiguration;
 class HDFWalkerOutput;
 class TraceManager;
 
 /** @ingroup QMCDrivers
  * @{
- * @brief abstract base class for QMC engines
+ * @brief QMCDriverNew Base class for Unified Drivers
  */
-class QMCDriver : public QMCDriverInterface, public QMCTraits, public MPIObjectBase
+class QMCDriverNew : public QMCDriverInterface, public MPIObjectBase
 {
 public:
+  using RealType = QMCTraits::RealType;
+  using IndexType = QMCTraits::IndexType;
+
   /** enumeration coupled with QMCMode */
   enum
   {
@@ -77,11 +60,10 @@ public:
     QMC_WARMUP
   };
 
-  typedef MCWalkerConfiguration::Walker_t Walker_t;
-  typedef Walker_t::Buffer_t Buffer_t;
-  typedef SimpleFixedNodeBranch BranchEngineType;
-
-  /** bits to classify QMCDriver
+  using MCPWalker =  MCPopulation::PopulationWalker;
+  using Buffer = MCPWalker::Buffer_t;
+ 
+  /** Remove and replace these bits to classify QMCDriver
    *
    * - QMCDriverMode[QMC_UPDATE_MODE]? particle-by-particle: walker-by-walker
    * - QMCDriverMode[QMC_MULTIPLE]? multiple H/Psi : single H/Psi
@@ -95,19 +77,13 @@ public:
   xmlNodePtr traces_xml;
   
   /// Constructor.
-  QMCDriver(MCWalkerConfiguration& w,
+  QMCDriverNew(MCPopulation& population,
             TrialWaveFunction& psi,
             QMCHamiltonian& h,
             WaveFunctionPool& ppool,
             Communicate* comm);
 
-  QMCDriver(MCPopulation& pop,
-            TrialWaveFunction& psi,
-            QMCHamiltonian& h,
-            WaveFunctionPool& ppool,
-            Communicate* comm);
-
-  virtual ~QMCDriver();
+  virtual ~QMCDriverNew();
 
   ///return current step
   inline int current() const { return CurrentStep; }
@@ -158,10 +134,10 @@ public:
   }
 
   ///set the BranchEngineType
-  void setBranchEngine(BranchEngineType* be) { branchEngine = be; }
+  void setBranchEngine(SimpleFixedNodeBranch* be) { branchEngine = be; }
 
   ///return BranchEngineType*
-  BranchEngineType* getBranchEngine() { return branchEngine; }
+  SimpleFixedNodeBranch* getBranchEngine() { return branchEngine; }
 
   int addObservable(const std::string& aname)
   {
@@ -201,7 +177,7 @@ public:
 
 protected:
   ///branch engine
-  BranchEngineType* branchEngine;
+  SimpleFixedNodeBranch* branchEngine;
   ///drift modifer
   DriftModifierBase* DriftModifier;
   ///randomize it
@@ -311,8 +287,8 @@ protected:
 
   ///record engine for walkers
   HDFWalkerOutput* wOut;
-  ///walker ensemble
-  MCWalkerConfiguration& W;
+  ///the entire (or on node) walker population
+  MCPopulation& population_;
 
   ///trial function
   TrialWaveFunction& Psi;
@@ -349,9 +325,9 @@ protected:
   //PooledData<RealType> HamPool;
 
   ///Copy Constructor (disabled).
-  QMCDriver(const QMCDriver&) = delete;
+  QMCDriverNew(const QMCDriverNew&) = delete;
   ///Copy operator (disabled).
-  QMCDriver& operator=(const QMCDriver&) = delete;
+  QMCDriverNew& operator=(const QMCDriverNew&) = delete;
 
   bool putQMCInfo(xmlNodePtr cur);
 

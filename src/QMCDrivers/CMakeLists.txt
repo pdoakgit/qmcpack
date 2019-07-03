@@ -25,6 +25,7 @@ SET(QMCDRIVERS
   SimpleFixedNodeBranch.cpp
   BranchIO.cpp
   QMCDriver.cpp
+  QMCDriverNew.cpp
   QMCOptimize.cpp
   QMCLinearOptimize.cpp
   QMCCorrelatedSamplingLinearOptimize.cpp
@@ -68,7 +69,8 @@ IF(QMC_CUDA)
 ENDIF(QMC_CUDA)
 
   SET(QMCDRIVERS ${QMCDRIVERS} 
-      VMC/VMC.cpp
+    VMC/VMC.cpp
+    VMC/VMCBatched.cpp
       VMC/VMCLinearOpt.cpp
       QMCCostFunction.cpp
      )

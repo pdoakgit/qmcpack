@@ -39,7 +39,7 @@ namespace qmcplusplus
 {
 ///initialize the static data member
 //ParticleSetPool* QMCDriverFactory::ptclPool = new ParticleSetPool;
-QMCDriverFactory::QMCDriverFactory(Communicate* c) : MPIObjectBase(c), qmcSystem(0), qmcDriver(0), curRunType(DUMMY_RUN)
+QMCDriverFactory::QMCDriverFactory(Communicate* c) : MPIObjectBase(c), qmcSystem(0), qmcDriver(0), curRunType(QMCDriverFactory::QMCRunType::DUMMY)
 {
   ////create ParticleSetPool
   ptclPool = new ParticleSetPool(myComm);
@@ -111,20 +111,20 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
   infoLog.flush();
 
   std::string wf_test_name("wftest");
-  QMCRunType newRunType = DUMMY_RUN;
+  QMCRunType newRunType =QMCRunType::DUMMY;
   if (curName != "qmc")
     qmc_mode = curName;
   int nchars = qmc_mode.size();
   if (qmc_mode.find("linear") < nchars)
   {
     if (qmc_mode.find("cslinear") < nchars)
-      newRunType = CS_LINEAR_OPTIMIZE_RUN;
+      newRunType =QMCRunType::CS_LINEAR_OPTIMIZE;
     else
-      newRunType = LINEAR_OPTIMIZE_RUN;
+      newRunType =QMCRunType::LINEAR_OPTIMIZE;
   }
   else if (qmc_mode.find("opt") < nchars)
   {
-    newRunType = OPTIMIZE_RUN;
+    newRunType =QMCRunType::OPTIMIZE;
   }
   else
   {
@@ -141,19 +141,23 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
     //       else
     if (qmc_mode.find("rmc") < nchars)
     {
-      newRunType = RMC_RUN;
+      newRunType =QMCRunType::RMC;
+    }
+    else if (qmc_mode.find("vmcbatch") < nchars)
+    {
+      newRunType = QMCRunType::VMC_BATCH;
     }
     else if (qmc_mode.find("vmc") < nchars)
     {
-      newRunType = VMC_RUN;
+      newRunType =QMCRunType::VMC;
     }
     else if (qmc_mode.find("dmc") < nchars)
     {
-      newRunType = DMC_RUN;
+      newRunType =QMCRunType::DMC;
     }
     else if (qmc_mode == wf_test_name)
     {
-      newRunType = WF_TEST_RUN;
+      newRunType =QMCRunType::WF_TEST;
     }
     else
     {
@@ -167,7 +171,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
   {
     if (newRunType != curRunType || newQmcMode != curQmcMode)
     {
-      if (curRunType == DUMMY_RUN)
+      if (curRunType ==QMCRunType::DUMMY)
       {
         APP_ABORT("QMCDriverFactory::setQMCDriver\n Other qmc sections cannot come after <qmc method=\"test\">.\n");
       }
@@ -182,14 +186,14 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
     else
     {
       app_log() << "  Reusing " << qmcDriver->getEngineName() << std::endl;
-      //         if(curRunType == DMC_RUN)
+      //         if(curRunType ==QMCRunType::DMC)
       qmcDriver->resetComponents(cur);
     }
   }
   if (curSeries == 0)
     append_run = false;
   //add trace information
-  bool allow_traces = traces_tag == "yes" || (traces_tag == "none" && (newRunType == VMC_RUN || newRunType == DMC_RUN));
+  bool allow_traces = traces_tag == "yes" || (traces_tag == "none" && (newRunType ==QMCRunType::VMC || newRunType ==QMCRunType::DMC));
   //continue with the existing qmcDriver
   if (qmcDriver)
   {
@@ -265,7 +269,7 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
   //set primaryH->Primary
   primaryH->setPrimary(true);
   ////flux is evaluated only with single-configuration VMC
-  //if(curRunType == VMC_RUN && !curQmcModeBits[MULTIPLE_MODE])
+  //if(curRunType ==QMCRunType::VMC && !curQmcModeBits[MULTIPLE_MODE])
   //{
   //  QMCHamiltonianBase* flux=primaryH->getHamiltonian("Flux");
   //  if(flux == 0) primaryH->addOperator(new ConservedEnergy,"Flux");
@@ -275,7 +279,7 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
   //  primaryH->remove("Flux");
   //}
   //(SPACEWARP_MODE,MULTIPE_MODE,UPDATE_MODE)
-  if (curRunType == VMC_RUN || curRunType == CSVMC_RUN)
+  if (curRunType ==QMCRunType::VMC || curRunType ==QMCRunType::CSVMC)
   {
     //VMCFactory fac(curQmcModeBits[UPDATE_MODE],cur);
     VMCFactory fac(curQmcModeBits.to_ulong(), cur);
@@ -284,24 +288,31 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
     //TrialWaveFunction* psiclone=primaryPsi->makeClone(*qmcSystem);
     //qmcDriver = fac.create(*qmcSystem,*psiclone,*primaryH,*ptclPool,*hamPool);
   }
-  else if (curRunType == DMC_RUN)
+  else if (curRunType == QMCRunType::VMC_BATCH)
+  {
+    APP_ABORT("VMCBatch driver not yet supported");
+    // DFCreator<VMC_BATCH> dfc(curQmcModeBits.to_ulong(), cur);
+    // qmcDriver = dfc(*qmcSystem, *primaryPsi, *primaryH, *ptclPool, *hamPool, *psiPool, myComm);
+
+  }
+  else if (curRunType ==QMCRunType::DMC)
   {
     DMCFactory fac(curQmcModeBits[UPDATE_MODE], curQmcModeBits[GPU_MODE], cur);
     qmcDriver = fac.create(*qmcSystem, *primaryPsi, *primaryH, *hamPool, *psiPool, myComm);
   }
-  else if (curRunType == RMC_RUN)
+  else if (curRunType ==QMCRunType::RMC)
   {
     RMCFactory fac(curQmcModeBits[UPDATE_MODE], cur);
     qmcDriver = fac.create(*qmcSystem, *primaryPsi, *primaryH, *ptclPool, *hamPool, *psiPool, myComm);
   }
-  else if (curRunType == OPTIMIZE_RUN)
+  else if (curRunType ==QMCRunType::OPTIMIZE)
   {
     QMCOptimize* opt = new QMCOptimize(*qmcSystem, *primaryPsi, *primaryH, *hamPool, *psiPool, myComm);
     //ZeroVarianceOptimize *opt = new ZeroVarianceOptimize(*qmcSystem,*primaryPsi,*primaryH );
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
     qmcDriver = opt;
   }
-  else if (curRunType == LINEAR_OPTIMIZE_RUN)
+  else if (curRunType ==QMCRunType::LINEAR_OPTIMIZE)
   {
 #ifdef MIXED_PRECISION
     APP_ABORT("QMCDriverFactory::createQMCDriver : method=\"linear\" is not safe with CPU mixed precision. Please use "
@@ -313,7 +324,7 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
     qmcDriver = opt;
   }
-  else if (curRunType == CS_LINEAR_OPTIMIZE_RUN)
+  else if (curRunType ==QMCRunType::CS_LINEAR_OPTIMIZE)
   {
 #if defined(QMC_CUDA)
     app_log() << "cslinear is not supported. Switch to linear method. " << std::endl;
@@ -326,14 +337,14 @@ void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
     opt->setWaveFunctionNode(psiPool->getWaveFunctionNode("psi0"));
     qmcDriver = opt;
   }
-  else if (curRunType == WF_TEST_RUN)
+  else if (curRunType ==QMCRunType::WF_TEST)
   {
     app_log() << "Testing wavefunctions." << std::endl;
     qmcDriver = new WaveFunctionTester(*qmcSystem, *primaryPsi, *primaryH, *ptclPool, *psiPool, myComm);
   }
   else
   {
-    APP_ABORT("Unhandled run type: " << curRunType);
+    APP_ABORT("Unhandled run type: " << static_cast<int>(curRunType));
   }
   if (curQmcModeBits[MULTIPLE_MODE])
   {

@@ -90,7 +90,6 @@ MCWalkerConfiguration::MCWalkerConfiguration()
       ReadyForPbyP(false),
       UpdateMode(Update_Walker),
       Polymer(0),
-
       MaxSamples(10),
       CurSampleCount(0),
       GlobalNumWalkers(0),
@@ -133,6 +132,39 @@ MCWalkerConfiguration::MCWalkerConfiguration(const MCWalkerConfiguration& mcw)
   GlobalNumWalkers = mcw.GlobalNumWalkers;
   WalkerOffsets    = mcw.WalkerOffsets;
   Properties       = mcw.Properties;
+  //initPropertyList();
+}
+
+
+MCWalkerConfiguration::MCWalkerConfiguration(const MCPopulation& pop)
+    : ParticleSet(pop.get_ions()),
+      OwnWalkers(true),
+      GlobalNumWalkers(pop.get_num_global_walkers()),
+      UpdateMode(Update_Walker),
+      ReadyForPbyP(false),
+      Polymer(0),
+      MaxSamples(pop.get_max_samples()),
+      CurSampleCount(0)
+#ifdef QMC_CUDA
+      ,
+      RList_GPU("MCWalkerConfiguration::RList_GPU"),
+      GradList_GPU("MCWalkerConfiguration::GradList_GPU"),
+      LapList_GPU("MCWalkerConfiguration::LapList_GPU"),
+      Rnew_GPU("MCWalkerConfiguration::Rnew_GPU"),
+      NLlist_GPU("MCWalkerConfiguration::NLlist_GPU"),
+      AcceptList_GPU("MCWalkerConfiguration::AcceptList_GPU"),
+      iatList_GPU("iatList_GPU")
+#endif
+{
+  WalkerOffsets    = pop.get_walker_offsets();
+  Properties       = pop.get_properties();
+  //initPropertyList();
+}
+
+MCWalkerConfiguration& MCWalkerConfiguration::operator=(const MCPopulation& pop)
+{
+  WalkerOffsets    = pop.get_walker_offsets();
+  Properties       = pop.get_properties();
   //initPropertyList();
 }
 

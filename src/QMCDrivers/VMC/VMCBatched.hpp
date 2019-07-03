@@ -12,17 +12,22 @@
 
 #ifndef QMCPLUSPLUS_VMCBATCHED_H
 #define QMCPLUSPLUS_VMCBATCHED_H
-#include "QMCDrivers/QMCDriver.h"
+
+#include "QMCDrivers/QMCDriverNew.h"
+#include "Particle/MCPopulation.hpp"
+
 namespace qmcplusplus
 {
 /** @ingroup QMCDrivers  ParticleByParticle
  * @brief Implements a VMC using particle-by-particle move. Threaded execution.
  */
-class VMCBatched : public QMCDriver
+class VMCBatched : public QMCDriverNew
 {
 public:
   /// Constructor.
-  VMC(MCPopulation& pop, WaveFunctionPool& ppool, Communicate* comm);
+  VMCBatched(MCPopulation& pop, TrialWaveFunction& psi,         QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+  VMCBatched(MCWalkerConfiguration& W, TrialWaveFunction& psi,          QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+
   bool run();
   bool put(xmlNodePtr cur);
   //inline std::vector<RandomGenerator_t*>& getRng() { return Rng;}
@@ -37,9 +42,9 @@ private:
   ///check the run-time environments
   void resetRun();
   ///copy constructor
-  VMC(const VMC&) = delete;
+  VMCBatched(const VMCBatched&) = delete;
   /// Copy operator (disabled).
-  VMC& operator=(const VMC&) = delete;
+  VMCBatched& operator=(const VMCBatched&) = delete;
 };
 } // namespace qmcplusplus
 

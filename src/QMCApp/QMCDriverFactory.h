@@ -35,22 +35,26 @@ class HamiltonianPool;
 struct QMCDriverFactory : public MPIObjectBase
 {
   /*! enum for QMC Run Type */
-  enum QMCRunType
+  enum class QMCRunType
   {
-    DUMMY_RUN, /*!< dummy */
-    VMC_RUN,   /**< VMC type: vmc, vmc-ptcl, vmc-multiple, vmc-ptcl-multiple */
-    CSVMC_RUN,
-    DMC_RUN,      /**< DMC type: dmc, dmc-ptcl*/
-    RMC_RUN,      /**< RMC type: rmc, rmc-ptcl */
-    OPTIMIZE_RUN, /*!< Optimization */
-    VMC_OPT_RUN,  /*!< Optimization with vmc blocks */
-    LINEAR_OPTIMIZE_RUN,
-    CS_LINEAR_OPTIMIZE_RUN,
-    WF_TEST_RUN,
+    DUMMY, /*!< dummy */
+    VMC,   /**< VMC type: vmc, vmc-ptcl, vmc-multiple, vmc-ptcl-multiple */
+    CSVMC,
+    DMC,      /**< DMC type: dmc, dmc-ptcl*/
+    RMC,      /**< RMC type: rmc, rmc-ptcl */
+    OPTIMIZE, /*!< Optimization */
+    VMC_OPT,  /*!< Optimization with vmc blocks */
+    LINEAR_OPTIMIZE,
+    CS_LINEAR_OPTIMIZE,
+    WF_TEST,
     VMC_BATCH
   };
 
-  /*! enum to set the bit to determine the QMC mode */
+  /** enum to set the bit to determine the QMC mode 
+   *
+   *  Can't be a scoped enum
+   */
+  
   enum QMCModeEnum
   {
     UPDATE_MODE,    /**< bit for move: walker or pbyp */
