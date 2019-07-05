@@ -99,6 +99,7 @@ SET(QMCDRIVERS ${QMCDRIVERS}
 ADD_LIBRARY(qmcdriver ${QMCDRIVERS})
 ADD_LIBRARY(qmcdriver_unit ${QMCDRIVERS})
 USE_FAKE_RNG(qmcdriver_unit)
+target_link_libraries(qmcdriver_unit qmcfakerng)
 #IF(QMC_BUILD_STATIC)
 #  ADD_LIBRARY(qmcdriver STATIC ${QMCDRIVERS})
 #ELSE(QMC_BUILD_STATIC)

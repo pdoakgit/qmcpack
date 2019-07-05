@@ -175,17 +175,17 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
 {
   unsigned long newQmcMode = das.what_to_do.to_ulong();
   //initialize to 0
-  QMCDriver::BranchEngineType* branchEngine = 0;
+  QMCDriver::BranchEngineType* branchEngine = nullptr;
   if (qmcDriver)
   {
     if (das.new_run_type != curRunType || newQmcMode != curQmcMode)
     {
-      if (curRunType ==QMCRunType::DUMMY)
+      if (curRunType == QMCRunType::DUMMY)
       {
         APP_ABORT("QMCDriverFactory::setQMCDriver\n Other qmc sections cannot come after <qmc method=\"test\">.\n");
       }
       //pass to the new driver
-      branchEngine = qmcDriver->getBranchEngine();
+      branchEngine = dynamic_cast<QMCDriver*>(qmcDriver)->getBranchEngine();
       delete qmcDriver;
       //set to 0 so that a new driver is created
       qmcDriver = 0;
@@ -194,7 +194,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
     }
     else
     {
-      app_log() << "  Reusing " << qmcDriver->getEngineName() << std::endl;
+      app_log() << "  Reusing " << dynamic_cast<QMCDriver*>(qmcDriver)->getEngineName() << std::endl;
       //         if(curRunType ==QMCRunType::DMC)
       qmcDriver->resetComponents(cur);
     }
@@ -206,7 +206,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
   //continue with the existing qmcDriver
   if (qmcDriver)
   {
-    qmcDriver->allow_traces = allow_traces;
+    dynamic_cast<QMCDriver*>(qmcDriver)->allow_traces = allow_traces;
     return das.append_run;
   }
   //need to create a qmcDriver
@@ -218,10 +218,10 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
   //initialize QMCDriver::myComm
   //branchEngine has to be transferred to a new QMCDriver
   if (branchEngine)
-    qmcDriver->setBranchEngine(branchEngine);
+    dynamic_cast<QMCDriver*>(qmcDriver)->setBranchEngine(branchEngine);
   infoSummary.flush();
   infoLog.flush();
-  qmcDriver->allow_traces = allow_traces;
+  dynamic_cast<QMCDriver*>(qmcDriver)->allow_traces = allow_traces;
   return das.append_run;
 }
 

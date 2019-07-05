@@ -12,7 +12,7 @@
 
 #include "catch.hpp"
 
-
+#include "Utilities/RandomGenerator.h"
 #include "Message/Communicate.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "QMCApp/QMCDriverFactory.h"
@@ -28,7 +28,7 @@
 namespace qmcplusplus
 {
 
-TEST_CASE("QMCDriverFactory::VMCBatchedDriver", "[qmcdriver]")
+TEST_CASE("QMCDriverFactory::VMCBatchedDriver", "[qmcapp]")
 {
   Communicate comm;
   QMCDriverFactory driver_factory(&comm);
@@ -53,6 +53,6 @@ TEST_CASE("QMCDriverFactory::VMCBatchedDriver", "[qmcdriver]")
   REQUIRE(okay);
   xmlNodePtr node = doc.getRoot();
   QMCDriverFactory::DriverAssemblyState das = driver_factory.readSection(0, node);
-  
+  REQUIRE(das.new_run_type == QMCDriverFactory::QMCRunType::VMC_BATCH);
 }
 }

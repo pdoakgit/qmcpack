@@ -33,7 +33,7 @@
 
 namespace qmcplusplus
 {
-QMCDriver* VMCFactory::create(MCWalkerConfiguration& w,
+QMCDriverInterface* VMCFactory::create(MCWalkerConfiguration& w,
                               TrialWaveFunction& psi,
                               QMCHamiltonian& h,
                               ParticleSetPool& ptclpool,
@@ -43,7 +43,7 @@ QMCDriver* VMCFactory::create(MCWalkerConfiguration& w,
 {
   int np = omp_get_max_threads();
   //(SPACEWARP_MODE,MULTIPE_MODE,UPDATE_MODE)
-  QMCDriver* qmc = 0;
+  QMCDriverInterface* qmc = nullptr;
 #ifdef QMC_CUDA
   if (VMCMode & 16)
     qmc = new VMCcuda(w, psi, h, ppool, comm);

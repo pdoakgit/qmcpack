@@ -29,7 +29,7 @@ namespace qmcplusplus
 {
 //forward declaration
 class MCWalkerConfiguration;
-class QMCDriver;
+class QMCDriverInterface;
 class WaveFunctionPool;
 class HamiltonianPool;
 
@@ -84,7 +84,7 @@ struct QMCDriverFactory : public MPIObjectBase
 
   /** current QMCDriver
    */
-  QMCDriver* qmcDriver;
+  QMCDriverInterface* qmcDriver;
 
   /** ParticleSet Pool
    */
