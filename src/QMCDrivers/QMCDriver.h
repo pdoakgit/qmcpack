@@ -149,8 +149,8 @@ public:
   inline void putTraces(xmlNodePtr txml) { traces_xml = txml; }
 
   inline void requestTraces(bool traces) { allow_traces = traces; }
-    
-  virtual std::string getEngineName() { return QMCType; }
+
+  std::string getEngineName() { return QMCType; }
 
   template<class PDT>
   void setValue(const std::string& aname, PDT x)
@@ -176,17 +176,8 @@ public:
 
   void setTau(RealType i) { Tau = i; }
 
-  ///resetComponents for next run if reusing a driver.
-  virtual void resetComponents(xmlNodePtr cur)
-  {
-    qmcNode = cur;
-    m_param.put(cur);
-  }
-
   ///set global offsets of the walkers
   void setWalkerOffsets();
-
-  //virtual std::vector<RandomGenerator_t*>& getRng() {}
 
   ///Observables manager
   EstimatorManagerBase* Estimators;

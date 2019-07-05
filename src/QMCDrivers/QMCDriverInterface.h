@@ -12,9 +12,7 @@
 #ifndef QMCPLUSPLUS_QMCDRIVERINTERFACE_H
 #define QMCPLUSPLUS_QMCDRIVERINTERFACE_H
 
-//#include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
-//#include <libxml/xpath.h>
 
 namespace qmcplusplus
 {
@@ -35,7 +33,6 @@ public:
 
   virtual bool run() = 0;
   virtual bool put(xmlNodePtr cur) = 0;
-  virtual void resetComponents(xmlNodePtr cur) = 0;
   virtual void recordBlock(int block) = 0;
 
   ///return the random generators
