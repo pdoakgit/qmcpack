@@ -17,11 +17,12 @@
 
 #ifndef QMCPLUSPLUS_QMCDRIVER_FACTORY_H
 #define QMCPLUSPLUS_QMCDRIVER_FACTORY_H
+#include <bitset>
+#include <string>
+
 #include "OhmmsData/OhmmsElementBase.h"
 #include "Message/MPIObjectBase.h"
 #include "QMCApp/ParticleSetPool.h"
-#include <bitset>
-
 class Communicate;
 
 namespace qmcplusplus
@@ -103,8 +104,19 @@ struct QMCDriverFactory : public MPIObjectBase
   /** set the active qmcDriver */
   void putCommunicator(xmlNodePtr cur);
 
+  struct DriverAssemblyState
+  {
+    std::bitset<QMC_MODE_MAX> what_to_do;
+    bool append_run;
+    std::string traces_tag = "none";
+    QMCRunType new_run_type = QMCRunType::DUMMY;
+  };
+  
+  /** read the current QMC Section */
+  DriverAssemblyState readSection(int curSeries, xmlNodePtr cur);
+
   /** set the active qmcDriver */
-  bool setQMCDriver(int curSeries, xmlNodePtr cur);
+  bool setQMCDriver(int curSeries, xmlNodePtr cur, DriverAssemblyState& das);
 
   /** create a new QMCDriver
    */

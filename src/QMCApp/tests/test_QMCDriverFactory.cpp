@@ -15,18 +15,44 @@
 
 #include "Message/Communicate.h"
 #include "OhmmsData/Libxml2Doc.h"
-#include "QMCApp/ParticleSetPool.h"
+#include "QMCApp/QMCDriverFactory.h"
 
 
+#include <iostream>
 #include <stdio.h>
 #include <string>
 #include <sstream>
 
+#include "Message/Communicate.h"
 
 namespace qmcplusplus
 {
+
 TEST_CASE("QMCDriverFactory::VMCBatchedDriver", "[qmcdriver]")
 {
-    
+  Communicate comm;
+  QMCDriverFactory driver_factory(&comm);
+  // clang-format off
+  const char* driver_xml = R"(
+  <qmc method="vmc_batch" move="pbyp">
+    <estimator name="LocalEnergy" hdf5="no" />
+    <parameter name="walkers">                1 </parameter>
+    <parameter name="stepsbetweensamples">    1 </parameter>
+    <parameter name="warmupSteps">            5 </parameter>
+    <parameter name="substeps">               5 </parameter>
+    <parameter name="steps">                  1 </parameter>
+    <parameter name="blocks">                 2 </parameter>
+    <parameter name="timestep">             1.0 </parameter>
+    <parameter name="usedrift">              no </parameter>
+  </qmc>
+)";
+  // clang-format on
+
+  Libxml2Document doc;
+  bool okay = doc.parseFromString(driver_xml);
+  REQUIRE(okay);
+  xmlNodePtr node = doc.getRoot();
+  QMCDriverFactory::DriverAssemblyState das = driver_factory.readSection(0, node);
+  
 }
 }

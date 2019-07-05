@@ -76,8 +76,14 @@ void QMCDriverFactory::putCommunicator(xmlNodePtr cur)
   }
 }
 
-bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
+/** Read the xml specifify the driver for this QMC section
+ *
+ *  Copy ellision should result in just a move of the
+ *  DriverAssemblyState
+ */
+QMCDriverFactory::DriverAssemblyState QMCDriverFactory::readSection(int curSeries, xmlNodePtr cur)
 {
+  DriverAssemblyState das;
   std::string curName((const char*)cur->name);
   std::string update_mode("pbyp");
   std::string qmc_mode("invalid");
@@ -89,7 +95,6 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
 #else
   std::string gpu_tag("no");
 #endif
-  std::string traces_tag("none");
   OhmmsAttributeSet aAttrib;
   aAttrib.add(qmc_mode, "method");
   aAttrib.add(update_mode, "move");
@@ -97,79 +102,83 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
   aAttrib.add(warp_tag, "warp");
   aAttrib.add(append_tag, "append");
   aAttrib.add(gpu_tag, "gpu");
-  aAttrib.add(traces_tag, "trace");
+  aAttrib.add(das.traces_tag, "trace");
   aAttrib.put(cur);
-  std::bitset<QMC_MODE_MAX> WhatToDo;
-  bool append_run          = (append_tag == "yes");
-  WhatToDo[SPACEWARP_MODE] = (warp_tag == "yes");
-  WhatToDo[MULTIPLE_MODE]  = (multi_tag == "yes");
-  WhatToDo[UPDATE_MODE]    = (update_mode == "pbyp");
+  das.append_run          = (append_tag == "yes");
+  das.what_to_do[SPACEWARP_MODE] = (warp_tag == "yes");
+  das.what_to_do[MULTIPLE_MODE]  = (multi_tag == "yes");
+  das.what_to_do[UPDATE_MODE]    = (update_mode == "pbyp");
 #if defined(QMC_CUDA)
-  WhatToDo[GPU_MODE] = (gpu_tag == "yes");
+  das.what_to_do[GPU_MODE] = (gpu_tag == "yes");
 #endif
   infoSummary.flush();
   infoLog.flush();
 
   std::string wf_test_name("wftest");
-  QMCRunType newRunType =QMCRunType::DUMMY;
+  
   if (curName != "qmc")
     qmc_mode = curName;
   int nchars = qmc_mode.size();
   if (qmc_mode.find("linear") < nchars)
   {
     if (qmc_mode.find("cslinear") < nchars)
-      newRunType =QMCRunType::CS_LINEAR_OPTIMIZE;
+      das.new_run_type =QMCRunType::CS_LINEAR_OPTIMIZE;
     else
-      newRunType =QMCRunType::LINEAR_OPTIMIZE;
+      das.new_run_type =QMCRunType::LINEAR_OPTIMIZE;
   }
   else if (qmc_mode.find("opt") < nchars)
   {
-    newRunType =QMCRunType::OPTIMIZE;
+    das.new_run_type =QMCRunType::OPTIMIZE;
   }
   else
   {
     if (qmc_mode.find("ptcl") < nchars)
-      WhatToDo[UPDATE_MODE] = 1;
+      das.what_to_do[UPDATE_MODE] = 1;
     if (qmc_mode.find("mul") < nchars)
-      WhatToDo[MULTIPLE_MODE] = 1;
+      das.what_to_do[MULTIPLE_MODE] = 1;
     if (qmc_mode.find("warp") < nchars)
-      WhatToDo[SPACEWARP_MODE] = 1;
+      das.what_to_do[SPACEWARP_MODE] = 1;
     //       if (qmc_mode.find("rmcPbyP")<nchars)
     //       {
-    //         newRunType=RMC_PBYP_RUN;
+    //         das.new_run_type=RMC_PBYP_RUN;
     //       }
     //       else
     if (qmc_mode.find("rmc") < nchars)
     {
-      newRunType =QMCRunType::RMC;
+      das.new_run_type =QMCRunType::RMC;
     }
-    else if (qmc_mode.find("vmcbatch") < nchars)
+    else if (qmc_mode.find("vmc_batch") < nchars) // order matters here
     {
-      newRunType = QMCRunType::VMC_BATCH;
+      das.new_run_type = QMCRunType::VMC_BATCH;
     }
     else if (qmc_mode.find("vmc") < nchars)
     {
-      newRunType =QMCRunType::VMC;
+      das.new_run_type =QMCRunType::VMC;
     }
     else if (qmc_mode.find("dmc") < nchars)
     {
-      newRunType =QMCRunType::DMC;
+      das.new_run_type =QMCRunType::DMC;
     }
     else if (qmc_mode == wf_test_name)
     {
-      newRunType =QMCRunType::WF_TEST;
+      das.new_run_type =QMCRunType::WF_TEST;
     }
     else
     {
       app_log() << "Unknown qmc method: " << qmc_mode << std::endl;
     }
   }
-  unsigned long newQmcMode = WhatToDo.to_ulong();
+  return das;
+}
+
+bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFactory::DriverAssemblyState& das)
+{
+  unsigned long newQmcMode = das.what_to_do.to_ulong();
   //initialize to 0
   QMCDriver::BranchEngineType* branchEngine = 0;
   if (qmcDriver)
   {
-    if (newRunType != curRunType || newQmcMode != curQmcMode)
+    if (das.new_run_type != curRunType || newQmcMode != curQmcMode)
     {
       if (curRunType ==QMCRunType::DUMMY)
       {
@@ -181,7 +190,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
       //set to 0 so that a new driver is created
       qmcDriver = 0;
       //if the current qmc method is different from the previous one, append_run is set to false
-      append_run = false;
+      das.append_run = false;
     }
     else
     {
@@ -191,19 +200,19 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
     }
   }
   if (curSeries == 0)
-    append_run = false;
+    das.append_run = false;
   //add trace information
-  bool allow_traces = traces_tag == "yes" || (traces_tag == "none" && (newRunType ==QMCRunType::VMC || newRunType ==QMCRunType::DMC));
+  bool allow_traces = das.traces_tag == "yes" || (das.traces_tag == "none" && (das.new_run_type ==QMCRunType::VMC || das.new_run_type ==QMCRunType::DMC));
   //continue with the existing qmcDriver
   if (qmcDriver)
   {
     qmcDriver->allow_traces = allow_traces;
-    return append_run;
+    return das.append_run;
   }
   //need to create a qmcDriver
-  curRunType     = newRunType;
+  curRunType     = das.new_run_type;
   curQmcMode     = newQmcMode;
-  curQmcModeBits = WhatToDo;
+  curQmcModeBits = das.what_to_do;
   //create a driver
   createQMCDriver(cur);
   //initialize QMCDriver::myComm
@@ -213,7 +222,7 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur)
   infoSummary.flush();
   infoLog.flush();
   qmcDriver->allow_traces = allow_traces;
-  return append_run;
+  return das.append_run;
 }
 
 void QMCDriverFactory::createQMCDriver(xmlNodePtr cur)
