@@ -75,6 +75,8 @@ private:
   QMCCostFunctionBase* optTarget;
   ///solver
   MinimizerBase<RealType>* optSolver;
+  ///vmc engine interface pointer
+  QMCDriverInterface* vmc_engine_interface;
   ///vmc engine
   QMCDriver* vmcEngine;
   ///xml node to be dumped

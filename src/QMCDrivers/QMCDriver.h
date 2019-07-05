@@ -79,7 +79,6 @@ public:
 
   typedef MCWalkerConfiguration::Walker_t Walker_t;
   typedef Walker_t::Buffer_t Buffer_t;
-  typedef SimpleFixedNodeBranch BranchEngineType;
 
   /** bits to classify QMCDriver
    *
@@ -147,9 +146,11 @@ public:
 
   void putWalkers(std::vector<xmlNodePtr>& wset);
 
-  inline void putTraces(xmlNodePtr txml) { traces_xml = txml; };
+  inline void putTraces(xmlNodePtr txml) { traces_xml = txml; }
 
-  inline std::string getEngineName() const { return QMCType; }
+  inline void requestTraces(bool traces) { allow_traces = traces; }
+    
+  virtual std::string getEngineName() { return QMCType; }
 
   template<class PDT>
   void setValue(const std::string& aname, PDT x)

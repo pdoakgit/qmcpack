@@ -178,37 +178,25 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
   QMCDriver::BranchEngineType* branchEngine = nullptr;
   if (qmcDriver)
   {
-    if (das.new_run_type != curRunType || newQmcMode != curQmcMode)
+    if (curRunType == QMCRunType::DUMMY)
     {
-      if (curRunType == QMCRunType::DUMMY)
-      {
-        APP_ABORT("QMCDriverFactory::setQMCDriver\n Other qmc sections cannot come after <qmc method=\"test\">.\n");
-      }
-      //pass to the new driver
-      branchEngine = dynamic_cast<QMCDriver*>(qmcDriver)->getBranchEngine();
-      delete qmcDriver;
-      //set to 0 so that a new driver is created
-      qmcDriver = 0;
-      //if the current qmc method is different from the previous one, append_run is set to false
-      das.append_run = false;
+      APP_ABORT("QMCDriverFactory::setQMCDriver\n Other qmc sections cannot come after <qmc method=\"test\">.\n");
     }
+
+    branchEngine = qmcDriver->getBranchEngine(); 
+    delete qmcDriver;
+    //set to 0 so that a new driver is created
+    qmcDriver = 0;
+    //if the current qmc method is different from the previous one, append_run is set to false
+    
+    if(das.new_run_type == curRunType && newQmcMode == curQmcMode)
+      das.append_run = true;
     else
-    {
-      app_log() << "  Reusing " << dynamic_cast<QMCDriver*>(qmcDriver)->getEngineName() << std::endl;
-      //         if(curRunType ==QMCRunType::DMC)
-      qmcDriver->resetComponents(cur);
-    }
+      das.append_run = false;
   }
   if (curSeries == 0)
     das.append_run = false;
-  //add trace information
-  bool allow_traces = das.traces_tag == "yes" || (das.traces_tag == "none" && (das.new_run_type ==QMCRunType::VMC || das.new_run_type ==QMCRunType::DMC));
-  //continue with the existing qmcDriver
-  if (qmcDriver)
-  {
-    dynamic_cast<QMCDriver*>(qmcDriver)->allow_traces = allow_traces;
-    return das.append_run;
-  }
+
   //need to create a qmcDriver
   curRunType     = das.new_run_type;
   curQmcMode     = newQmcMode;
@@ -218,10 +206,12 @@ bool QMCDriverFactory::setQMCDriver(int curSeries, xmlNodePtr cur, QMCDriverFact
   //initialize QMCDriver::myComm
   //branchEngine has to be transferred to a new QMCDriver
   if (branchEngine)
-    dynamic_cast<QMCDriver*>(qmcDriver)->setBranchEngine(branchEngine);
+    qmcDriver->setBranchEngine(branchEngine);
   infoSummary.flush();
   infoLog.flush();
-  dynamic_cast<QMCDriver*>(qmcDriver)->allow_traces = allow_traces;
+  //add trace information
+  bool allow_traces = das.traces_tag == "yes" || (das.traces_tag == "none" && (das.new_run_type ==QMCRunType::VMC || das.new_run_type ==QMCRunType::DMC));
+  qmcDriver->requestTraces(allow_traces);
   return das.append_run;
 }
 

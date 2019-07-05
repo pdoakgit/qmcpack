@@ -65,7 +65,9 @@ QMCOptimize::QMCOptimize(MCWalkerConfiguration& w,
 /** Clean up the vector */
 QMCOptimize::~QMCOptimize()
 {
-  delete vmcEngine;
+  // Need to delete the actual virtual base class to get
+  // correct destructors called
+  delete vmc_engine_interface;
   delete optSolver;
   delete optTarget;
 }
@@ -202,10 +204,12 @@ bool QMCOptimize::put(xmlNodePtr q)
   {
 #if defined(QMC_CUDA)
     if (useGPU == "yes")
-      vmcEngine = new VMCcuda(W, Psi, H, psiPool, myComm);
+      vmc_engine_interface = new VMCcuda(W, Psi, H, psiPool, myComm);
     else
 #endif
-      vmcEngine = new VMC(W, Psi, H, psiPool, myComm);
+      vmc_engine_interface = new VMC(W, Psi, H, psiPool, myComm);
+    // To avoid many issues with private access from QMCOptimize into QMCDriver
+    vmcEngine = dynamic_cast<QMCDriver*>(vmc_engine_interface);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
   vmcEngine->setStatus(RootName, h5FileRoot, AppendRun);
