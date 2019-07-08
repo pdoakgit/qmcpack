@@ -25,8 +25,8 @@ class QMCDriverOptions
     QMC_WARMUP
   };
 
-  std::map<Keys,bool>
+  std::map<Keys, bool>
 }
 
-}
+} // namespace qmcplusplus
 #endif

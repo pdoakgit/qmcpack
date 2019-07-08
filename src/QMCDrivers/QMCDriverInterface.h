@@ -16,7 +16,6 @@
 
 namespace qmcplusplus
 {
-
 class QMCHamiltonian;
 class TrialWaveFunction;
 class SimpleFixedNodeBranch;
@@ -31,8 +30,8 @@ class QMCDriverInterface
 public:
   using BranchEngineType = SimpleFixedNodeBranch;
 
-  virtual bool run() = 0;
-  virtual bool put(xmlNodePtr cur) = 0;
+  virtual bool run()                  = 0;
+  virtual bool put(xmlNodePtr cur)    = 0;
   virtual void recordBlock(int block) = 0;
 
   ///return the random generators
@@ -40,22 +39,22 @@ public:
 
   ///return the i-th random generator
   virtual RandomGenerator_t& getRng(int i) = 0;
- 
-  virtual void setUpdateMode(bool pbyp) = 0;
-  virtual void add_H_and_Psi(QMCHamiltonian* h, TrialWaveFunction* psi) = 0;
+
+  virtual void setUpdateMode(bool pbyp)                                                    = 0;
+  virtual void add_H_and_Psi(QMCHamiltonian* h, TrialWaveFunction* psi)                    = 0;
   virtual void setStatus(const std::string& aname, const std::string& h5name, bool append) = 0;
-  virtual void putWalkers(std::vector<xmlNodePtr>& wset) = 0;
-  virtual void putTraces(xmlNodePtr txml) = 0;
-  virtual void requestTraces(bool allow_traces) = 0;
-  virtual void process(xmlNodePtr cur) = 0;
+  virtual void putWalkers(std::vector<xmlNodePtr>& wset)                                   = 0;
+  virtual void putTraces(xmlNodePtr txml)                                                  = 0;
+  virtual void requestTraces(bool allow_traces)                                            = 0;
+  virtual void process(xmlNodePtr cur)                                                     = 0;
 
   virtual void setBranchEngine(BranchEngineType* be) = 0;
-  virtual BranchEngineType* getBranchEngine() = 0;
-  virtual std::string getEngineName() = 0;
+  virtual BranchEngineType* getBranchEngine()        = 0;
+  virtual std::string getEngineName()                = 0;
 
   virtual ~QMCDriverInterface() {}
 };
 
-}
+} // namespace qmcplusplus
 
 #endif

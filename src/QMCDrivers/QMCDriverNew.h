@@ -36,7 +36,6 @@ class Communicate;
 
 namespace qmcplusplus
 {
-
 //forward declarations: Do not include headers if not needed
 class HDFWalkerOutput;
 class TraceManager;
@@ -48,7 +47,7 @@ class TraceManager;
 class QMCDriverNew : public QMCDriverInterface, public MPIObjectBase
 {
 public:
-  using RealType = QMCTraits::RealType;
+  using RealType  = QMCTraits::RealType;
   using IndexType = QMCTraits::IndexType;
 
   /** enumeration coupled with QMCMode */
@@ -60,9 +59,9 @@ public:
     QMC_WARMUP
   };
 
-  using MCPWalker =  MCPopulation::PopulationWalker;
-  using Buffer = MCPWalker::Buffer_t;
- 
+  using MCPWalker = MCPopulation::PopulationWalker;
+  using Buffer    = MCPWalker::Buffer_t;
+
   /** Remove and replace these bits to classify QMCDriver
    *
    * - QMCDriverMode[QMC_UPDATE_MODE]? particle-by-particle: walker-by-walker
@@ -75,13 +74,13 @@ public:
   bool allow_traces;
   /// traces xml
   xmlNodePtr traces_xml;
-  
+
   /// Constructor.
   QMCDriverNew(MCPopulation& population,
-            TrialWaveFunction& psi,
-            QMCHamiltonian& h,
-            WaveFunctionPool& ppool,
-            Communicate* comm);
+               TrialWaveFunction& psi,
+               QMCHamiltonian& h,
+               WaveFunctionPool& ppool,
+               Communicate* comm);
 
   virtual ~QMCDriverNew();
 

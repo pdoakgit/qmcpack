@@ -92,7 +92,7 @@ public:
   bool allow_traces;
   /// traces xml
   xmlNodePtr traces_xml;
-  
+
   /// Constructor.
   QMCDriver(MCWalkerConfiguration& w,
             TrialWaveFunction& psi,
@@ -100,11 +100,7 @@ public:
             WaveFunctionPool& ppool,
             Communicate* comm);
 
-  QMCDriver(MCPopulation& pop,
-            TrialWaveFunction& psi,
-            QMCHamiltonian& h,
-            WaveFunctionPool& ppool,
-            Communicate* comm);
+  QMCDriver(MCPopulation& pop, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
 
   virtual ~QMCDriver();
 

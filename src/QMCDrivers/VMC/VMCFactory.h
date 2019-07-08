@@ -30,12 +30,12 @@ public:
   VMCFactory(int vmode, xmlNodePtr cur) : VMCMode(vmode), myNode(cur) {}
 
   QMCDriverInterface* create(MCWalkerConfiguration& w,
-			     TrialWaveFunction& psi,
-			     QMCHamiltonian& h,
-			     ParticleSetPool& ptclpool,
-			     HamiltonianPool& hpool,
-			     WaveFunctionPool& ppool,
-			     Communicate* comm);
+                             TrialWaveFunction& psi,
+                             QMCHamiltonian& h,
+                             ParticleSetPool& ptclpool,
+                             HamiltonianPool& hpool,
+                             WaveFunctionPool& ppool,
+                             Communicate* comm);
 };
 } // namespace qmcplusplus
 

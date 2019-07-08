@@ -34,12 +34,12 @@
 namespace qmcplusplus
 {
 QMCDriverInterface* VMCFactory::create(MCWalkerConfiguration& w,
-                              TrialWaveFunction& psi,
-                              QMCHamiltonian& h,
-                              ParticleSetPool& ptclpool,
-                              HamiltonianPool& hpool,
-                              WaveFunctionPool& ppool,
-                              Communicate* comm)
+                                       TrialWaveFunction& psi,
+                                       QMCHamiltonian& h,
+                                       ParticleSetPool& ptclpool,
+                                       HamiltonianPool& hpool,
+                                       WaveFunctionPool& ppool,
+                                       Communicate* comm)
 {
   int np = omp_get_max_threads();
   //(SPACEWARP_MODE,MULTIPE_MODE,UPDATE_MODE)

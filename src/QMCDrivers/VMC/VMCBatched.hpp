@@ -25,8 +25,12 @@ class VMCBatched : public QMCDriverNew
 {
 public:
   /// Constructor.
-  VMCBatched(MCPopulation& pop, TrialWaveFunction& psi,         QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
-  VMCBatched(MCWalkerConfiguration& W, TrialWaveFunction& psi,          QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+  VMCBatched(MCPopulation& pop, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+  VMCBatched(MCWalkerConfiguration& W,
+             TrialWaveFunction& psi,
+             QMCHamiltonian& h,
+             WaveFunctionPool& ppool,
+             Communicate* comm);
 
   bool run();
   bool put(xmlNodePtr cur);
