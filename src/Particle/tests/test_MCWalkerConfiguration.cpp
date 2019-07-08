@@ -23,9 +23,4 @@ TEST_CASE("MCWalkerConfiguration(MCPopulation&)", "[particle]")
   MCWalkerConfiguration MCWC(pop);
 }
 
-void consumeMCW(MCWalkerConfiguration& mcw)
-{
-  mcw.setLocalEnergy(2.0);
-}
-
 }
