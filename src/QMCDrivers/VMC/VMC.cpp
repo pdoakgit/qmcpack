@@ -40,8 +40,9 @@ VMC::VMC(MCWalkerConfiguration& w,
          TrialWaveFunction& psi,
          QMCHamiltonian& h,
          WaveFunctionPool& ppool,
+	 VMC::Repeat repeat,
          Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm), UseDrift("yes")
+    : QMCDriver(w, psi, h, ppool, comm), repeat_(repeat), UseDrift("yes")
 {
   RootName = "vmc";
   QMCType  = "VMC";
@@ -50,9 +51,6 @@ VMC::VMC(MCWalkerConfiguration& w,
   m_param.add(UseDrift, "useDrift", "string");
   m_param.add(UseDrift, "usedrift", "string");
   m_param.add(UseDrift, "use_drift", "string");
-
-  prevSteps               = nSteps;
-  prevStepsBetweenSamples = nStepsBetweenSamples;
 }
 
 bool VMC::run()
@@ -312,12 +310,13 @@ bool VMC::put(xmlNodePtr q)
   p.add(target_min, "minimumsamples", "int");       //p.add(target_min,"minimumSamples","int");
   p.put(q);
 
-  app_log() << "\n<vmc function=\"put\">"
-            << "\n  qmc_counter=" << qmc_common.qmc_counter << "  my_counter=" << MyCounter << std::endl;
-  if (qmc_common.qmc_counter && MyCounter)
+  if (repeat_)
   {
-    nSteps               = prevSteps;
-    nStepsBetweenSamples = prevStepsBetweenSamples;
+    // For some reason a following VMC following a VMC ignores its input
+    // and uses the previous section steps and steps between samples
+    nSteps               = repeat_.last_driver_steps;
+    nStepsBetweenSamples = repeat_.last_driver_steps_between_samples;
+    nBlocksBetweenRecompute = 1;
   }
   else
   {

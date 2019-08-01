@@ -108,7 +108,7 @@ TEST_CASE("VMC", "[drivers][vmc]")
   //EstimatorManagerBase emb(c);
 
 
-  VMC vmc_omp(elec, psi, h, wpool, c);
+  VMC vmc_omp(elec, psi, h, wpool, VMC::Repeat(), c);
 
   const char* vmc_input = "<qmc method=\"vmc\" move=\"pbyp\"> \
    <parameter name=\"substeps\">1</parameter> \

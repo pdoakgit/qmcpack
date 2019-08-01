@@ -27,6 +27,7 @@
 #include "QMCApp/HamiltonianPool.h"
 #include "QMCWaveFunctions/TrialWaveFunction.h"
 #include "QMCDrivers/VMC/VMCFactory.h"
+#include "QMCDrivers/VMC/VMC.h"
 #include "QMCDrivers/DMC/DMCFactory.h"
 #include "QMCDrivers/RMC/RMCFactory.h"
 #include "QMCDrivers/QMCOptimize.h"
@@ -143,7 +144,6 @@ std::unique_ptr<QMCDriverInterface> QMCDriverFactory::newQMCDriver(std::unique_p
                                                                    HamiltonianPool& hamiltonian_pool,
                                                                    Communicate* comm)
 {
-  //initialize to 0
   QMCDriver::BranchEngineType* branchEngine = nullptr;
   if (last_driver)
   {
@@ -152,6 +152,14 @@ std::unique_ptr<QMCDriverInterface> QMCDriverFactory::newQMCDriver(std::unique_p
       APP_ABORT("QMCDriverFactory::setQMCDriver\n Other qmc sections cannot come after <qmc method=\"test\">.\n");
     }
 
+    // This is what the old driver checked before reusing the driver
+    // the MyCounter --> counter_ was state that was passed forward.
+    if (last_driver->getRunType() == das.new_run_type
+	&& last_driver->getDriverMode() == das.what_to_do.to_ulong())
+    {
+	app_log() << "Repeated VMC section" << std::endl;
+	das.vmc_repeat = VMC::Repeat(last_driver->getSteps(), last_driver->getStepsBetweenSamples());
+    }
     branchEngine = last_driver->getBranchEngine();
   }
 
@@ -246,7 +254,7 @@ std::unique_ptr<QMCDriverInterface> QMCDriverFactory::createQMCDriver(xmlNodePtr
     //VMCFactory fac(curQmcModeBits[UPDATE_MODE],cur);
     VMCFactory fac(das.what_to_do.to_ulong(), cur);
     new_driver.reset(
-        fac.create(qmc_system, *primaryPsi, *primaryH, particle_pool, hamiltonian_pool, wavefunction_pool, comm));
+        fac.create(qmc_system, *primaryPsi, *primaryH, particle_pool, hamiltonian_pool, wavefunction_pool, das.vmc_repeat, comm));
     //TESTING CLONE
     //TrialWaveFunction* psiclone=primaryPsi->makeClone(qmc_system);
     //qmcDriver = fac.create(qmc_system,*psiclone,*primaryH,particle_pool,hamiltonian_pool);

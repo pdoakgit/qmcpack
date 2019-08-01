@@ -39,6 +39,7 @@ public:
         TrialWaveFunction& psi,
         QMCHamiltonian& h,
         WaveFunctionPool& ppool,
+	bool vmc_repeat_,
         Communicate* comm);
 
   bool run();
@@ -49,6 +50,7 @@ private:
   std::string UseDrift;
   int prevSteps;
   int prevStepsBetweenSamples;
+  bool vmc_repeat_;
   ///blocks over which normalization factors are accumulated
   int equilBlocks;
   /// Copy Constructor (disabled)

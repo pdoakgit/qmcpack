@@ -162,7 +162,6 @@ void QMCLinearOptimize::engine_start(cqmc::engine::LMYEngine* EngineObj)
 
 void QMCLinearOptimize::finish()
 {
-  MyCounter++;
   app_log() << "  Execution time = " << std::setprecision(4) << t1.elapsed() << std::endl;
   app_log() << "  </log>" << std::endl;
 
@@ -812,10 +811,10 @@ bool QMCLinearOptimize::put(xmlNodePtr q)
   {
 #if defined(QMC_CUDA)
     if (useGPU == "yes")
-      vmcEngine = new VMCcuda(W, Psi, H, psiPool, myComm);
+	vmcEngine = new VMCcuda(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     else
 #endif
-      vmcEngine = new VMC(W, Psi, H, psiPool, myComm);
+	vmcEngine = new VMC(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
 

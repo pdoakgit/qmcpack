@@ -518,10 +518,10 @@ bool QMCFixedSampleLinearOptimize::put(xmlNodePtr q)
   {
 #if defined(QMC_CUDA)
     if (useGPU == "yes")
-      vmcEngine = new VMCcuda(W, Psi, H, psiPool, myComm);
+	vmcEngine = new VMCcuda(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     else
 #endif
-      vmcEngine = new VMC(W, Psi, H, psiPool, myComm);
+	vmcEngine = new VMC(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
 

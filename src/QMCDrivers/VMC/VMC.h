@@ -24,16 +24,29 @@ namespace qmcplusplus
 class VMC : public QMCDriver, public CloneManager
 {
 public:
+
+  struct Repeat
+  {
+      Repeat() : repeat(false), last_driver_steps(0), last_driver_steps_between_samples(0) {}
+      Repeat(int steps, int steps_between_samples) : repeat(true), last_driver_steps(steps), last_driver_steps_between_samples(steps_between_samples) {}
+    operator bool() { return repeat; }
+      bool repeat;
+      int  last_driver_steps;
+      int last_driver_steps_between_samples;
+  };
+
   /// Constructor.
-  VMC(MCWalkerConfiguration& w, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+  VMC(MCWalkerConfiguration& w, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, VMC::Repeat repeat, Communicate* comm);
   bool run();
   bool put(xmlNodePtr cur);
   QMCRunType getRunType() { return QMCRunType::VMC; }
   //inline std::vector<RandomGenerator_t*>& getRng() { return Rng;}
 private:
+  Repeat repeat_;
   int prevSteps;
   int prevStepsBetweenSamples;
-
+  // Flag to preserve QMCPACK behavior for repeated VMC sections
+  bool vmc_repeat_;
   ///Ways to set rn constant
   RealType logoffset, logepsilon;
   ///option to enable/disable drift equation or RN for VMC

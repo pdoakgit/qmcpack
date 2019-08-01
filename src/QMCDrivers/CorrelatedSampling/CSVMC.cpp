@@ -39,8 +39,9 @@ CSVMC::CSVMC(MCWalkerConfiguration& w,
              TrialWaveFunction& psi,
              QMCHamiltonian& h,
              WaveFunctionPool& ppool,
+	     bool vmc_repeat,
              Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm), multiEstimator(0), Mover(0), UseDrift("yes")
+    : QMCDriver(w, psi, h, ppool, comm), vmc_repeat_(vmc_repeat), multiEstimator(0), Mover(0), UseDrift("yes")
 {
   RootName = "csvmc";
   QMCType  = "CSVMC";
@@ -65,9 +66,7 @@ bool CSVMC::put(xmlNodePtr q)
   p.add(target_min, "minimumsamples", "int");
   p.put(q);
 
-  app_log() << "\n<vmc function=\"put\">"
-            << "\n  qmc_counter=" << qmc_common.qmc_counter << "  my_counter=" << MyCounter << std::endl;
-  if (qmc_common.qmc_counter && MyCounter)
+  if (vmc_repeat_)
   {
     nSteps               = prevSteps;
     nStepsBetweenSamples = prevStepsBetweenSamples;

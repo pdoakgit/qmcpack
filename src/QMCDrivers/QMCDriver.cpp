@@ -71,7 +71,6 @@ QMCDriver::QMCDriver(MCWalkerConfiguration& w,
   ConstPopulation = true; //default is a fixed population method
   IsQMCDriver     = true;
   allow_traces    = false;
-  MyCounter       = 0;
   //<parameter name=" "> value </parameter>
   //accept multiple names for the same value
   //recommend using all lower cases for a new parameter
@@ -490,7 +489,6 @@ bool QMCDriver::finalize(int block, bool dumpwalkers)
     wOut = 0;
     //Estimators->finalize();
     nTargetWalkers = W.getActiveWalkers();
-    MyCounter++;
     infoSummary.flush();
     infoLog.flush();
   }

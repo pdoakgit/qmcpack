@@ -22,6 +22,7 @@
 
 #include "OhmmsData/OhmmsElementBase.h"
 #include "QMCDrivers/DriverTraits.h"
+#include "QMCDrivers/VMC/VMC.h"
 #include "QMCApp/ParticleSetPool.h"
 
 class Communicate;
@@ -43,6 +44,8 @@ public:
     bool append_run         = false;
     std::string traces_tag  = "none";
     QMCRunType new_run_type = QMCRunType::DUMMY;
+    // This state element should be removed when the legacy VMC driver goes
+    VMC::Repeat vmc_repeat;
   };
 
   /** default constructor **/

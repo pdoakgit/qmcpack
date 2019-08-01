@@ -13,7 +13,7 @@
 #define QMCPLUSPLUS_QMCDRIVERINTERFACE_H
 
 #include <libxml/parser.h>
-
+#include "Configuration.h"
 namespace qmcplusplus
 {
 class QMCHamiltonian;
@@ -53,6 +53,8 @@ public:
   virtual BranchEngineType* getBranchEngine()                           = 0;
   virtual std::string getEngineName()                                   = 0;
   virtual unsigned long getDriverMode()                                 = 0;
+    virtual QMCTraits::IndexType getSteps() = 0;
+    virtual  QMCTraits::IndexType  getStepsBetweenSamples() = 0;
   virtual ~QMCDriverInterface() {}
 };
 

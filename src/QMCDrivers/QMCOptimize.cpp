@@ -129,7 +129,6 @@ bool QMCOptimize::run()
 
   app_log() << "</opt>" << std::endl;
   app_log() << "</optimization-report>" << std::endl;
-  MyCounter++;
   return (optTarget->getReportCounter() > 0);
 }
 
@@ -201,10 +200,10 @@ bool QMCOptimize::put(xmlNodePtr q)
   {
 #if defined(QMC_CUDA)
     if (useGPU == "yes")
-      vmcEngine = new VMCcuda(W, Psi, H, psiPool, myComm);
+      vmcEngine = new VMCcuda(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     else
 #endif
-      vmcEngine = new VMC(W, Psi, H, psiPool, myComm);
+    vmcEngine = new VMC(W, Psi, H, psiPool, VMC::Repeat(), myComm);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
   vmcEngine->setStatus(RootName, h5FileRoot, AppendRun);

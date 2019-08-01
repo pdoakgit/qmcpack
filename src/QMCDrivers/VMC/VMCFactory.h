@@ -14,6 +14,7 @@
 #ifndef QMCPLUSPLUS_VMC_FACTORY_H
 #define QMCPLUSPLUS_VMC_FACTORY_H
 #include "QMCDrivers/QMCDriver.h"
+#include "QMCDrivers/VMC/VMC.h"
 
 namespace qmcplusplus
 {
@@ -35,6 +36,7 @@ public:
                              ParticleSetPool& ptclpool,
                              HamiltonianPool& hpool,
                              WaveFunctionPool& ppool,
+			     VMC::Repeat vmc_repeat,
                              Communicate* comm);
 };
 } // namespace qmcplusplus

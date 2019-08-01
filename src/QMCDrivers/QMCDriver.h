@@ -187,7 +187,8 @@ public:
   inline RandomGenerator_t& getRng(int i) { return (*Rng[i]); }
 
   unsigned long getDriverMode() { return qmc_driver_mode.to_ulong(); }
-
+    IndexType getSteps() { return nSteps; }
+    IndexType getStepsBetweenSamples() { return nStepsBetweenSamples; }
 protected:
   ///branch engine
   BranchEngineType* branchEngine;
@@ -203,13 +204,7 @@ protected:
   bool ConstPopulation;
   ///true, if it is a real QMC engine
   bool IsQMCDriver;
-  /** the number of times this QMCDriver is executed
-   *
-   * MyCounter is initialized to zero by the constructor and is incremented
-   * whenever a run is completed by calling finalize(int block) or
-   * using MyCounter++ as in RQMC.
-   */
-  int MyCounter;
+
   ///the number of blocks to be rolled back
   int RollBackBlocks;
   ///the number to delay updates by
