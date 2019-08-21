@@ -51,7 +51,7 @@ enum
 };
 
 //initialize the name of the primary estimator
-EstimatorManagerBase::EstimatorManagerBase(Communicate* c)
+EstimatorManager::EstimatorManager(Communicate* c)
     : RecordCount(0),
       h_file(-1),
       FieldWidth(20),
@@ -66,7 +66,7 @@ EstimatorManagerBase::EstimatorManagerBase(Communicate* c)
   setCommunicator(c);
 }
 
-EstimatorManagerBase::EstimatorManagerBase(EstimatorManagerBase& em)
+EstimatorManager::EstimatorManager(EstimatorManager& em)
     : RecordCount(0),
       h_file(-1),
       FieldWidth(20),
@@ -89,7 +89,7 @@ EstimatorManagerBase::EstimatorManagerBase(EstimatorManagerBase& em)
     Collectables = em.Collectables->clone();
 }
 
-EstimatorManagerBase::~EstimatorManagerBase()
+EstimatorManager::~EstimatorManager()
 {
   delete_iter(Estimators.begin(), Estimators.end());
   delete_iter(RemoteData.begin(), RemoteData.end());
@@ -98,7 +98,7 @@ EstimatorManagerBase::~EstimatorManagerBase()
     delete Collectables;
 }
 
-void EstimatorManagerBase::setCommunicator(Communicate* c)
+void EstimatorManager::setCommunicator(Communicate* c)
 {
   if (myComm && myComm == c)
     return;
@@ -116,7 +116,7 @@ void EstimatorManagerBase::setCommunicator(Communicate* c)
 /** set CollectSum
  * @param collect if true, global sum is done over the values
  */
-void EstimatorManagerBase::setCollectionMode(bool collect)
+void EstimatorManager::setCollectionMode(bool collect)
 {
   if (!myComm)
     setCommunicator(0);
@@ -130,7 +130,7 @@ void EstimatorManagerBase::setCollectionMode(bool collect)
  * The number of estimators and their order can vary from the previous state.
  * Clear properties before setting up a new BlockAverage data list.
  */
-void EstimatorManagerBase::reset()
+void EstimatorManager::reset()
 {
   weightInd = BlockProperties.add("BlockWeight");
   cpuInd    = BlockProperties.add("BlockCPU");
@@ -143,9 +143,9 @@ void EstimatorManagerBase::reset()
     Collectables->add2Record(BlockAverages);
 }
 
-void EstimatorManagerBase::resetTargetParticleSet(ParticleSet& p) {}
+void EstimatorManager::resetTargetParticleSet(ParticleSet& p) {}
 
-void EstimatorManagerBase::addHeader(std::ostream& o)
+void EstimatorManager::addHeader(std::ostream& o)
 {
   o.setf(std::ios::scientific, std::ios::floatfield);
   o.setf(std::ios::left, std::ios::adjustfield);
@@ -164,7 +164,7 @@ void EstimatorManagerBase::addHeader(std::ostream& o)
   o.setf(std::ios::right, std::ios::adjustfield);
 }
 
-void EstimatorManagerBase::start(int blocks, bool record)
+void EstimatorManager::start(int blocks, bool record)
 {
   for (int i = 0; i < Estimators.size(); i++)
     Estimators[i]->setNumberOfBlocks(blocks);
@@ -220,7 +220,7 @@ void EstimatorManagerBase::start(int blocks, bool record)
   }
 }
 
-void EstimatorManagerBase::stop(const std::vector<EstimatorManagerBase*> est)
+void EstimatorManager::stop(const std::vector<EstimatorManager*> est)
 {
   int num_threads = est.size();
   //normalize by the number of threads per node
@@ -250,7 +250,7 @@ void EstimatorManagerBase::stop(const std::vector<EstimatorManagerBase*> est)
  * be guarded by master/single.
  * Keep the ascii output for now
  */
-void EstimatorManagerBase::stop()
+void EstimatorManager::stop()
 {
   //close any open files
   if (Archive)
@@ -266,7 +266,7 @@ void EstimatorManagerBase::stop()
 }
 
 
-void EstimatorManagerBase::startBlock(int steps)
+void EstimatorManager::startBlock(int steps)
 {
   MyTimer.restart();
   BlockWeight = 0.0;
@@ -276,7 +276,7 @@ void EstimatorManagerBase::startBlock(int steps)
  * @param accept acceptance rate of this block
  * @param collectall if true, need to gather data over MPI tasks
  */
-void EstimatorManagerBase::stopBlock(RealType accept, bool collectall)
+void EstimatorManager::stopBlock(RealType accept, bool collectall)
 {
   //take block averages and update properties per block
   PropertyCache[weightInd] = BlockWeight;
@@ -292,7 +292,7 @@ void EstimatorManagerBase::stopBlock(RealType accept, bool collectall)
     collectBlockAverages(1);
 }
 
-void EstimatorManagerBase::stopBlock(const std::vector<EstimatorManagerBase*>& est)
+void EstimatorManager::stopBlock(const std::vector<EstimatorManager*>& est)
 {
   //normalized it by the thread
   int num_threads = est.size();
@@ -316,7 +316,7 @@ void EstimatorManagerBase::stopBlock(const std::vector<EstimatorManagerBase*>& e
 }
 
 
-void EstimatorManagerBase::collectBlockAverages(int num_threads)
+void EstimatorManager::collectBlockAverages(int num_threads)
 {
   if (Options[COLLECT])
   {
@@ -367,7 +367,7 @@ void EstimatorManagerBase::collectBlockAverages(int num_threads)
 /** accumulate Local energies and collectables
  * @param W ensemble
  */
-void EstimatorManagerBase::accumulate(MCWalkerConfiguration& W)
+void EstimatorManager::accumulate(MCWalkerConfiguration& W)
 {
   BlockWeight += W.getActiveWalkers();
   RealType norm = 1.0 / W.getGlobalNumWalkers();
@@ -377,7 +377,7 @@ void EstimatorManagerBase::accumulate(MCWalkerConfiguration& W)
     Collectables->accumulate_all(W.Collectables, 1.0);
 }
 
-void EstimatorManagerBase::accumulate(MCWalkerConfiguration& W,
+void EstimatorManager::accumulate(MCWalkerConfiguration& W,
                                       MCWalkerConfiguration::iterator it,
                                       MCWalkerConfiguration::iterator it_end)
 {
@@ -389,7 +389,7 @@ void EstimatorManagerBase::accumulate(MCWalkerConfiguration& W,
     Collectables->accumulate_all(W.Collectables, 1.0);
 }
 
-void EstimatorManagerBase::getEnergyAndWeight(RealType& e, RealType& w, RealType& var)
+void EstimatorManager::getEnergyAndWeight(RealType& e, RealType& w, RealType& var)
 {
   if (Options[COLLECT]) //need to broadcast the value
   {
@@ -410,7 +410,7 @@ void EstimatorManagerBase::getEnergyAndWeight(RealType& e, RealType& w, RealType
   }
 }
 
-void EstimatorManagerBase::getCurrentStatistics(MCWalkerConfiguration& W, RealType& eavg, RealType& var)
+void EstimatorManager::getCurrentStatistics(MCWalkerConfiguration& W, RealType& eavg, RealType& var)
 {
   LocalEnergyOnlyEstimator energynow;
   energynow.clear();
@@ -424,14 +424,14 @@ void EstimatorManagerBase::getCurrentStatistics(MCWalkerConfiguration& W, RealTy
   var  = tmp[1] / tmp[2] - eavg * eavg;
 }
 
-EstimatorManagerBase::EstimatorType* EstimatorManagerBase::getMainEstimator()
+EstimatorManager::EstimatorType* EstimatorManager::getMainEstimator()
 {
   if (MainEstimator == 0)
     add(new LocalEnergyOnlyEstimator(), MainEstimatorName);
   return MainEstimator;
 }
 
-EstimatorManagerBase::EstimatorType* EstimatorManagerBase::getEstimator(const std::string& a)
+EstimatorManager::EstimatorType* EstimatorManager::getEstimator(const std::string& a)
 {
   std::map<std::string, int>::iterator it = EstimatorMap.find(a);
   if (it == EstimatorMap.end())
@@ -441,7 +441,7 @@ EstimatorManagerBase::EstimatorType* EstimatorManagerBase::getEstimator(const st
 }
 
 /** This should be moved to branch engine */
-bool EstimatorManagerBase::put(MCWalkerConfiguration& W, QMCHamiltonian& H, xmlNodePtr cur)
+bool EstimatorManager::put(QMCHamiltonian& H, xmlNodePtr cur)
 {
   std::vector<std::string> extra;
   cur = cur->children;
@@ -499,7 +499,7 @@ bool EstimatorManagerBase::put(MCWalkerConfiguration& W, QMCHamiltonian& H, xmlN
   return true;
 }
 
-int EstimatorManagerBase::add(EstimatorType* newestimator, const std::string& aname)
+int EstimatorManager::add(EstimatorType* newestimator, const std::string& aname)
 {
   std::map<std::string, int>::iterator it = EstimatorMap.find(aname);
   int n                                   = Estimators.size();
@@ -521,7 +521,7 @@ int EstimatorManagerBase::add(EstimatorType* newestimator, const std::string& an
   return n;
 }
 
-int EstimatorManagerBase::addObservable(const char* aname)
+int EstimatorManager::addObservable(const char* aname)
 {
   int mine = BlockAverages.add(aname);
   int add  = TotalAverages.add(aname);
@@ -532,7 +532,7 @@ int EstimatorManagerBase::addObservable(const char* aname)
   return mine;
 }
 
-void EstimatorManagerBase::getData(int i, std::vector<RealType>& values)
+void EstimatorManager::getData(int i, std::vector<RealType>& values)
 {
   int entries = TotalAveragesData.rows();
   values.resize(entries);

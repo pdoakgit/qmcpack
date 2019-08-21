@@ -212,7 +212,7 @@ void QMCDriver::process(xmlNodePtr cur)
   Estimators = branchEngine->getEstimatorManager();
   if (Estimators == 0)
   {
-    Estimators = new EstimatorManagerBase(myComm);
+    Estimators = new EstimatorManager(myComm);
     branchEngine->setEstimatorManager(Estimators);
     branchEngine->read(h5FileRoot);
   }
@@ -228,7 +228,7 @@ void QMCDriver::process(xmlNodePtr cur)
   Traces->put(traces_xml, allow_traces, RootName);
 #endif
   branchEngine->put(cur);
-  Estimators->put(W, H, cur);
+  Estimators->put(H, cur);
   if (wOut == 0)
     wOut = new HDFWalkerOutput(W, RootName, myComm);
   branchEngine->start(RootName);

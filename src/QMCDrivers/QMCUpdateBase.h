@@ -86,7 +86,7 @@ public:
    * Update time-step variables to move walkers
    */
   void resetRun(BranchEngineType* brancher,
-                EstimatorManagerBase* est,
+                EstimatorManager* est,
                 TraceManager* traces,
                 const DriftModifierBase* driftmodifer);
 
@@ -255,7 +255,7 @@ protected:
   ///drift modifer, stateless reference to the one in QMCDriver
   const DriftModifierBase* DriftModifier;
   ///estimator
-  EstimatorManagerBase* Estimators;
+  EstimatorManager* Estimators;
   ///parameters
   ParameterSet myParams;
   ///1/Mass per species

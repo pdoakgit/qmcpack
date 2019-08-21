@@ -100,7 +100,7 @@ TEST_CASE("VMC Particle-by-Particle advanceWalkers", "[drivers][vmc]")
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
   VMCUpdatePbyP vmc(elec, psi, h, rg);
-  EstimatorManagerBase EM;
+  EstimatorManager EM;
   SimpleFixedNodeBranch branch(0.1, 1);
   TraceManager TM;
   DriftModifierUNR DM;

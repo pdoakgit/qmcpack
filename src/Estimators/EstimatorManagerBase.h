@@ -37,7 +37,7 @@ class QMCHamiltonian;
 class CollectablesEstimator;
 
 /**Class to manage a set of ScalarEstimators */
-class EstimatorManagerBase
+class EstimatorManager
 {
 public:
   typedef QMCTraits::FullPrecRealType RealType;
@@ -54,11 +54,11 @@ public:
   // //Cummulative energy, weight and variance
   // TinyVector<RealType,4>  EPSum;
   ///default constructor
-  EstimatorManagerBase(Communicate* c = 0);
+  EstimatorManager(Communicate* c = 0);
   ///copy constructor
-  EstimatorManagerBase(EstimatorManagerBase& em);
+  EstimatorManager(EstimatorManager& em);
   ///destructor
-  virtual ~EstimatorManagerBase();
+  virtual ~EstimatorManager();
 
   /** set the communicator */
   void setCommunicator(Communicate* c);
@@ -128,7 +128,7 @@ public:
 
   ///process xml tag associated with estimators
   //bool put(xmlNodePtr cur);
-  bool put(MCWalkerConfiguration& W, QMCHamiltonian& H, xmlNodePtr cur);
+  bool put(QMCHamiltonian& H, xmlNodePtr cur);
 
   void resetTargetParticleSet(ParticleSet& p);
 
@@ -150,7 +150,7 @@ public:
   void stop();
   /** stop a qmc run
    */
-  void stop(const std::vector<EstimatorManagerBase*> m);
+  void stop(const std::vector<EstimatorManager*> m);
 
 
   /** start  a block
@@ -171,7 +171,7 @@ public:
   /** stop a block
    * @param m list of estimator which has been collecting data independently
    */
-  void stopBlock(const std::vector<EstimatorManagerBase*>& m);
+  void stopBlock(const std::vector<EstimatorManager*>& m);
 
   /** accumulate the measurements
    * @param W walkers

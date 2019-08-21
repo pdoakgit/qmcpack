@@ -39,7 +39,7 @@ TEST_CASE("Fixed node branch", "[drivers][walker_control]")
   OHMMS::Controller->initialize(0, NULL);
   Communicate* c = OHMMS::Controller;
 
-  EstimatorManagerBase emb(c);
+  EstimatorManager emb(c);
 
   double tau = 0.5;
   int nideal = 1;

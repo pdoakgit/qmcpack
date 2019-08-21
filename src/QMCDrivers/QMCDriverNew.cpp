@@ -53,7 +53,7 @@ QMCDriverNew::QMCDriverNew(QMCDriverInput&& input,
       DriftModifier(0),
       population_(population),
       Psi(psi),
-      H(h),
+      hamiltonian_(h),
       psiPool(ppool),
       Estimators(0),
       wOut(0)
@@ -132,7 +132,7 @@ void QMCDriverNew::process(xmlNodePtr cur)
   Estimators = branchEngine->getEstimatorManager();
   if (Estimators == 0)
   {
-    Estimators = new EstimatorManagerBase(myComm);
+    Estimators = new EstimatorManager(myComm);
     branchEngine->setEstimatorManager(Estimators);
     branchEngine->read(h5FileRoot);
   }
@@ -140,7 +140,7 @@ void QMCDriverNew::process(xmlNodePtr cur)
     DriftModifier = createDriftModifier(qmcdriver_input_);
 
   branchEngine->put(cur);
-  // Estimators->put(W, H, cur);
+  Estimators->put(hamiltonian_, cur);
   // if (wOut == 0)
   //   wOut = new HDFWalkerOutput(W, RootName, myComm);
   branchEngine->start(RootName);

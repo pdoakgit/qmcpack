@@ -227,12 +227,12 @@ protected:
   TrialWaveFunction& Psi;
 
   ///Hamiltonian
-  QMCHamiltonian& H;
+  QMCHamiltonian& hamiltonian_;
 
   WaveFunctionPool& psiPool;
 
   ///Observables manager
-  EstimatorManagerBase* Estimators;
+  EstimatorManager* Estimators;
 
   ///record engine for walkers
   HDFWalkerOutput* wOut;

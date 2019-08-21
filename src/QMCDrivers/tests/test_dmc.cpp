@@ -100,7 +100,7 @@ TEST_CASE("DMC Particle-by-Particle advanceWalkers ConstantOrbital", "[drivers][
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
   DMCUpdatePbyPWithRejectionFast dmc(elec, psi, h, rg);
-  EstimatorManagerBase EM;
+  EstimatorManager EM;
   double tau = 0.1;
   SimpleFixedNodeBranch branch(tau, 1);
   TraceManager TM;
@@ -203,7 +203,7 @@ TEST_CASE("DMC Particle-by-Particle advanceWalkers LinearOrbital", "[drivers][dm
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
   DMCUpdatePbyPWithRejectionFast dmc(elec, psi, h, rg);
-  EstimatorManagerBase EM;
+  EstimatorManager EM;
   double tau = 0.1;
   SimpleFixedNodeBranch branch(tau, 1);
   TraceManager TM;

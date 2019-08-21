@@ -175,7 +175,7 @@ public:
   void setWalkerOffsets();
 
   ///Observables manager
-  EstimatorManagerBase* Estimators;
+  EstimatorManager* Estimators;
 
   ///Traces manager
   TraceManager* Traces;

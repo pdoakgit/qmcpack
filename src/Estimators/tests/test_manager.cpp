@@ -41,7 +41,7 @@ TEST_CASE("EstimatorManagerBase", "[estimators]")
   OHMMS::Controller->initialize(0, NULL);
   Communicate* c = OHMMS::Controller;
 
-  EstimatorManagerBase em(c);
+  EstimatorManager em(c);
 
   REQUIRE(em.size() == 0);
 
@@ -56,7 +56,7 @@ TEST_CASE("EstimatorManagerBase", "[estimators]")
   REQUIRE(fake_est2 == fake_est);
 
   // Check the copy constructor
-  EstimatorManagerBase em2(em);
+  EstimatorManager em2(em);
   REQUIRE(em.size() == 1);
 
   em.start(2, true);
