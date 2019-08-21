@@ -28,7 +28,7 @@
 #include "QMCWaveFunctions/TrialWaveFunction.h"
 #include "QMCApp/WaveFunctionPool.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 #include "Particle/MCPopulation.h"
 #include "QMCDrivers/Crowd.h"
 #include "QMCDrivers/QMCDriverInterface.h"

@@ -18,7 +18,7 @@
 
 
 #include "Particle/MCWalkerConfiguration.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"
 #include "Message/Communicate.h"
 #include "Message/CommOperators.h"

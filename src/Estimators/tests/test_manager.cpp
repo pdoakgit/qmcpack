@@ -16,7 +16,7 @@
 #include "OhmmsData/Libxml2Doc.h"
 #include "Particle/MCWalkerConfiguration.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 #include "Estimators/ScalarEstimatorBase.h"
 
 

@@ -25,7 +25,7 @@
 #include "QMCHamiltonians/NonLocalTOperator.h"
 #include "QMCDrivers/GreenFunctionModifiers/DriftModifierBase.h"
 #include "QMCDrivers/SimpleFixedNodeBranch.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 
 namespace qmcplusplus
 {

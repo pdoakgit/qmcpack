@@ -26,7 +26,7 @@
 #include "QMCWaveFunctions/ConstantOrbital.h"
 #include "QMCWaveFunctions/LinearOrbital.h"
 #include "QMCHamiltonians/BareKineticEnergy.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 #include "Estimators/TraceManager.h"
 #include "QMCDrivers/DMC/DMCUpdatePbyP.h"
 #include "QMCDrivers/GreenFunctionModifiers/DriftModifierUNR.h"

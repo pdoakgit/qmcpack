@@ -103,7 +103,7 @@ void DMC::resetUpdateEngines()
 #pragma omp parallel for
     for (int ip = 0; ip < NumThreads; ++ip)
     {
-      estimatorClones[ip] = new EstimatorManagerBase(*Estimators);
+      estimatorClones[ip] = new EstimatorManager(*Estimators);
       estimatorClones[ip]->setCollectionMode(false);
 #if !defined(REMOVE_TRACEMANAGER)
       traceClones[ip] = Traces->makeClone();

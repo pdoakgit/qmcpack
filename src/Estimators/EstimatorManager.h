@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-/** @file EstimatorManagerBase.h
+/** @file
  * @brief Manager class of scalar estimators
  */
 #ifndef QMCPLUSPLUS_ESTIMATORMANAGERBASE_H

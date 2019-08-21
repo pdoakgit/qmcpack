@@ -21,7 +21,7 @@
 #include "Particle/DistanceTableData.h"
 #include "Particle/SymmetricDistanceTableData.h"
 #include "Particle/MCWalkerConfiguration.h"
-#include "Estimators/EstimatorManagerBase.h"
+#include "Estimators/EstimatorManager.h"
 #include "QMCDrivers/SimpleFixedNodeBranch.h"
 
 

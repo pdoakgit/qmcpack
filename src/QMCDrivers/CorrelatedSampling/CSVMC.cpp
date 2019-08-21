@@ -249,7 +249,7 @@ void CSVMC::resetRun()
     for (int ip = 0; ip < NumThreads; ++ip)
     {
       std::ostringstream os;
-      estimatorClones[ip] = new EstimatorManagerBase(*Estimators);
+      estimatorClones[ip] = new EstimatorManager(*Estimators);
       estimatorClones[ip]->resetTargetParticleSet(*wClones[ip]);
       estimatorClones[ip]->setCollectionMode(false);
 #if !defined(REMOVE_TRACEMANAGER)

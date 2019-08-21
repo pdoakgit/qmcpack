@@ -210,7 +210,7 @@ void RMC::resetRun()
     for (int ip = 0; ip < NumThreads; ++ip)
     {
       std::ostringstream os;
-      estimatorClones[ip] = new EstimatorManagerBase(*Estimators); //,*hClones[ip]);
+      estimatorClones[ip] = new EstimatorManager(*Estimators); //,*hClones[ip]);
       estimatorClones[ip]->resetTargetParticleSet(*wClones[ip]);
       estimatorClones[ip]->setCollectionMode(false);
       Rng[ip] = new RandomGenerator_t(*(RandomNumberControl::Children[ip]));
