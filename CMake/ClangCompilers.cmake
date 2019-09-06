@@ -79,6 +79,13 @@ ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "ppc64" OR CMAKE_SYSTEM_PROCESSOR MATCHES 
     # use -mcpu=native
     SET(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} -mcpu=native")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=native")
+    IF(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0.0 )
+      # Doesn't emit the massive number of TOC optimization warnings on Power9
+      # I believe this is due to lld finally passing the typically deployed gnu ld
+      # and doing these Power9 optimizations correctly.
+      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
+      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld")
+    ENDIF(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0.0 )
   endif() #(CMAKE_CXX_FLAGS MATCHES "-mcpu=" OR CMAKE_C_FLAGS MATCHES "-mcpu=")
 ENDIF()
 
