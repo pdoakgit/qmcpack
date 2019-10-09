@@ -272,9 +272,9 @@ struct DistanceTableData
    */
   virtual size_t get_neighbors(int iat,
                                RealType rcut,
-                               int* restrict jid,
-                               RealType* restrict dist,
-                               PosType* restrict displ) const
+                               int* jid,
+                               RealType* dist,
+                               PosType* displ) const
   {
     return 0;
   }
@@ -299,7 +299,7 @@ struct DistanceTableData
    * @param dist compressed distance
    * @return number of target particles within rcut
    */
-  virtual size_t get_neighbors(int iat, RealType rcut, RealType* restrict dist) const { return 0; }
+  virtual size_t get_neighbors(int iat, RealType rcut, RealType* dist) const { return 0; }
 
   /// find index and distance of each nearest neighbor particle
   virtual void nearest_neighbor(std::vector<ripair>& ri, bool transposed = false) const

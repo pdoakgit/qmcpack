@@ -78,7 +78,7 @@ inline uint32_t make_seed(int i, int n) { return static_cast<uint32_t>(std::time
 namespace qmcplusplus
 {
 typedef FakeRandom RandomGenerator_t;
-extern RandomGenerator_t Random;
+//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #else
 
@@ -90,7 +90,7 @@ namespace qmcplusplus
 template<class T>
 using RandomGenerator = BoostRandom<T>;
 typedef BoostRandom<OHMMS_PRECISION_FULL> RandomGenerator_t;
-extern RandomGenerator_t Random;
+//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #else
 
@@ -99,14 +99,14 @@ extern RandomGenerator_t Random;
 namespace qmcplusplus
 {
 typedef SprngRandom<0> RandomGenerator_t;
-extern RandomGenerator_t Random;
+//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #else
 #include "Utilities/SimpleRandom.h"
 namespace qmcplusplus
 {
 typedef SimpleRandom<MTRand> RandomGenerator_t;
-extern RandomGenerator_t Random;
+//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #endif
 #endif

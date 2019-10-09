@@ -13,6 +13,8 @@
 #include "Concurrency/TasksOneToOne.hpp"
 #include "Concurrency/Info.hpp"
 #include "Utilities/RunTimeManager.h"
+#include "Utilities/FakeRandom.h"
+#include "Utilities/RandomGenerator.h"
 #include "ParticleBase/RandomSeqGenerator.h"
 
 namespace qmcplusplus
@@ -250,7 +252,8 @@ void VMCBatched::runVMCStep(int crowd_id,
                             std::vector<std::unique_ptr<Crowd>>& crowds)
 {
   Crowd& crowd = *(crowds[crowd_id]);
-
+  for(QMCHamiltonian& ham : crowd.get_walker_hamiltonians())
+    ham.setRandomGenerator(&((context_for_steps[crowd_id])->get_random_gen()));
   int max_steps = sft.qmcdrv_input.get_max_steps();
   bool is_recompute_block =
       sft.recomputing_blocks ? (1 + sft.block) % sft.qmcdrv_input.get_blocks_between_recompute() == 0 : false;

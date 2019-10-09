@@ -81,97 +81,97 @@ inline void assignUniformRand(T* restrict a, unsigned n, RG& rng)
     a[i] = rng();
 }
 
-#if defined(HAVE_LIBBLITZ)
-///specialized functions: stick to overloading
-template<typename T, unsigned D>
-inline void makeGaussRandom(blitz::Array<TinyVector<T, D>, 2>& a)
-{
-  assignGaussRand(&(a(0, 0)[0]), a.size() * D, Random);
-}
-#endif
+// #if defined(HAVE_LIBBLITZ)
+// ///specialized functions: stick to overloading
+// template<typename T, unsigned D>
+// inline void makeGaussRandom(blitz::Array<TinyVector<T, D>, 2>& a)
+// {
+//   assignGaussRand(&(a(0, 0)[0]), a.size() * D, Random);
+// }
+// #endif
 
-template<typename T, unsigned D>
-inline void makeGaussRandom(std::vector<TinyVector<T, D>>& a)
-{
-  assignGaussRand(&(a[0][0]), a.size() * D, Random);
-}
+// template<typename T, unsigned D>
+// inline void makeGaussRandom(std::vector<TinyVector<T, D>>& a)
+// {
+//   assignGaussRand(&(a[0][0]), a.size() * D, Random);
+// }
 
-///specialized functions: stick to overloading
-template<typename T, unsigned D>
-inline void makeGaussRandom(Matrix<TinyVector<T, D>>& a)
-{
-  assignGaussRand(&(a(0, 0)[0]), a.size() * D, Random);
-}
+// ///specialized functions: stick to overloading
+// template<typename T, unsigned D>
+// inline void makeGaussRandom(Matrix<TinyVector<T, D>>& a)
+// {
+//   assignGaussRand(&(a(0, 0)[0]), a.size() * D, Random);
+// }
 
-template<typename T, unsigned D>
-inline void makeGaussRandom(ParticleAttrib<TinyVector<T, D>>& a)
-{
-  assignGaussRand(&(a[0][0]), a.size() * D, Random);
-}
+// template<typename T, unsigned D>
+// inline void makeGaussRandom(ParticleAttrib<TinyVector<T, D>>& a)
+// {
+//   assignGaussRand(&(a[0][0]), a.size() * D, Random);
+// }
 
-template<typename T>
-inline void makeGaussRandom(ParticleAttrib<T>& a)
-{
-  assignGaussRand(&(a[0]), a.size(), Random);
-}
+// template<typename T>
+// inline void makeGaussRandom(ParticleAttrib<T>& a)
+// {
+//   assignGaussRand(&(a[0]), a.size(), Random);
+// }
 
-template<typename T, unsigned D>
-inline void makeUniformRandom(ParticleAttrib<TinyVector<T, D>>& a)
-{
-  assignUniformRand(&(a[0][0]), a.size() * D, Random);
-}
+// template<typename T, unsigned D>
+// inline void makeUniformRandom(ParticleAttrib<TinyVector<T, D>>& a)
+// {
+//   assignUniformRand(&(a[0][0]), a.size() * D, Random);
+// }
 
-template<typename T>
-inline void makeUniformRandom(ParticleAttrib<T>& a)
-{
-  assignUniformRand(&(a[0]), a.size(), Random);
-}
+// template<typename T>
+// inline void makeUniformRandom(ParticleAttrib<T>& a)
+// {
+//   assignUniformRand(&(a[0]), a.size(), Random);
+// }
 
-template<typename T>
-inline void makeSphereRandom(ParticleAttrib<TinyVector<T, 3>>& a)
-{
-  for (int i = 0; i < a.size(); i++)
-  {
-    bool failed = true;
-    while (failed)
-    {
-      T x   = 1.0 - 2.0 * Random();
-      T y   = 1.0 - 2.0 * Random();
-      T z   = 1.0 - 2.0 * Random();
-      T sep = std::sqrt(x * x + y * y + z * z);
-      if (sep < 1)
-      {
-        T rinv  = 1.0 / sep;
-        a[i][0] = x * rinv;
-        a[i][1] = y * rinv;
-        a[i][2] = z * rinv;
-        failed  = false;
-      }
-    }
-  }
-}
+// template<typename T>
+// inline void makeSphereRandom(ParticleAttrib<TinyVector<T, 3>>& a)
+// {
+//   for (int i = 0; i < a.size(); i++)
+//   {
+//     bool failed = true;
+//     while (failed)
+//     {
+//       T x   = 1.0 - 2.0 * Random();
+//       T y   = 1.0 - 2.0 * Random();
+//       T z   = 1.0 - 2.0 * Random();
+//       T sep = std::sqrt(x * x + y * y + z * z);
+//       if (sep < 1)
+//       {
+//         T rinv  = 1.0 / sep;
+//         a[i][0] = x * rinv;
+//         a[i][1] = y * rinv;
+//         a[i][2] = z * rinv;
+//         failed  = false;
+//       }
+//     }
+//   }
+// }
 
-template<typename T>
-inline void makeSphereRandom(ParticleAttrib<TinyVector<T, 2>>& a)
-{
-  for (int i = 0; i < a.size(); i++)
-  {
-    bool failed = true;
-    while (failed)
-    {
-      T x   = 1.0 - 2.0 * Random();
-      T y   = 1.0 - 2.0 * Random();
-      T sep = std::sqrt(x * x + y * y);
-      if (sep < 1)
-      {
-        T rinv  = 1.0 / sep;
-        a[i][0] = x * rinv;
-        a[i][1] = y * rinv;
-        failed  = false;
-      }
-    }
-  }
-}
+// template<typename T>
+// inline void makeSphereRandom(ParticleAttrib<TinyVector<T, 2>>& a)
+// {
+//   for (int i = 0; i < a.size(); i++)
+//   {
+//     bool failed = true;
+//     while (failed)
+//     {
+//       T x   = 1.0 - 2.0 * Random();
+//       T y   = 1.0 - 2.0 * Random();
+//       T sep = std::sqrt(x * x + y * y);
+//       if (sep < 1)
+//       {
+//         T rinv  = 1.0 / sep;
+//         a[i][0] = x * rinv;
+//         a[i][1] = y * rinv;
+//         failed  = false;
+//       }
+//     }
+//   }
+// }
 
 template<typename T, unsigned D, class RG>
 inline void makeGaussRandomWithEngine(ParticleAttrib<TinyVector<T, D>>& a, RG& rng)

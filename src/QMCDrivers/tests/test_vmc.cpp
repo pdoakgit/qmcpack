@@ -14,6 +14,7 @@
 
 
 #include "Utilities/RandomGenerator.h"
+#include "Utilities/FakeRandom.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "OhmmsPETE/OhmmsMatrix.h"
 #include "Lattice/ParticleBConds.h"

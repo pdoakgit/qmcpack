@@ -98,9 +98,9 @@ struct SoaDistanceTableBA : public DTD_BConds<T, D, SC>, public DistanceTableDat
 
   size_t get_neighbors(int iat,
                        RealType rcut,
-                       int* restrict jid,
-                       RealType* restrict dist,
-                       PosType* restrict displ) const
+                       int* jid,
+                       RealType* dist,
+                       PosType* displ) const
   {
     constexpr T cminus(-1);
     size_t nn = 0;
@@ -153,7 +153,7 @@ struct SoaDistanceTableBA : public DTD_BConds<T, D, SC>, public DistanceTableDat
     return index;
   }
 
-  size_t get_neighbors(int iat, RealType rcut, RealType* restrict dist) const
+  size_t get_neighbors(int iat, RealType rcut, RealType* dist) const
   {
     size_t nn = 0;
     for (int jat = 0; jat < N_targets; ++jat)

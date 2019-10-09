@@ -311,7 +311,11 @@ bool XMLParticleParser::putSpecial(xmlNodePtr cur)
   {
     if (randomizeR == "yes")
     {
-      makeUniformRandom(ref_.R);
+      // Previously a global , but if reproducibility is desired it needs come from somewhere
+      // the global generator was causing races and segfaults
+      // also why is this in the IO
+      RandomGenerator_t my_random;
+      assignUniformRand(&(ref_.R[0]), ref_.R.size(), my_random);
       ref_.R.setUnit(PosUnit::Lattice);
       ref_.convert2Cart(ref_.R);
     }

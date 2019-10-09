@@ -14,6 +14,8 @@
 #include "Concurrency/Info.hpp"
 #include "Utilities/RunTimeManager.h"
 #include "ParticleBase/RandomSeqGenerator.h"
+#include "Utilities/RandomGenerator.h"
+#include "Utilities/FakeRandom.h"
 #include "Utilities/ProgressReportEngine.h"
 
 namespace qmcplusplus
@@ -422,6 +424,9 @@ void DMCBatched::runDMCStep(int crowd_id,
 {
   Crowd& crowd  = *(crowds[crowd_id]);
   int max_steps = sft.qmcdrv_input.get_max_steps();
+  for(QMCHamiltonian& ham : crowd.get_walker_hamiltonians())
+    ham.setRandomGenerator(&((context_for_steps[crowd_id])->get_random_gen()));
+
   // This is migraine inducing here and in the original driver, I believe they are the same in
   // VMC(Batched)/DMC(Batched) needs another check and unit test
   bool is_recompute_block =
