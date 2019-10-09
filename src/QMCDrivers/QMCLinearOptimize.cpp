@@ -45,8 +45,9 @@ QMCLinearOptimize::QMCLinearOptimize(MCWalkerConfiguration& w,
                                      QMCHamiltonian& h,
                                      HamiltonianPool& hpool,
                                      WaveFunctionPool& ppool,
+                                     RandomNumberControl& random_control,
                                      Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm),
+    : QMCDriver(w, psi, h, ppool, random_control, comm),
       PartID(0),
       NumParts(1),
       WarmupBlocks(10),
@@ -789,10 +790,10 @@ bool QMCLinearOptimize::put(xmlNodePtr q)
   {
 #if defined(QMC_CUDA)
     if (useGPU == "yes")
-      vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, myComm);
+      vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, random_control_, myComm);
     else
 #endif
-      vmcEngine = std::make_unique<VMC>(W, Psi, H, psiPool, myComm);
+      vmcEngine = std::make_unique<VMC>(W, Psi, H, psiPool, random_control_, myComm);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
 

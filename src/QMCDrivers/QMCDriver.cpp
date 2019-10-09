@@ -46,6 +46,7 @@ QMCDriver::QMCDriver(MCWalkerConfiguration& w,
                      TrialWaveFunction& psi,
                      QMCHamiltonian& h,
                      WaveFunctionPool& ppool,
+                     RandomNumberControl& random_control,
                      Communicate* comm)
     : MPIObjectBase(comm),
       branchEngine(0),
@@ -54,6 +55,7 @@ QMCDriver::QMCDriver(MCWalkerConfiguration& w,
       Psi(psi),
       H(h),
       psiPool(ppool),
+      random_control_(random_control),
       Estimators(0),
       Traces(0),
       qmcNode(NULL),
@@ -172,6 +174,7 @@ void QMCDriver::add_H_and_Psi(QMCHamiltonian* h, TrialWaveFunction* psi)
   Psi1.push_back(psi);
 }
 
+
 /** process a <qmc/> element
  * @param cur xmlNode with qmc tag
  *
@@ -235,7 +238,7 @@ void QMCDriver::process(xmlNodePtr cur)
   if (ResetRandom)
   {
     app_log() << "  Regenerate random seeds." << std::endl;
-    RandomNumberControl::make_seeds();
+    random_control_.make_seeds();
     ResetRandom = false;
   }
   //flush the std::ostreams
@@ -329,7 +332,7 @@ void QMCDriver::recordBlock(int block)
     checkpointTimer->start();
     wOut->dump(W, block);
     branchEngine->write(RootName, true); //save energy_history
-    RandomNumberControl::write(RootName, myComm);
+    random_control_.write(RootName, myComm);
     checkpointTimer->stop();
   }
 }
@@ -348,7 +351,7 @@ bool QMCDriver::finalize(int block, bool dumpwalkers)
   branchEngine->finalize(W);
 
   if (DumpConfig)
-    RandomNumberControl::write(RootName, myComm);
+    random_control_.write(RootName, myComm);
 
   return true;
 }

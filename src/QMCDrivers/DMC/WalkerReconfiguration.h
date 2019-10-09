@@ -16,6 +16,7 @@
 #define QMCPLUSPLUS_RECONFIGURATION_WALKER_CONTROL_H
 
 #include "QMCDrivers/WalkerControlBase.h"
+#include "OhmmsApp/RandomNumberControl.h"
 
 namespace qmcplusplus
 {
@@ -37,7 +38,7 @@ struct WalkerReconfiguration : public WalkerControlBase
    *
    * Set the SwapMode to zero so that instantiation can be done
    */
-  WalkerReconfiguration(Communicate* c);
+  WalkerReconfiguration(RandomNumberControl& random_control, Communicate* c);
 
   /** perform branch and swap walkers as required */
   int branch(int iter, MCWalkerConfiguration& W, FullPrecRealType trigger);
@@ -49,6 +50,8 @@ struct WalkerReconfiguration : public WalkerControlBase
    */
   int getIndexPermutation(MCWalkerConfiguration& W);
   int shuffleIndex(int nw);
+private:
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

@@ -83,7 +83,9 @@ void CSVMCUpdateAll::advanceWalker(Walker_t& thisWalker, bool recompute)
 
   RealType g = sumratio[0] / thisWalker.Multiplicity * std::exp(2.0 * (logpsi[0] - thisWalker.Properties(LOGPSI)));
 
-  if (Random() > g)
+  // This is a call likely to occur in a threaded region yet
+  // lets just pound on the stateful global rng.
+  if (RandomGen() > g)
   {
     thisWalker.Age++;
     ++nReject;
@@ -183,7 +185,7 @@ void CSVMCUpdateAllWithDrift::advanceWalker(Walker_t& thisWalker, bool recompute
   RealType g = sumratio[0] / thisWalker.Multiplicity *
       std::exp(logGb - logGf + 2.0 * (logpsi[0] - thisWalker.Properties(LOGPSI)));
 
-  if (Random() > g)
+  if (RandomGen() > g)
   {
     thisWalker.Age++;
     ++nReject;

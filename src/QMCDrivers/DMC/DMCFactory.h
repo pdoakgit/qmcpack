@@ -16,7 +16,7 @@
 #define QMCPLUSPLUS_DMC_FACTORY_H
 #include "QMCDrivers/QMCDriver.h"
 #include "QMCApp/HamiltonianPool.h"
-
+#include "OhmmsApp/RandomNumberControl.h"
 namespace qmcplusplus
 {
 class DMCFactory
@@ -33,6 +33,7 @@ public:
                     QMCHamiltonian& h,
                     HamiltonianPool& hpool,
                     WaveFunctionPool& ppool,
+                    RandomNumberControl& random_control,
                     Communicate* comm);
 };
 } // namespace qmcplusplus

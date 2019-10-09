@@ -43,8 +43,9 @@ DMC::DMC(MCWalkerConfiguration& w,
          TrialWaveFunction& psi,
          QMCHamiltonian& h,
          WaveFunctionPool& ppool,
+         RandomNumberControl& random_control,
          Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm),
+    : QMCDriver(w, psi, h, ppool, random_control, comm),
       KillNodeCrossing(0),
       Reconfiguration("no"),
       BranchInterval(-1),
@@ -71,7 +72,7 @@ void DMC::resetUpdateEngines()
   {
     W.loadEnsemble(wClones);
     setWalkerOffsets();
-    int nw_multi = branchEngine->initWalkerController(W, fixW, false);
+    int nw_multi = branchEngine->initWalkerController(W, random_control_, fixW, false);
     if (nw_multi > 1)
     {
       W.createWalkers((nw_multi - 1) * W.getActiveWalkers());
@@ -111,7 +112,7 @@ void DMC::resetUpdateEngines()
 #ifdef USE_FAKE_RNG
       Rng[ip] = new FakeRandom();
 #else
-      Rng[ip] = new RandomGenerator_t(*RandomNumberControl::Children[ip]);
+      Rng[ip] = new RandomGenerator_t(*random_control_.Children[ip]);
       hClones[ip]->setRandomGenerator(Rng[ip]);
 #endif
       if (qmc_driver_mode[QMC_UPDATE_MODE])
@@ -254,7 +255,7 @@ bool DMC::run()
     {
 #ifndef USE_FAKE_RNG
       for (int ip = 0; ip < NumThreads; ip++)
-        *(RandomNumberControl::Children[ip]) = *(Rng[ip]);
+        *(random_control_.Children[ip]) = *(Rng[ip]);
 #endif
     }
     recordBlock(block);
@@ -273,7 +274,7 @@ bool DMC::run()
   //for(int ip=0; ip<NumThreads; ip++) Movers[ip]->stopRun();
 #ifndef USE_FAKE_RNG
   for (int ip = 0; ip < NumThreads; ip++)
-    *(RandomNumberControl::Children[ip]) = *(Rng[ip]);
+    *(random_control_.Children[ip]) = *(Rng[ip]);
 #endif
   Estimators->stop();
   for (int ip = 0; ip < NumThreads; ++ip)

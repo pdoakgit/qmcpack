@@ -17,6 +17,7 @@
 #ifndef QMCPLUSPLUS_INITMOLECULARSYSTEM_H
 #define QMCPLUSPLUS_INITMOLECULARSYSTEM_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include <map>
 
@@ -30,7 +31,7 @@ class ParticleSetPool;
 class InitMolecularSystem : public OhmmsElementBase
 {
 public:
-  InitMolecularSystem(ParticleSetPool* pset, const char* aname = "mosystem");
+  InitMolecularSystem(ParticleSetPool* pset, RandomNumberControl& random_control, const char* aname = "mosystem");
 
   bool get(std::ostream& os) const;
   bool put(std::istream& is);
@@ -60,6 +61,7 @@ private:
    * a QMCHamiltonian.
    */
   ParticleSetPool* ptclPool;
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

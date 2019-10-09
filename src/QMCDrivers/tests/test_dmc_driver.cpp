@@ -91,9 +91,7 @@ TEST_CASE("DMC", "[drivers][dmc]")
   psi.addComponent(orb, "Constant");
   psi.registerData(elec, elec.WalkerList[0]->DataSet);
   elec.WalkerList[0]->DataSet.allocate();
-
-  FakeRandom rg;
-
+  
   QMCHamiltonian h;
   BareKineticEnergy<double>* p_bke = new BareKineticEnergy<double>(elec);
   h.addOperator(p_bke, "Kinetic");
@@ -101,14 +99,17 @@ TEST_CASE("DMC", "[drivers][dmc]")
 
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
+  RandomNumberControl random_control;
+  
+  
   HamiltonianPool hpool(c);
 
-  WaveFunctionPool wpool(c);
+  WaveFunctionPool wpool(c, random_control);
 
   //EstimatorManagerBase emb(c);
 
 
-  DMC dmc_omp(elec, psi, h, wpool, c);
+  DMC dmc_omp(elec, psi, h, wpool, random_control, c);
 
   const char* dmc_input = "<qmc method=\"dmc\"> \
    <parameter name=\"steps\">1</parameter> \

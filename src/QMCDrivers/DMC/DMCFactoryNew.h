@@ -12,6 +12,7 @@
 
 #ifndef QMCPLUSPLUS_DMCFACTORYNEW_H
 #define QMCPLUSPLUS_DMCFACTORYNEW_H
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCDrivers/QMCDriverInterface.h"
 #include "QMCApp/WaveFunctionPool.h"
 #include "Message/Communicate.h"
@@ -37,6 +38,7 @@ public:
                              TrialWaveFunction& psi,
                              QMCHamiltonian& h,
                              WaveFunctionPool& wf_pool,
+                             RandomNumberControl& random_control,
                              Communicate* comm);
 };
 } // namespace qmcplusplus

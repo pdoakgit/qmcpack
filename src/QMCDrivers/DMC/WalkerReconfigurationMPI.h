@@ -15,6 +15,7 @@
 #ifndef QMCPLUSPLUS_RECONFIGURATION_WALKER_CONTROLMPI_H
 #define QMCPLUSPLUS_RECONFIGURATION_WALKER_CONTROLMPI_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCDrivers/WalkerControlBase.h"
 
 namespace qmcplusplus
@@ -52,7 +53,7 @@ struct WalkerReconfigurationMPI : public WalkerControlBase
    *
    * Set the SwapMode to zero so that instantiation can be done
    */
-  WalkerReconfigurationMPI(Communicate* c = 0);
+  WalkerReconfigurationMPI(RandomNumberControl& random_control, Communicate* c = 0);
 
   /** perform branch and swap walkers as required */
   int branch(int iter, MCWalkerConfiguration& W, FullPrecRealType trigger);
@@ -71,6 +72,8 @@ struct WalkerReconfigurationMPI : public WalkerControlBase
    * @param minus local indices of the walkers to be copied
    */
   void recvWalkers(MCWalkerConfiguration& W, const std::vector<IndexType>& minus);
+private:
+  RandomNumberControl random_control_;
 };
 } // namespace qmcplusplus
 #endif

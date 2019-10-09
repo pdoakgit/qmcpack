@@ -37,8 +37,9 @@ QMCOptimize::QMCOptimize(MCWalkerConfiguration& w,
                          QMCHamiltonian& h,
                          HamiltonianPool& hpool,
                          WaveFunctionPool& ppool,
+                         RandomNumberControl& random_control,
                          Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm),
+    : QMCDriver(w, psi, h, ppool, random_control, comm),
       PartID(0),
       NumParts(1),
       WarmupBlocks(10),
@@ -200,7 +201,7 @@ bool QMCOptimize::put(xmlNodePtr q)
       vmcEngine = new VMCcuda(W, Psi, H, psiPool, myComm);
     else
 #endif
-      vmcEngine = new VMC(W, Psi, H, psiPool, myComm);
+      vmcEngine = new VMC(W, Psi, H, psiPool, random_control_, myComm);
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   }
   vmcEngine->setStatus(RootName, h5FileRoot, AppendRun);

@@ -20,6 +20,7 @@
 #define QMCPLUSPLUS_DMC_H
 #include "QMCDrivers/QMCDriver.h"
 #include "QMCDrivers/CloneManager.h"
+#include "OhmmsApp/RandomNumberControl.h"
 namespace qmcplusplus
 {
 /** @ingroup QMCDrivers
@@ -31,7 +32,7 @@ class DMC : public QMCDriver, public CloneManager
 {
 public:
   /// Constructor.
-  DMC(MCWalkerConfiguration& w, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, Communicate* comm);
+  DMC(MCWalkerConfiguration& w, TrialWaveFunction& psi, QMCHamiltonian& h, WaveFunctionPool& ppool, RandomNumberControl& random_control, Communicate* comm);
 
   bool run();
   bool put(xmlNodePtr cur);

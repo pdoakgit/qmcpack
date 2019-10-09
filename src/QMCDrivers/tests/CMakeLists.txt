@@ -22,6 +22,9 @@ SET(UTEST_HDF_INPUT ${qmcpack_SOURCE_DIR}/tests/solids/diamondC_1x1x1_pp/pwscf.p
 EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory "${UTEST_DIR}")
 MAYBE_SYMLINK(${UTEST_HDF_INPUT} ${UTEST_DIR}/pwscf.pwscf.h5)
 
+SET(TEST_HELPER_SRC SetupPools.cpp) 
+ADD_LIBRARY(qmctesthelper ${TEST_HELPER_SRC})
+
 SET(DRIVER_TEST_SRC test_vmc.cpp test_dmc.cpp test_drift.cpp test_clone_manager.cpp test_fixed_node_branch.cpp test_DescentEngine.cpp test_HybridEngine.cpp)
 
 IF (NOT QMC_CUDA)
@@ -34,7 +37,7 @@ ENDIF()
 ADD_EXECUTABLE(${UTEST_EXE} ${DRIVER_TEST_SRC})
 
 USE_FAKE_RNG(${UTEST_EXE})
-TARGET_LINK_LIBRARIES(${UTEST_EXE} qmc qmcdriver_unit qmcham qmcwfs qmcbase qmcutil qmcfakerng ${QMC_UTIL_LIBS} ${MPI_LIBRARY})
+TARGET_LINK_LIBRARIES(${UTEST_EXE} qmc qmcdriver_unit qmcham qmcwfs qmcbase qmcutil qmcfakerng qmctesthelper ${QMC_UTIL_LIBS} ${MPI_LIBRARY})
 
 ADD_UNIT_TEST(${UTEST_NAME} "${QMCPACK_UNIT_TEST_DIR}/${UTEST_EXE}")
 SET_TESTS_PROPERTIES(${UTEST_NAME} PROPERTIES WORKING_DIRECTORY ${UTEST_DIR})
@@ -54,7 +57,7 @@ SET(UTEST_HDF_INPUT ${qmcpack_SOURCE_DIR}/tests/solids/diamondC_1x1x1_pp/pwscf.p
 EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory "${UTEST_DIR}")
 MAYBE_SYMLINK(${UTEST_HDF_INPUT} ${UTEST_DIR}/pwscf.pwscf.h5)
 
-SET(DRIVER_TEST_SRC SetupPools.cpp test_Crowd.cpp test_MCPopulation.cpp test_ContextForSteps.cpp test_QMCDriverInput.cpp test_QMCDriverNew.cpp test_VMCDriverInput.cpp test_VMCFactoryNew.cpp test_VMCBatched.cpp test_DMCBatched.cpp)
+SET(DRIVER_TEST_SRC test_Crowd.cpp test_MCPopulation.cpp test_ContextForSteps.cpp test_QMCDriverInput.cpp test_QMCDriverNew.cpp test_VMCDriverInput.cpp test_VMCFactoryNew.cpp test_VMCBatched.cpp test_DMCBatched.cpp)
 
 IF(HAVE_MPI)
   SET(DRIVER_TEST_SRC ${DRIVER_TEST_SRC} test_WalkerControlMPI.cpp)
@@ -63,7 +66,7 @@ ENDIF()
 ADD_EXECUTABLE(${UTEST_EXE} ${DRIVER_TEST_SRC})
 
 USE_FAKE_RNG(${UTEST_EXE})
-TARGET_LINK_LIBRARIES(${UTEST_EXE} qmc qmcdriver_unit qmcham qmcwfs qmcbase qmcutil qmcfakerng ${QMC_UTIL_LIBS} ${MPI_LIBRARY})
+TARGET_LINK_LIBRARIES(${UTEST_EXE} qmc qmcdriver_unit qmcham qmcwfs qmcbase qmcutil qmcfakerng qmctesthelper ${QMC_UTIL_LIBS} ${MPI_LIBRARY})
 
 
 ADD_UNIT_TEST(${UTEST_NAME} "${QMCPACK_UNIT_TEST_DIR}/${UTEST_EXE}")

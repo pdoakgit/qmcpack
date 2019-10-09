@@ -42,6 +42,7 @@ public:
                                       QMCHamiltonian& h,
                                       HamiltonianPool& hpool,
                                       WaveFunctionPool& ppool,
+                                      RandomNumberControl& random_control,
                                       Communicate* comm);
 
   ///Destructor

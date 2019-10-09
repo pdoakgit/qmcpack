@@ -14,34 +14,25 @@
 
 #include "type_traits/template_types.hpp"
 #include "QMCHamiltonians/QMCHamiltonian.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
+#include "QMCDrivers/tests/SetupPools.h"
+
 namespace qmcplusplus
 {
 TEST_CASE("QMCHamiltonian::flex_evaluate", "[hamiltonian]")
 {
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+  using namespace testing;
+  RandomNumberControl random_control;
+  SetupPools pools(random_control);
 
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
-
-  TrialWaveFunction twf(comm);
+  TrialWaveFunction twf(pools.comm);
 
   std::vector<QMCHamiltonian> hamiltonians;
-  hamiltonians.emplace_back(*(hamiltonian_pool.getPrimary()));
-  hamiltonians.emplace_back(*(hamiltonian_pool.getPrimary()));
+  hamiltonians.emplace_back(*(pools.hamiltonian_pool->getPrimary()));
+  hamiltonians.emplace_back(*(pools.hamiltonian_pool->getPrimary()));
 
   std::vector<ParticleSet> elecs;
-  elecs.emplace_back(*(particle_pool.getParticleSet("e")));
-  elecs.emplace_back(*(particle_pool.getParticleSet("e")));
+  elecs.emplace_back(*(pools.particle_pool->getParticleSet("e")));
+  elecs.emplace_back(*(pools.particle_pool->getParticleSet("e")));
 
   // TODO: finish initializing the elecs.
   //std::vector<QMCHamiltonian::RealType> local_energies(QMCHamiltonian::flex_evaluate(makeRefVector<QMCHamiltonian>(hamiltonians), makeRefVector<ParticleSet>(elecs)));

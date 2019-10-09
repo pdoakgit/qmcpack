@@ -37,10 +37,10 @@ class MinimalWaveFunctionPool
 
 public:
   MinimalWaveFunctionPool() : comm_(nullptr) {}
-  WaveFunctionPool operator()(Communicate* comm, ParticleSetPool* particle_pool)
+  WaveFunctionPool operator()(RandomNumberControl random_control, Communicate* comm, ParticleSetPool* particle_pool)
   {
     comm_ = comm;
-    WaveFunctionPool wp(comm_);
+    WaveFunctionPool wp(comm_, random_control);
     wp.setParticleSetPool(particle_pool);
 
     Libxml2Document* doc = new Libxml2Document;

@@ -80,7 +80,8 @@ TEST_CASE("Bare Kinetic Energy", "[hamiltonian]")
   elec.update();
 
 
-  ParticleSetPool ptcl = ParticleSetPool(c);
+  RandomNumberControl random_control;
+  ParticleSetPool ptcl(c, random_control);
 
 
   const char* particles = "<tmp> \
@@ -181,7 +182,8 @@ TEST_CASE("Bare KE Pulay PBC", "[hamiltonian]")
 
   elec.createSK();
 
-  ParticleSetPool ptcl = ParticleSetPool(c);
+  RandomNumberControl random_control;
+  ParticleSetPool ptcl(c, random_control);
 
   ions.resetGroups();
 

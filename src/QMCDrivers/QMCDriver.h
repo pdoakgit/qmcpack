@@ -23,6 +23,7 @@
 
 #include "Configuration.h"
 #include "OhmmsData/ParameterSet.h"
+#include "OhmmsApp/RandomNumberControl.h"
 #include "Utilities/PooledData.h"
 #include "Utilities/NewTimer.h"
 #include "QMCWaveFunctions/TrialWaveFunction.h"
@@ -99,6 +100,7 @@ public:
             TrialWaveFunction& psi,
             QMCHamiltonian& h,
             WaveFunctionPool& ppool,
+            RandomNumberControl& random_control,
             Communicate* comm);
 
   virtual ~QMCDriver();
@@ -330,7 +332,8 @@ protected:
 
   ///temporary buffer to accumulate data
   //ostrstream log_buffer;
-
+  RandomNumberControl& random_control_;
+  
   //PooledData<RealType> HamPool;
 
   ///Copy Constructor (disabled).

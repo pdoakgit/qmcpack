@@ -35,6 +35,7 @@ public:
                     ParticleSetPool& ptclpool,
                     HamiltonianPool& hpool,
                     WaveFunctionPool& ppool,
+                    RandomNumberControl& random_control,
                     Communicate* comm);
 };
 } // namespace qmcplusplus

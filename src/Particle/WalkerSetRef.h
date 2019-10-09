@@ -71,26 +71,26 @@ struct WalkerSetRef : public QMCTraits
    *@param tauinv timestep
    *@brief Make Metropolis move to the walkers and save in a temporary array.
    */
-  template<class IT>
-  inline void sample(IT first, IT last, RealType tauinv)
-  {
-    makeGaussRandom(R);
-    R *= tauinv;
-    ///reset the number of active walkers to zero to count them
-    int iw = 0;
-    while (first != last)
-    {
-      const ParticleSet::ParticlePos_t& r     = (*first)->R;
-      const ParticleSet::ParticlePos_t& drift = (*first)->Drift;
-      for (int jat = 0; jat < N[Particles]; jat++)
-      {
-        R(iw, jat) += r[jat] + drift[jat];
-      }
-      ///increment the index and iterator
-      iw++;
-      first++;
-    }
-  }
+  // template<class IT>
+  // inline void sample(IT first, IT last, RealType tauinv)
+  // {
+  //   makeGaussRandom(R);
+  //   R *= tauinv;
+  //   ///reset the number of active walkers to zero to count them
+  //   int iw = 0;
+  //   while (first != last)
+  //   {
+  //     const ParticleSet::ParticlePos_t& r     = (*first)->R;
+  //     const ParticleSet::ParticlePos_t& drift = (*first)->Drift;
+  //     for (int jat = 0; jat < N[Particles]; jat++)
+  //     {
+  //       R(iw, jat) += r[jat] + drift[jat];
+  //     }
+  //     ///increment the index and iterator
+  //     iw++;
+  //     first++;
+  //   }
+  // }
 };
 } // namespace qmcplusplus
 #endif

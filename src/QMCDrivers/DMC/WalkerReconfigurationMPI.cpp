@@ -23,7 +23,7 @@ using namespace qmcplusplus;
  *
  * set SwapMode
  */
-WalkerReconfigurationMPI::WalkerReconfigurationMPI(Communicate* c) : WalkerControlBase(c), TotalWalkers(0)
+WalkerReconfigurationMPI::WalkerReconfigurationMPI(RandomNumberControl& random_control, Communicate* c) : WalkerControlBase(c), TotalWalkers(0), random_control_(random_control)
 {
   SwapMode = 1;
 }
@@ -68,7 +68,7 @@ int WalkerReconfigurationMPI::swapWalkers(MCWalkerConfiguration& W)
     wOffset.resize(num_contexts_ + 1);
     dN.resize(num_contexts_ + 4);
   }
-  UnitZeta = Random();
+  UnitZeta = (random_control_.get_random())();
   myComm->bcast(UnitZeta);
   DeltaStep = UnitZeta * nwInv;
   //std::fill(wSum.begin(),wSum.end(),0.0);

@@ -26,7 +26,9 @@ namespace qmcplusplus
 #ifdef HAVE_LIBBOOST
 TEST_CASE("boost", "[utilities]")
 {
-  double d = Random();
+  //TODO: this test is almost worthless it could pass by chance.
+  RandomGenerator_t my_random;
+  double d = my_random();
   REQUIRE(d >= 0.0);
   REQUIRE(d < 1.0);
 }

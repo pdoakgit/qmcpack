@@ -27,8 +27,9 @@ VMCBatched::VMCBatched(QMCDriverInput&& qmcdriver_input,
                        TrialWaveFunction& psi,
                        QMCHamiltonian& h,
                        WaveFunctionPool& ppool,
+                       RandomNumberControl& random_control,
                        Communicate* comm)
-    : QMCDriverNew(std::move(qmcdriver_input), pop, psi, h, ppool, "VMCBatched::", comm),
+    : QMCDriverNew(std::move(qmcdriver_input), pop, psi, h, ppool, "VMCBatched::", random_control, comm),
       vmcdriver_input_(input)
 {
   QMCType = "VMCBatched";

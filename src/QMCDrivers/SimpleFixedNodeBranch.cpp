@@ -117,7 +117,7 @@ void SimpleFixedNodeBranch::start(const std::string& froot, bool append)
   MyEstimator->reset();
 }
 
-int SimpleFixedNodeBranch::initWalkerController(MCWalkerConfiguration& walkers, bool fixW, bool killwalker)
+int SimpleFixedNodeBranch::initWalkerController(MCWalkerConfiguration& walkers, RandomNumberControl& random_control, bool fixW, bool killwalker)
 {
   BranchMode.set(B_DMC, 1);                               //set DMC
   BranchMode.set(B_DMCSTAGE, iParam[B_WARMUPSTEPS] == 0); //use warmup
@@ -145,7 +145,7 @@ int SimpleFixedNodeBranch::initWalkerController(MCWalkerConfiguration& walkers, 
       walkers.setWalkerOffsets(nwoff);
       iParam[B_TARGETWALKERS] = nwoff[ncontexts];
     }
-    WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], MyEstimator->getCommunicator(), myNode));
+    WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], random_control, MyEstimator->getCommunicator(), myNode));
     if (!BranchMode[B_RESTART])
     {
       fromscratch = true;
@@ -160,7 +160,7 @@ int SimpleFixedNodeBranch::initWalkerController(MCWalkerConfiguration& walkers, 
         app_log() << "Warmup DMC is done with a fixed population " << iParam[B_TARGETWALKERS] << std::endl;
         BackupWalkerController = std::move(WalkerController); //save the main controller
         WalkerController.reset(
-            createWalkerController(iParam[B_TARGETWALKERS], MyEstimator->getCommunicator(), myNode, true));
+            createWalkerController(iParam[B_TARGETWALKERS], random_control, MyEstimator->getCommunicator(), myNode, true));
         BranchMode.set(B_POPCONTROL, 0);
       }
       //PopHist.clear();
@@ -205,7 +205,7 @@ int SimpleFixedNodeBranch::initWalkerController(MCWalkerConfiguration& walkers, 
   return int(round(double(iParam[B_TARGETWALKERS]) / double(nwtot_now)));
 }
 
-int SimpleFixedNodeBranch::initWalkerController(MCPopulation& population, bool fixW, bool killwalker)
+int SimpleFixedNodeBranch::initWalkerController(MCPopulation& population, RandomNumberControl& random_control, bool fixW, bool killwalker)
 {
   BranchMode.set(B_DMC, 1);                               //set DMC
   BranchMode.set(B_DMCSTAGE, iParam[B_WARMUPSTEPS] == 0); //use warmup
@@ -226,7 +226,7 @@ int SimpleFixedNodeBranch::initWalkerController(MCPopulation& population, bool f
     // has "important" side effect of updating the walker offsets
     iParam[B_TARGETWALKERS] = population.update_num_global_walkers(MyEstimator->getCommunicator());
   }
-  WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], MyEstimator->getCommunicator(), myNode));
+  WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], random_control, MyEstimator->getCommunicator(), myNode));
   if (!BranchMode[B_RESTART])
   {
     fromscratch = true;
@@ -241,7 +241,7 @@ int SimpleFixedNodeBranch::initWalkerController(MCPopulation& population, bool f
       app_log() << "Warmup DMC is done with a fixed population " << iParam[B_TARGETWALKERS] << std::endl;
       BackupWalkerController = std::move(WalkerController); //save the main controller
       WalkerController.reset(
-          createWalkerController(iParam[B_TARGETWALKERS], MyEstimator->getCommunicator(), myNode, true));
+          createWalkerController(iParam[B_TARGETWALKERS], random_control, MyEstimator->getCommunicator(), myNode, true));
       BranchMode.set(B_POPCONTROL, 0);
     }
     //PopHist.clear();
@@ -773,7 +773,7 @@ int SimpleFixedNodeBranch::resetRun(xmlNodePtr cur)
   {
     app_log() << "Destroy WalkerController. Existing method " << WalkerController->get_method() << std::endl;
     ;
-    WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], MyEstimator->getCommunicator(), myNode));
+    WalkerController.reset(createWalkerController(iParam[B_TARGETWALKERS], random_control_, MyEstimator->getCommunicator(), myNode));
     app_log().flush();
 
     BranchMode[B_POPCONTROL] = (WalkerController->get_method() == 0);

@@ -18,6 +18,7 @@
 #ifndef QMCPLUSPLUS_PARTICLESETPOOL_H
 #define QMCPLUSPLUS_PARTICLESETPOOL_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include "Particle/MCWalkerConfiguration.h"
 #include "Message/MPIObjectBase.h"
@@ -38,7 +39,7 @@ public:
   /** constructor
    * @param aname xml tag
    */
-  ParticleSetPool(Communicate* c, const char* aname = "particleset");
+  ParticleSetPool(Communicate* c, RandomNumberControl& random_control, const char* aname = "particleset");
 
   ParticleSetPool(ParticleSetPool&& pset);
   
@@ -116,6 +117,7 @@ private:
    * randomize() process initializations just before starting qmc sections
    */
   std::vector<xmlNodePtr> randomize_nodes;
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

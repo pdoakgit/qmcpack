@@ -12,6 +12,7 @@
 #ifndef QMCPLUSPLUS_SETUP_POOLS_H
 #define QMCPLUSPLUS_SETUP_POOLS_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCApp/tests/MinimalParticlePool.h"
 #include "QMCApp/tests/MinimalWaveFunctionPool.h"
 #include "QMCApp/tests/MinimalHamiltonianPool.h"
@@ -24,7 +25,7 @@ namespace testing
 class SetupPools
 {
 public:
-  SetupPools();
+  SetupPools(RandomNumberControl& random_control);
 
   MinimalParticlePool mpp;
   MinimalWaveFunctionPool wfp;

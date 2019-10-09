@@ -111,7 +111,8 @@ bool DriverFactory::executeAFQMCDriver(std::string title, int m_series, xmlNodeP
   int block0=0;
   double Eshift=0.0;
 
-  auto rng = RandomNumberControl::Children[0];
+  // this smells
+  auto rng = random_control_.Children[0];
 
   app_log()<<"\n****************************************************\n"
            <<"****************************************************\n"

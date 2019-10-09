@@ -23,7 +23,7 @@ using namespace qmcplusplus;
  *
  * set SwapMode
  */
-WalkerReconfiguration::WalkerReconfiguration(Communicate* c) : WalkerControlBase(c)
+WalkerReconfiguration::WalkerReconfiguration(RandomNumberControl& random_control, Communicate* c) : WalkerControlBase(c), random_control_(random_control) 
 {
   SwapMode = 1;
   //ofstream fout("check.dat");
@@ -62,7 +62,7 @@ int WalkerReconfiguration::getIndexPermutation(MCWalkerConfiguration& W)
   curData[R2ACCEPTED_INDEX] = r2_accepted;
   curData[R2PROPOSED_INDEX] = r2_proposed;
   FullPrecRealType nwInv            = 1.0 / static_cast<FullPrecRealType>(nw);
-  UnitZeta                  = Random();
+  UnitZeta                  = (random_control_.get_random())();
   FullPrecRealType dstep            = UnitZeta * nwInv;
   for (int iw = 0; iw < nw; iw++)
   {

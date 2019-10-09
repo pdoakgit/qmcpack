@@ -17,6 +17,7 @@
 #ifndef QMCPLUSPLUS_WAVEFUNCTIONPOOL_H
 #define QMCPLUSPLUS_WAVEFUNCTIONPOOL_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include "Message/MPIObjectBase.h"
 #include "QMCWaveFunctions/WaveFunctionFactory.h"
@@ -39,7 +40,7 @@ class WaveFunctionPool : public MPIObjectBase
 public:
   typedef std::map<std::string, WaveFunctionFactory*> PoolType;
 
-  WaveFunctionPool(Communicate* c, const char* aname = "wavefunction");
+  WaveFunctionPool(Communicate* c, RandomNumberControl& random_control, const char* aname = "wavefunction");
   ~WaveFunctionPool();
 
   bool put(xmlNodePtr cur);
@@ -110,6 +111,8 @@ private:
    * is used as an input object for the evaluations.
    */
   ParticleSetPool* ptcl_pool_;
+
+  RandomNumberControl random_control_;
 };
 } // namespace qmcplusplus
 #endif

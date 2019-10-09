@@ -63,6 +63,7 @@ public:
                                                    WaveFunctionPool& wave_function_pool,
                                                    HamiltonianPool& hamiltonian_pool,
                                                    MCPopulation& population,
+                                                   RandomNumberControl& random_control,
                                                    Communicate* comm);
 
 private:
@@ -77,6 +78,7 @@ private:
                                                       WaveFunctionPool& wave_function_pool,
                                                       HamiltonianPool& hamiltonian_pool,
                                                       MCPopulation& population,
+                                                      RandomNumberControl& random_control,
                                                       Communicate* comm);
 };
 } // namespace qmcplusplus

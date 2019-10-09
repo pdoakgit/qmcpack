@@ -22,7 +22,8 @@
 # QMC Drivers which implements various QMC algorithms
 ####################################
 
-SET(QMCDRIVERS 
+SET(QMCDRIVERS
+  DMC/WalkerControlFactory.cpp
   SimpleFixedNodeBranch.cpp
   BranchIO.cpp
   MCPopulation.cpp
@@ -56,7 +57,6 @@ SET(QMCDRIVERS
   DMC/DMCFactoryNew.cpp
   DMC/DMCBatched.cpp
   DMC/DMCDriverInput.cpp
-  DMC/WalkerControlFactory.cpp
   DMC/WalkerReconfiguration.cpp
   RMC/RMC.cpp
   RMC/RMCUpdatePbyP.cpp

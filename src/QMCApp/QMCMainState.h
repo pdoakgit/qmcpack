@@ -76,6 +76,10 @@ struct QMCMainState : public MPIObjectBase
 
   /** virtual destructor **/
   virtual ~QMCMainState();
+
+  RandomNumberControl& get_random_control() { return random_control_; }
+private:
+  RandomNumberControl random_control_;
 };
 } // namespace qmcplusplus
 #endif

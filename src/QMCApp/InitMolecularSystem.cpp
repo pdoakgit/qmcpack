@@ -29,8 +29,8 @@ namespace qmcplusplus
 {
 typedef QMCTraits::RealType RealType;
 
-InitMolecularSystem::InitMolecularSystem(ParticleSetPool* pset, const char* aname)
-    : OhmmsElementBase(aname), ptclPool(pset)
+InitMolecularSystem::InitMolecularSystem(ParticleSetPool* pset, RandomNumberControl& random_control, const char* aname)
+    : OhmmsElementBase(aname), ptclPool(pset), random_control_(random_control)
 {}
 
 bool InitMolecularSystem::put(xmlNodePtr cur)
@@ -71,7 +71,7 @@ void InitMolecularSystem::initAtom(ParticleSet* ions, ParticleSet* els)
 {
   //3N-dimensional Gaussian
   ParticleSet::ParticlePos_t chi(els->getTotalNum());
-  makeGaussRandom(chi);
+  makeGaussRandomWithEngine(chi, random_control_.get_random());
   RealType q = std::sqrt(static_cast<RealType>(els->getTotalNum())) * 0.5;
   int nel(els->getTotalNum()), items(0);
   while (nel)
@@ -110,7 +110,7 @@ void InitMolecularSystem::initMolecule(ParticleSet* ions, ParticleSet* els)
   RealType cutoff = 4.0;
   ParticleSet::ParticlePos_t chi(els->getTotalNum());
   //makeGaussRandom(chi);
-  makeSphereRandom(chi);
+  makeSphereRandom(chi, random_control_.get_random());
   int numUp   = els->last(0);
   int numDown = els->last(1) - els->first(0);
   int item    = 0;
@@ -297,7 +297,7 @@ void InitMolecularSystem::initWithVolume(ParticleSet* ions, ParticleSet* els)
   app_log() << newbox << std::endl;
 
   Ru.resize(els->getTotalNum());
-  makeUniformRandom(Ru);
+  makeUniformRandom(Ru, random_control_.get_random());
   for (int iat = 0; iat < Ru.size(); ++iat)
     els->R[iat] = slattice.toCart(Ru[iat]) + shift;
   els->R.setUnit(PosUnit::Cartesian);

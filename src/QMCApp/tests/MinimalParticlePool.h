@@ -13,6 +13,7 @@
 #define QMCPLUSPLUS_MINIMALPARTICLEPOOL_H
 
 #include "Message/Communicate.h"
+#include "OhmmsApp/RandomNumberControl.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "QMCApp/ParticleSetPool.h"
 
@@ -58,7 +59,7 @@ class MinimalParticlePool
 )";
 
 public:
-  ParticleSetPool operator()(Communicate* c)
+  ParticleSetPool operator()(RandomNumberControl& random_control, Communicate* c)
   {
     Libxml2Document doc;
 
@@ -67,7 +68,7 @@ public:
     xmlNodePtr root     = doc.getRoot();
     xmlNodePtr sim_cell = xmlFirstElementChild(root);
 
-    ParticleSetPool pp(c);
+    ParticleSetPool pp(c, random_control);
 
     // Need to set up simulation cell lattice before reading particle sets
     pp.putLattice(sim_cell);

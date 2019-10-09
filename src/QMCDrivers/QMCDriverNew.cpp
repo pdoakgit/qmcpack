@@ -51,6 +51,7 @@ QMCDriverNew::QMCDriverNew(QMCDriverInput&& input,
                            QMCHamiltonian& h,
                            WaveFunctionPool& ppool,
                            const std::string timer_prefix,
+                           RandomNumberControl& random_control,
                            Communicate* comm)
     : MPIObjectBase(comm),
       qmcdriver_input_(input),
@@ -62,7 +63,8 @@ QMCDriverNew::QMCDriverNew(QMCDriverInput&& input,
       estimator_manager_(nullptr),
       wOut(0),
       walkers_per_crowd_(1),
-      timers_(timer_prefix)
+      timers_(timer_prefix),
+      random_control_(random_control)
       // num_crowds_(input.get_num_crowds())
 {
   QMCType = "invalid";
@@ -118,7 +120,7 @@ void QMCDriverNew::process(xmlNodePtr cur)
   // if seeds are not made then neither are the children. So when MoveContexts are created a segfault occurs.
   // For now it is unclear whether get_reset_random should always be true on the first run or what.
   app_log() << "  Regenerate random seeds." << std::endl;
-  RandomNumberControl::make_seeds();
+  random_control_.make_seeds();
   // }
 
   
@@ -295,7 +297,7 @@ void QMCDriverNew::recordBlock(int block)
   {
     timers_.checkpoint_timer.start();
     branch_engine_->write(root_name_, true); //save energy_history
-    RandomNumberControl::write(root_name_, myComm);
+    random_control_.write(root_name_, myComm);
     timers_.checkpoint_timer.stop();
   }
 }
@@ -306,7 +308,7 @@ bool QMCDriverNew::finalize(int block, bool dumpwalkers)
   branch_engine_->finalize(population_.get_num_global_walkers(), walkers);
 
   if (qmcdriver_input_.get_dump_config())
-    RandomNumberControl::write(root_name_, myComm);
+    random_control_.write(root_name_, myComm);
 
   return true;
 }
@@ -362,7 +364,7 @@ void QMCDriverNew::createRngsStepContexts()
 
   for(int i = 0; i < num_crowds_; ++i)
   {
-    Rng[i].reset(new RandomGenerator_t(*(RandomNumberControl::Children[i])));
+    Rng[i].reset(new RandomGenerator_t(*(random_control_.Children[i])));
     step_contexts_[i].reset(new ContextForSteps(crowds_[i]->size(), population_.get_num_particles(),
                                             population_.get_particle_group_indexes(), *(Rng[i])));
   }

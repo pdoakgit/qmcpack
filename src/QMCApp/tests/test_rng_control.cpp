@@ -31,9 +31,10 @@ TEST_CASE("RandomNumberControl make_seeds", "[ohmmsapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl::make_seeds();
+  RandomNumberControl random_control;
+  random_control.make_seeds();
 
-  REQUIRE(RandomNumberControl::Children.size() > 0);
+  REQUIRE(random_control.Children.size() > 0);
 }
 
 TEST_CASE("RandomNumberControl no random in xml", "[ohmmsapp]")

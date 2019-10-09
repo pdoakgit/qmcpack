@@ -49,8 +49,9 @@ QMCCorrelatedSamplingLinearOptimize::QMCCorrelatedSamplingLinearOptimize(MCWalke
                                                                          QMCHamiltonian& h,
                                                                          HamiltonianPool& hpool,
                                                                          WaveFunctionPool& ppool,
+                                                                         RandomNumberControl& random_control,
                                                                          Communicate* comm)
-    : QMCLinearOptimize(w, psi, h, hpool, ppool, comm),
+: QMCLinearOptimize(w, psi, h, hpool, ppool, random_control, comm),
       exp0(-16),
       nstabilizers(3),
       stabilizerScale(2.0),
@@ -330,11 +331,11 @@ bool QMCCorrelatedSamplingLinearOptimize::put(xmlNodePtr q)
   if (vmcEngine == 0)
   {
 #if defined(QMC_CUDA)
-    vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, myComm);
+    vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, random_control_, myComm);
     vmcCSEngine = dynamic_cast<VMCcuda*>(vmcEngine.get());
     vmcCSEngine->setOpt(true);
 #else
-    vmcEngine = std::make_unique<VMCLinearOpt>(W, Psi, H, hamPool, psiPool, myComm);
+    vmcEngine = std::make_unique<VMCLinearOpt>(W, Psi, H, hamPool, psiPool, random_control_, myComm);
     vmcCSEngine = dynamic_cast<VMCLinearOpt*>(vmcEngine.get());
 #endif
     vmcEngine->setUpdateMode(vmcMove[0] == 'p');

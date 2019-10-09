@@ -25,8 +25,9 @@
 #include "Configuration.h"
 #include "Utilities/PooledData.h"
 #include "Utilities/NewTimer.h"
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCWaveFunctions/TrialWaveFunction.h"
-#include "QMCApp/WaveFunctionPool.h"
+//#include "QMCApp/WaveFunctionPool.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"
 #include "Estimators/EstimatorManagerBase.h"
 #include "QMCDrivers/MCPopulation.h"
@@ -45,6 +46,7 @@ namespace qmcplusplus
 //forward declarations: Do not include headers if not needed
 class HDFWalkerOutput;
 class TraceManager;
+class WaveFunctionPool;
 
 /** @ingroup QMCDrivers
  * @{
@@ -91,6 +93,7 @@ public:
                QMCHamiltonian& h,
                WaveFunctionPool& ppool,
                const std::string timer_prefix,
+               RandomNumberControl& random_control,
                Communicate* comm);
 
   QMCDriverNew(QMCDriverNew&&) = default;
@@ -337,6 +340,7 @@ protected:
 
   DriverTimers timers_;
 
+  RandomNumberControl& random_control_;
 public:
   ///Copy Constructor (disabled).
   QMCDriverNew(const QMCDriverNew&) = delete;

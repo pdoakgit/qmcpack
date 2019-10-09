@@ -24,7 +24,7 @@
 namespace qmcplusplus
 {
 
-WalkerControlBase* createWalkerController(int nwtot, Communicate* comm, xmlNodePtr cur, bool reconfig)
+WalkerControlBase* createWalkerController(int nwtot, RandomNumberControl& random_control, Communicate* comm, xmlNodePtr cur, bool reconfig)
 {
   app_log() << "  Creating WalkerController: target  number of walkers = " << nwtot << std::endl;
   ///set of parameters
@@ -52,7 +52,7 @@ WalkerControlBase* createWalkerController(int nwtot, Communicate* comm, xmlNodeP
     if (fixw)
     {
       app_log() << "  Using WalkerReconfigurationMPI for population control." << std::endl;
-      wc = new WalkerReconfigurationMPI(comm);
+      wc = new WalkerReconfigurationMPI(random_control, comm);
     }
     else
     {
@@ -66,7 +66,7 @@ WalkerControlBase* createWalkerController(int nwtot, Communicate* comm, xmlNodeP
     if (fixw)
     {
       app_log() << "  Using WalkerReconfiguration for population control." << std::endl;
-      wc = new WalkerReconfiguration(comm);
+      wc = new WalkerReconfiguration(random_control, comm);
     }
     else
     {

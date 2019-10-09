@@ -19,6 +19,7 @@
 #define QMCPLUSPLUS_PRIME_NUMBER_SET_H
 #include <vector>
 #include <limits>
+#include <stdexcept>
 
 ///dummy declaration
 template<typename UIntType>
@@ -144,7 +145,7 @@ struct PrimeNumberSet : public PrimeConstants<UIntType>
     {
       std::ostringstream o;
       o << "  PrimeNumberSet::get Failed to generate " << n2add << " prime numbers among " << n << " requested.";
-      APP_ABORT(o.str());
+      throw std::runtime_error(o.str());
       return false; //to make compiler happy
     }
     primes_add.insert(primes_add.end(), primes.begin() + offset, primes.begin() + offset + n);

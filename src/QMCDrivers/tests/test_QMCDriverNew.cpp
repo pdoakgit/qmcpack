@@ -13,12 +13,10 @@
 #include "catch.hpp"
 
 #include "QMCDrivers/QMCDriverNew.h"
+#include "QMCDrivers/tests/SetupPools.h"
 #include "QMCDrivers/tests/QMCDriverNewTestWrapper.h"
 #include "QMCDrivers/tests/ValidQMCInputSections.h"
 #include "Message/Communicate.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
 #include "QMCDrivers/MCPopulation.h"
 #include "Concurrency/Info.hpp"
 #include "Concurrency/UtilityFunctions.hpp"
@@ -30,9 +28,9 @@ TEST_CASE("QMCDriverNew tiny case", "[drivers]")
 {
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+
+  RandomNumberControl random_control;
+  SetupPools pools(random_control);
 
   Libxml2Document doc;
   bool okay = doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_tiny_index]);
@@ -40,17 +38,10 @@ TEST_CASE("QMCDriverNew tiny case", "[drivers]")
   xmlNodePtr node = doc.getRoot();
   QMCDriverInput qmcdriver_input(1);
   qmcdriver_input.readXML(node);
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
-  MCPopulation population(1, particle_pool.getParticleSet("e"), wavefunction_pool.getPrimary(), hamiltonian_pool.getPrimary());
-  QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(wavefunction_pool.getPrimary()),
-                                    *(hamiltonian_pool.getPrimary()), wavefunction_pool, comm);
+
+  MCPopulation population(1, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(), pools.hamiltonian_pool->getPrimary());
+  QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(pools.wavefunction_pool->getPrimary()),
+                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control, pools.comm);
 
   // setStatus must be called before process
   std::string root_name{"Test"};
@@ -74,9 +65,9 @@ TEST_CASE("QMCDriverNew integration", "[drivers]")
 {
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+
+  RandomNumberControl random_control;
+  SetupPools pools(random_control);
 
   Libxml2Document doc;
   bool okay = doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_batch_index]);
@@ -84,17 +75,10 @@ TEST_CASE("QMCDriverNew integration", "[drivers]")
   xmlNodePtr node = doc.getRoot();
   QMCDriverInput qmcdriver_input(3);
   qmcdriver_input.readXML(node);
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
-  MCPopulation population(4, particle_pool.getParticleSet("e"), wavefunction_pool.getPrimary(), hamiltonian_pool.getPrimary());
-  QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(wavefunction_pool.getPrimary()),
-                                    *(hamiltonian_pool.getPrimary()), wavefunction_pool, comm);
+
+  MCPopulation population(4, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(), pools.hamiltonian_pool->getPrimary());
+  QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(pools.wavefunction_pool->getPrimary()),
+                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control, pools.comm);
 
   // setStatus must be called before process
   std::string root_name{"Test"};

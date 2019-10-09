@@ -52,8 +52,9 @@ QMCFixedSampleLinearOptimize::QMCFixedSampleLinearOptimize(MCWalkerConfiguration
                                                            QMCHamiltonian& h,
                                                            HamiltonianPool& hpool,
                                                            WaveFunctionPool& ppool,
+                                                           RandomNumberControl& random_control,
                                                            Communicate* comm)
-    : QMCLinearOptimize(w, psi, h, hpool, ppool, comm),
+    : QMCLinearOptimize(w, psi, h, hpool, ppool, random_control, comm),
 #ifdef HAVE_LMY_ENGINE
       vdeps(1, std::vector<double>()),
 #endif
@@ -474,7 +475,10 @@ bool QMCFixedSampleLinearOptimize::put(xmlNodePtr q)
     return processOptXML(q, vmcMove, ReportToH5 == "yes", useGPU == "yes");
 }
 
-bool QMCFixedSampleLinearOptimize::processOptXML(xmlNodePtr opt_xml, const std::string& vmcMove, bool reportH5, bool useGPU)
+bool QMCFixedSampleLinearOptimize::processOptXML(xmlNodePtr opt_xml,
+                                                 const std::string& vmcMove,
+                                                 bool reportH5,
+                                                 bool useGPU)
 {
   m_param.put(opt_xml);
   tolower(targetExcitedStr);
@@ -553,10 +557,10 @@ bool QMCFixedSampleLinearOptimize::processOptXML(xmlNodePtr opt_xml, const std::
   // {
 #if defined(QMC_CUDA)
   if (useGPU)
-    vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, myComm);
+    vmcEngine = std::make_unique<VMCcuda>(W, Psi, H, psiPool, random_control_, myComm);
   else
 #endif
-    vmcEngine = std::make_unique<VMC>(W, Psi, H, psiPool, myComm);
+    vmcEngine = std::make_unique<VMC>(W, Psi, H, psiPool, random_control_, myComm);
   vmcEngine->setUpdateMode(vmcMove[0] == 'p');
   // }
 

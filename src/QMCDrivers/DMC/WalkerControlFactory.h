@@ -15,13 +15,13 @@
 #define QMCPLUSPLUS_WALKER_CONTROL_FACTORY_H
 
 #include "QMCDrivers/WalkerControlBase.h"
-
+#include "OhmmsApp/RandomNumberControl.h"
 namespace qmcplusplus
 {
 /** function to create WalkerControlBase or its derived class
  * @param current number of walkers
  */
 
-WalkerControlBase* createWalkerController(int nwtot, Communicate* comm, xmlNodePtr cur, bool reconfig = false);
+  WalkerControlBase* createWalkerController(int nwtot, RandomNumberControl& random_control, Communicate* comm, xmlNodePtr cur, bool reconfig = false);
 } // namespace qmcplusplus
 #endif

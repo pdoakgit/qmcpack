@@ -19,6 +19,7 @@
 #ifndef QMCPLUSPLUS_CS_VMC_UPDATEALL_H
 #define QMCPLUSPLUS_CS_VMC_UPDATEALL_H
 
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCDrivers/CorrelatedSampling/CSUpdateBase.h"
 
 namespace qmcplusplus

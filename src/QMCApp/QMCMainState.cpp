@@ -43,9 +43,9 @@ namespace qmcplusplus
 QMCMainState::QMCMainState(Communicate* c) : MPIObjectBase(c), qmcSystem(0), curRunType(QMCRunType::DUMMY)
 {
   ////create ParticleSetPool
-  ptclPool = new ParticleSetPool(myComm);
+  ptclPool = new ParticleSetPool(myComm, this->get_random_control());
   //create WaveFunctionPool
-  psiPool = new WaveFunctionPool(myComm);
+  psiPool = new WaveFunctionPool(myComm, this->get_random_control());
   psiPool->setParticleSetPool(ptclPool);
   //create HamiltonianPool
   hamPool = new HamiltonianPool(myComm);

@@ -90,7 +90,6 @@ namespace qmcplusplus
 template<class T>
 using RandomGenerator = BoostRandom<T>;
 typedef BoostRandom<OHMMS_PRECISION_FULL> RandomGenerator_t;
-//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #else
 
@@ -99,14 +98,12 @@ typedef BoostRandom<OHMMS_PRECISION_FULL> RandomGenerator_t;
 namespace qmcplusplus
 {
 typedef SprngRandom<0> RandomGenerator_t;
-//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #else
 #include "Utilities/SimpleRandom.h"
 namespace qmcplusplus
 {
 typedef SimpleRandom<MTRand> RandomGenerator_t;
-//extern RandomGenerator_t Random;
 } // namespace qmcplusplus
 #endif
 #endif

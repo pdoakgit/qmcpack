@@ -48,6 +48,7 @@ public:
                      QMCHamiltonian& h,
                      ParticleSetPool& ptclPool,
                      WaveFunctionPool& ppool,
+                     RandomNumberControl& random_control,
                      Communicate* comm);
 
   ~WaveFunctionTester();
@@ -111,6 +112,8 @@ private:
   //vector<RealType> Mv3(std::vector<std::vector<RealType> >& M, std::vector<RealType>& v);
 
   std::ofstream fout;
+
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

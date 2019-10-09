@@ -161,7 +161,7 @@ bool QMCMain::execute()
     xmlNodePtr rptr = myRandomControl.initialize(m_context);
 
     auto world = boost::mpi3::environment::get_world_instance();
-    afqmc::AFQMCFactory afqmc_fac(world);
+    afqmc::AFQMCFactory afqmc_fac(world, get_random_control());
     if (!afqmc_fac.parse(cur))
     {
       app_log() << " Error in AFQMCFactory::parse() ." << std::endl;
@@ -322,7 +322,7 @@ bool QMCMain::executeQMCSection(xmlNodePtr cur, bool reuse)
   a.add(random_test, "testrng");
   a.put(cur);
   if (random_test == "yes")
-    RandomNumberControl::test();
+    get_random_control().test();
   if (qmcSystem == 0)
     qmcSystem = ptclPool->getWalkerSet(target);
   bool success = runQMC(cur, reuse);
@@ -442,7 +442,7 @@ bool QMCMain::validateXML()
     }
     else if (cname == "init")
     {
-      InitMolecularSystem moinit(ptclPool);
+      InitMolecularSystem moinit(ptclPool, get_random_control());
       moinit.put(cur);
     }
 #if !defined(REMOVE_TRACEMANAGER)
@@ -557,7 +557,7 @@ bool QMCMain::runQMC(xmlNodePtr cur, bool reuse)
     QMCDriverFactory driver_factory;
     QMCDriverFactory::DriverAssemblyState das = driver_factory.readSection(myProject.m_series, cur);
     qmc_driver = driver_factory.newQMCDriver(std::move(last_driver), myProject.m_series, cur, das, *qmcSystem, *ptclPool,
-                                             *psiPool, *hamPool, *population_, myComm);
+                                             *psiPool, *hamPool, *population_, get_random_control(), myComm);
     append_run = das.append_run;
   }
 
@@ -621,7 +621,7 @@ bool QMCMain::setMCWalkers(xmlXPathContextPtr context_)
     a.add(fname, "src");
     a.put(result[result.size() - 1]);
     if (fname.size())
-      RandomNumberControl::read(fname, myComm);
+      get_random_control().read(fname, myComm);
   }
   return true;
 }

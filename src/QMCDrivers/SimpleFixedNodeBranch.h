@@ -22,6 +22,7 @@
 #define QMCPLUSPLUS_SIMPLE_FIXEDNODE_BRANCHER_H
 
 #include <Configuration.h>
+#include "OhmmsApp/RandomNumberControl.h"
 #include <OhmmsData/ParameterSet.h>
 #include <Particle/MCWalkerConfiguration.h>
 #include <Estimators/BlockHistogram.h>
@@ -231,7 +232,7 @@ struct SimpleFixedNodeBranch : public QMCTraits
    * @param fixW true, if reconfiguration with the fixed number of walkers is used
    * @return number of copies to make in case targetwalkers changed
    */
-  int initWalkerController(MCWalkerConfiguration& mcwc, bool fixW, bool killwalker);
+  int initWalkerController(MCWalkerConfiguration& mcwc, RandomNumberControl& random_control, bool fixW, bool killwalker);
 
   /** initialize  the WalkerController
    * @param w Walkers
@@ -239,7 +240,7 @@ struct SimpleFixedNodeBranch : public QMCTraits
    * @param fixW true, if reconfiguration with the fixed number of walkers is used
    * @return number of copies to make in case targetwalkers changed
    */
-  int initWalkerController(MCPopulation& pop, bool fixW, bool killwalker);
+  int initWalkerController(MCPopulation& pop, RandomNumberControl& random_control, bool fixW, bool killwalker);
 
   /** initialize reptile stats
    *
@@ -432,6 +433,8 @@ private:
                        FullPrecRealType targetSigma,
                        FullPrecRealType maxSigma,
                        int Nelec = 0);
+
+  RandomNumberControl random_control_;
 };
 
 } // namespace qmcplusplus

@@ -38,8 +38,9 @@ CSVMC::CSVMC(MCWalkerConfiguration& w,
              TrialWaveFunction& psi,
              QMCHamiltonian& h,
              WaveFunctionPool& ppool,
+             RandomNumberControl& random_control,
              Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm), multiEstimator(0), Mover(0), UseDrift("yes")
+    : QMCDriver(w, psi, h, ppool, random_control ,comm), multiEstimator(0), Mover(0), UseDrift("yes")
 {
   RootName = "csvmc";
   QMCType  = "CSVMC";
@@ -196,7 +197,7 @@ bool CSVMC::run()
 #endif
   //copy back the random states
   for (int ip = 0; ip < NumThreads; ++ip)
-    *(RandomNumberControl::Children[ip]) = *(Rng[ip]);
+    *(random_control_.Children[ip]) = *(Rng[ip]);
   ///write samples to a file
   bool wrotesamples = DumpConfig;
   if (DumpConfig)
@@ -246,7 +247,7 @@ void CSVMC::resetRun()
 #if !defined(REMOVE_TRACEMANAGER)
       traceClones[ip] = Traces->makeClone();
 #endif
-      Rng[ip] = new RandomGenerator_t(*(RandomNumberControl::Children[ip]));
+      Rng[ip] = new RandomGenerator_t(*(random_control_.Children[ip]));
 
       if (qmc_driver_mode[QMC_UPDATE_MODE])
       {

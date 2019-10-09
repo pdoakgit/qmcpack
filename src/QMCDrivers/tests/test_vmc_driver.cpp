@@ -102,12 +102,12 @@ TEST_CASE("VMC", "[drivers][vmc]")
 
   HamiltonianPool hpool(c);
 
-  WaveFunctionPool wpool(c);
+  RandomNumberControl random_control;
+  WaveFunctionPool wpool(c, random_control);
 
   //EstimatorManagerBase emb(c);
 
-
-  VMC vmc_omp(elec, psi, h, wpool, c);
+  VMC vmc_omp(elec, psi, h, wpool, random_control, c);
 
   const char* vmc_input = "<qmc method=\"vmc\" move=\"pbyp\"> \
    <parameter name=\"substeps\">1</parameter> \

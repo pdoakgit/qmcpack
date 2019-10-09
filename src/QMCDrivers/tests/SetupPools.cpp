@@ -18,7 +18,7 @@ namespace qmcplusplus
 {
 namespace testing
 {
-SetupPools::SetupPools()
+SetupPools::SetupPools(RandomNumberControl& random_control)
 {
   OHMMS::Controller->initialize(0, NULL);
   comm = OHMMS::Controller;
@@ -26,8 +26,8 @@ SetupPools::SetupPools()
   std::cout << "SetupPools::SetupPools()\n";
   Concurrency::OverrideMaxThreads<> override(8);
   
-  particle_pool.reset(new ParticleSetPool(mpp(comm)));
-  wavefunction_pool.reset(new WaveFunctionPool(wfp(comm, particle_pool.get())));
+  particle_pool.reset(new ParticleSetPool(mpp(random_control, comm)));
+  wavefunction_pool.reset(new WaveFunctionPool(wfp(random_control, comm, particle_pool.get())));
   wavefunction_pool->setPrimary(wavefunction_pool->getWaveFunction("psi0"));
   hamiltonian_pool.reset(new HamiltonianPool(mhp(comm, particle_pool.get(), wavefunction_pool.get())));
 }

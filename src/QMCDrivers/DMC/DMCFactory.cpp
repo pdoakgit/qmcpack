@@ -29,13 +29,14 @@ QMCDriver* DMCFactory::create(MCWalkerConfiguration& w,
                               QMCHamiltonian& h,
                               HamiltonianPool& hpool,
                               WaveFunctionPool& ppool,
+                              RandomNumberControl& random_control,
                               Communicate* comm)
 {
 #ifdef QMC_CUDA
   if (GPU)
     return new DMCcuda(w, psi, h, ppool, comm);
 #endif
-  QMCDriver* qmc = new DMC(w, psi, h, ppool, comm);
+  QMCDriver* qmc = new DMC(w, psi, h, ppool, random_control, comm);
   qmc->setUpdateMode(PbyPUpdate);
   return qmc;
 }

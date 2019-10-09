@@ -11,6 +11,7 @@
 
 #ifndef QMCPLUSPLUS_QMCDRIVERNEWTESTWRAPPER_H
 #define QMCPLUSPLUS_QMCDRIVERNEWTESTWRAPPER_H
+#include "OhmmsApp/RandomNumberControl.h"
 #include "QMCDrivers/QMCDriverNew.h"
 #include "QMCDrivers/DriverTraits.h"
 
@@ -27,8 +28,9 @@ public:
                           TrialWaveFunction& psi,
                           QMCHamiltonian& h,
                           WaveFunctionPool& ppool,
+                          RandomNumberControl& random_control,
                           Communicate* comm)
-    : QMCDriverNew(std::move(input), population, psi, h, ppool, "QMCDriverTestWrapper::", comm)
+      : QMCDriverNew(std::move(input), population, psi, h, ppool, "QMCDriverTestWrapper::", random_control, comm)
   {}
 
   QMCRunType getRunType() { return QMCRunType::DUMMY; }

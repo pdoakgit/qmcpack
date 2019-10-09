@@ -92,7 +92,8 @@ TEST_CASE("Coulomb PBC A-B Ewald3D", "[hamiltonian]")
   elec.update();
 
 
-  ParticleSetPool ptcl = ParticleSetPool(c);
+  RandomNumberControl random_control;
+  ParticleSetPool ptcl(c, random_control);
 
   LRCoulombSingleton::CoulombHandler = new EwaldHandler3D(ions);
   LRCoulombSingleton::CoulombHandler->initBreakup(ions);
@@ -186,7 +187,8 @@ TEST_CASE("Coulomb PBC A-B BCC H Ewald3D", "[hamiltonian]")
   elec.update();
 
 
-  ParticleSetPool ptcl = ParticleSetPool(c);
+  RandomNumberControl random_control;
+  ParticleSetPool ptcl(c, random_control);
 
   LRCoulombSingleton::CoulombHandler = new EwaldHandler3D(ions);
   LRCoulombSingleton::CoulombHandler->initBreakup(ions);

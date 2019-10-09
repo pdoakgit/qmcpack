@@ -102,7 +102,9 @@ TEST_CASE("Einspline SPO from HDF", "[wavefunction]")
   TrialWaveFunction psi(c);
   // Need 1 electron and 1 proton, somehow
   //ParticleSet target = ParticleSet();
-  ParticleSetPool ptcl = ParticleSetPool(c);
+  RandomNumberControl random_control;
+  ParticleSetPool ptcl{c, random_control};
+
   ptcl.addParticleSet(&elec_);
   ptcl.addParticleSet(&ions_);
 

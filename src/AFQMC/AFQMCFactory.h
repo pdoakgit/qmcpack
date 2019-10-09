@@ -40,7 +40,7 @@ class AFQMCFactory
   public:
 
     ///constructor
-    AFQMCFactory(boost::mpi3::communicator& comm_):
+  AFQMCFactory(boost::mpi3::communicator& comm_, RandomNumberControl& random_control):
         m_series(0),project_title("afqmc"),
         gTG(comm_),
         TGHandler(gTG,-10),
@@ -49,7 +49,7 @@ class AFQMCFactory
         WSetFac(InfoMap),
         WfnFac(InfoMap),
         PropFac(InfoMap),
-        DriverFac(gTG,TGHandler,InfoMap,WSetFac,PropFac,WfnFac,HamFac)
+        DriverFac(gTG,TGHandler,InfoMap,WSetFac,PropFac,WfnFac,HamFac,random_control)
     {
 #ifdef ENABLE_CUDA
 // taken from src/OhmmsApp/RandomNumberControl.cpp

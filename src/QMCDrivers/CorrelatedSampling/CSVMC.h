@@ -39,6 +39,7 @@ public:
         TrialWaveFunction& psi,
         QMCHamiltonian& h,
         WaveFunctionPool& ppool,
+        RandomNumberControl& random_control,
         Communicate* comm);
 
   bool run();

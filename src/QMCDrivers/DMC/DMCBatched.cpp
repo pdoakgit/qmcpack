@@ -28,8 +28,10 @@ DMCBatched::DMCBatched(QMCDriverInput&& qmcdriver_input,
                        TrialWaveFunction& psi,
                        QMCHamiltonian& h,
                        WaveFunctionPool& wf_pool,
+                       RandomNumberControl& random_control,
                        Communicate* comm)
-    : QMCDriverNew(std::move(qmcdriver_input), pop, psi, h, wf_pool, "DMCBatched::", comm), dmcdriver_input_(input)
+    : QMCDriverNew(std::move(qmcdriver_input), pop, psi, h, wf_pool, "DMCBatched::", random_control, comm),
+      dmcdriver_input_(input)
 {
   QMCType = "DMCBatched";
 }
@@ -58,7 +60,8 @@ void DMCBatched::resetUpdateEngines()
   ReportEngine PRE("DMC", "resetUpdateEngines");
   Timer init_timer;
   // Here DMC loads "Ensemble of cloned MCWalkerConfigurations"
-  int nw_multi = branch_engine_->initWalkerController(population_,dmcdriver_input_.get_reconfiguration(), false);
+  int nw_multi =
+      branch_engine_->initWalkerController(population_, random_control_, dmcdriver_input_.get_reconfiguration(), false);
   RefVector<MCPWalker> walkers(convertUPtrToRefVector(population_.get_walkers()));
 
   branch_engine_->checkParameters(population_.get_num_global_walkers(), walkers);
@@ -424,7 +427,7 @@ void DMCBatched::runDMCStep(int crowd_id,
 {
   Crowd& crowd  = *(crowds[crowd_id]);
   int max_steps = sft.qmcdrv_input.get_max_steps();
-  for(QMCHamiltonian& ham : crowd.get_walker_hamiltonians())
+  for (QMCHamiltonian& ham : crowd.get_walker_hamiltonians())
     ham.setRandomGenerator(&((context_for_steps[crowd_id])->get_random_gen()));
 
   // This is migraine inducing here and in the original driver, I believe they are the same in
@@ -477,9 +480,9 @@ bool DMCBatched::run()
       ScopedTimer local_timer(&(timers_.run_steps_timer));
       dmc_state.step = step;
       crowd_task(runDMCStep, dmc_state, timers_, std::ref(step_contexts_), std::ref(crowds_));
-      
+
       branch_engine_->branch(step, crowds_, population_);
-      for( auto& crowd_ptr : crowds_)
+      for (auto& crowd_ptr : crowds_)
         crowd_ptr->clearWalkers();
       population_.distributeWalkers(crowds_.begin(), crowds_.end(), walkers_per_crowd_);
     }
@@ -502,7 +505,6 @@ bool DMCBatched::run()
                                                 total_block_weight);
     // TODO: should be accept rate for block
     estimator_manager_->stopBlockNew(total_accept_ratio);
-
   }
   return false;
 }

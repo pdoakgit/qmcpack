@@ -85,12 +85,12 @@ TEST_CASE("WaveFunctionPool", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  WaveFunctionPool wp(c);
+  RandomNumberControl random_control;
+  WaveFunctionPool wp(c, random_control);
 
   REQUIRE(wp.empty() == true);
 
-
-  ParticleSetPool pp(c);
+  ParticleSetPool pp(c, random_control);
   setupParticleSetPool(pp);
   wp.setParticleSetPool(&pp);
 

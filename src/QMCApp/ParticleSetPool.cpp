@@ -31,14 +31,14 @@
 
 namespace qmcplusplus
 {
-ParticleSetPool::ParticleSetPool(Communicate* c, const char* aname) : MPIObjectBase(c), SimulationCell(nullptr), TileMatrix(0)
+ParticleSetPool::ParticleSetPool(Communicate* c, RandomNumberControl& random_control, const char* aname) : MPIObjectBase(c), SimulationCell(nullptr), TileMatrix(0), random_control_(random_control)
 {
   TileMatrix.diagonal(1);
   ClassName = "ParticleSetPool";
   myName    = aname;
 }
 
-ParticleSetPool::ParticleSetPool(ParticleSetPool&& other) : MPIObjectBase(other.myComm), SimulationCell(other.SimulationCell), TileMatrix(other.TileMatrix), myPool(std::move(other.myPool))
+ParticleSetPool::ParticleSetPool(ParticleSetPool&& other) : MPIObjectBase(other.myComm), SimulationCell(other.SimulationCell), TileMatrix(other.TileMatrix), myPool(std::move(other.myPool)), random_control_(other.random_control_)
 {
   ClassName = other.ClassName;
   myName    = other.myName;
@@ -200,7 +200,7 @@ void ParticleSetPool::randomize()
   bool success = true;
   for (int i = 0; i < randomize_nodes.size(); ++i)
   {
-    InitMolecularSystem moinit(this);
+    InitMolecularSystem moinit(this, random_control_);
     success &= moinit.put(randomize_nodes[i]);
     xmlFreeNode(randomize_nodes[i]);
   }
@@ -393,14 +393,14 @@ ParticleSet* ParticleSetPool::createESParticleSet(xmlNodePtr cur, const std::str
     //for PPP, use uniform random
     if (qp->Lattice.SuperCellEnum == SUPERCELL_BULK)
     {
-      makeUniformRandom(qp->R);
+      makeUniformRandom(qp->R, random_control_.get_random());
       qp->R.setUnit(PosUnit::Lattice);
       qp->convert2Cart(qp->R);
     }
     else
     {
       //assign non-trivial positions for the quanmtum particles
-      InitMolecularSystem mole(this);
+      InitMolecularSystem mole(this, random_control_);
       mole.initMolecule(ions, qp);
       qp->R.setUnit(PosUnit::Cartesian);
     }

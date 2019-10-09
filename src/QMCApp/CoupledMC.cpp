@@ -58,7 +58,7 @@ bool QMCMain::executeCMCSection(xmlNodePtr cur)
   int nat = ions->getTotalNum();
   ParticleSet::ParticlePos_t deltaR(nat);
 
-  makeGaussRandomWithEngine(deltaR, Random); //generate random displaement
+  makeGaussRandomWithEngine(deltaR, get_random_control().get_random()); //generate random displaement
 
   //update QMC system
   qmcSystem->update();

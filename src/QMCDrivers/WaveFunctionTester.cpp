@@ -27,6 +27,7 @@
 #include "QMCWaveFunctions/SPOSet.h"
 #include "QMCWaveFunctions/Fermion/SlaterDet.h"
 #include "QMCWaveFunctions/OrbitalSetTraits.h"
+#include "ParticleBase/RandomSeqGenerator.h"
 #include "Numerics/DeterminantOperators.h"
 #include "Numerics/SymmetryOperations.h"
 #include "Numerics/Blasf.h"
@@ -39,8 +40,9 @@ WaveFunctionTester::WaveFunctionTester(MCWalkerConfiguration& w,
                                        QMCHamiltonian& h,
                                        ParticleSetPool& ptclPool,
                                        WaveFunctionPool& ppool,
+                                       RandomNumberControl& random_control,
                                        Communicate* comm)
-    : QMCDriver(w, psi, h, ppool, comm),
+    : QMCDriver(w, psi, h, ppool, random_control, comm),
       checkRatio("no"),
       checkClone("no"),
       checkHamPbyP("no"),
@@ -52,7 +54,8 @@ WaveFunctionTester::WaveFunctionTester(MCWalkerConfiguration& w,
       deltaParam(0.0),
       toleranceParam(0.0),
       outputDeltaVsError(false),
-      checkSlaterDet(true)
+      checkSlaterDet(true),
+      random_control_(random_control)
 {
   m_param.add(checkRatio, "ratio", "string");
   m_param.add(checkClone, "clone", "string");
@@ -67,7 +70,7 @@ WaveFunctionTester::WaveFunctionTester(MCWalkerConfiguration& w,
   m_param.add(checkSlaterDetOption, "sd", "string");
 
   deltaR.resize(w.getTotalNum());
-  makeGaussRandom(deltaR);
+  makeGaussRandomWithEngine(deltaR, random_control_.get_random());
 }
 
 WaveFunctionTester::~WaveFunctionTester() {}
@@ -118,7 +121,7 @@ bool WaveFunctionTester::run()
   }
   else if (checkRatio == "deriv")
   {
-    makeGaussRandom(deltaR);
+    makeGaussRandomWithEngine(deltaR, random_control_.get_random());
     deltaR *= 0.2;
     runDerivTest();
     runDerivNLPPTest();
@@ -1011,7 +1014,7 @@ void WaveFunctionTester::runBasicTest()
   RealType tol        = 1e-3;
   RealType ratio_tol  = 1e-9;
   bool any_ratio_fail = false;
-  makeGaussRandom(deltaR);
+  makeGaussRandomWithEngine(deltaR, random_control_.get_random());
   fout << "deltaR:" << std::endl;
   fout << deltaR << std::endl;
   fout << "Particle       Ratio of Ratios     Computed Ratio   Internal Ratio" << std::endl;
@@ -1078,7 +1081,7 @@ void WaveFunctionTester::runRatioTest()
   MCWalkerConfiguration::iterator it(W.begin()), it_end(W.end());
   while (it != it_end)
   {
-    makeGaussRandom(deltaR);
+    makeGaussRandomWithEngine(deltaR), random_control_);
     Walker_t::WFBuffer_t tbuffer;
     W.R = (**it).R+Tau*deltaR;
     (**it).R=W.R;
@@ -1116,7 +1119,7 @@ void WaveFunctionTester::runRatioTest()
       RealType eold(thisWalker.Properties(LOCALENERGY));
       RealType logpsi(thisWalker.Properties(LOGPSI));
       RealType emixed(eold), enew(eold);
-      makeGaussRandom(deltaR);
+      makeGaussRandomWithEngine(deltaR), random_control_);
       //mave a move
       RealType ratio_accum(1.0);
       for (int iat=0; iat<nat; iat++)
@@ -1203,7 +1206,7 @@ void WaveFunctionTester::runRatioTest()
       RealType ratio_accum(1.0);
       for (int substep=0; substep<3; ++substep)
       {
-        makeGaussRandom(deltaR);
+        makeGaussRandomWithEngine(deltaR), random_control_);
         for (int iat=0; iat<nat; iat++)
         {
           PosType dr(Tau*deltaR[iat]);
@@ -1272,7 +1275,7 @@ void WaveFunctionTester::runRatioTest2()
   MCWalkerConfiguration::iterator it(W.begin()), it_end(W.end());
   for (; it != it_end; ++it)
   {
-    makeGaussRandom(deltaR);
+    makeGaussRandomWithEngine(deltaR, random_control_.get_random());
     Walker_t::WFBuffer_t tbuffer;
     (**it).R += Tau * deltaR;
     W.loadWalker(**it, true);
@@ -1307,7 +1310,7 @@ void WaveFunctionTester::runRatioTest2()
       RealType logpsi(thisWalker.Properties(LOGPSI));
       Psi.evaluateLog(W);
       ParticleSet::ParticleGradient_t realGrad(W.G);
-      makeGaussRandom(deltaR);
+      makeGaussRandomWithEngine(deltaR, random_control_.get_random());
       //mave a move
       for (int iat = 0; iat < nat; iat++)
       {
@@ -1338,11 +1341,11 @@ void WaveFunctionTester::runRatioTest2()
   //}
 }
 
-template<typename T, unsigned D>
-inline void randomize(ParticleAttrib<TinyVector<T, D>>& displ, T fac)
+template<typename T, unsigned D, typename RG>
+inline void randomize(ParticleAttrib<TinyVector<T, D>>& displ, T fac, RG random_gen)
 {
   T* rv = &(displ[0][0]);
-  assignUniformRand(rv, displ.size() * D, Random);
+  assignUniformRand(rv, displ.size() * D, random_gen());
   for (int i = 0; i < displ.size() * D; ++i)
     rv[i] = fac * (rv[i] - 0.5);
 }
@@ -1368,7 +1371,7 @@ void WaveFunctionTester::runRatioV()
   MCWalkerConfiguration::iterator it(W.begin()), it_end(W.end());
   while (it != it_end)
   {
-    makeGaussRandom(deltaR);
+    makeGaussRandomWithEngine(deltaR), random_control_);
     Walker_t::WFBuffer_t tbuffer;
     W.R = (**it).R+Tau*deltaR;
     (**it).R=W.R;
@@ -1383,7 +1386,7 @@ void WaveFunctionTester::runRatioV()
       {
         register RealType r(dt_ie->r(nn));
         if(r>Rmax) continue;
-        randomize(sphere,(RealType)0.5);
+        randomize(sphere,(RealType)0.5, random_control_.rng());
         
         for(int k=0; k<sphere.size(); ++k)
         {
@@ -1433,7 +1436,7 @@ void WaveFunctionTester::runGradSourceTest()
   //copy the properties of the working walker
   Properties = awalker->Properties;
   //sample a new walker configuration and copy to ParticleSet::R
-  //makeGaussRandom(deltaR);
+  //makeGaussRandomWithEngine(deltaR), random_control_);
   W.R = awalker->R;
   //W.R += deltaR;
   W.update();
@@ -1581,7 +1584,7 @@ void WaveFunctionTester::runZeroVarianceTest()
   //copy the properties of the working walker
   Properties = awalker->Properties;
   //sample a new walker configuration and copy to ParticleSet::R
-  //makeGaussRandom(deltaR);
+  //makeGaussRandomWithEngine(deltaR), random_control_);
   W.R = awalker->R;
   //W.R += deltaR;
   W.update();
