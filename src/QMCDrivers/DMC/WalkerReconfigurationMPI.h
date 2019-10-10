@@ -73,7 +73,7 @@ struct WalkerReconfigurationMPI : public WalkerControlBase
    */
   void recvWalkers(MCWalkerConfiguration& W, const std::vector<IndexType>& minus);
 private:
-  RandomNumberControl random_control_;
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

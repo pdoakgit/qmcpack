@@ -31,7 +31,7 @@ TEST_CASE("RandomNumberControl make_seeds", "[ohmmsapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   random_control.make_seeds();
 
   REQUIRE(random_control.Children.size() > 0);

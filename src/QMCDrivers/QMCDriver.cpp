@@ -205,7 +205,7 @@ void QMCDriver::process(xmlNodePtr cur)
   //create branchEngine first
   if (branchEngine == 0)
   {
-    branchEngine = new BranchEngineType(Tau, W.getGlobalNumWalkers());
+    branchEngine = new BranchEngineType(Tau, W.getGlobalNumWalkers(), random_control_);
   }
   //execute the put function implemented by the derived classes
   put(cur);

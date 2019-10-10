@@ -102,7 +102,7 @@ TEST_CASE("VMC", "[drivers][vmc]")
 
   HamiltonianPool hpool(c);
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   WaveFunctionPool wpool(c, random_control);
 
   //EstimatorManagerBase emb(c);

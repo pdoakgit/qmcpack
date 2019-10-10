@@ -2,9 +2,10 @@
 // This file is distributed under the University of Illinois/NCSA Open Source License.
 // See LICENSE file in top directory for details.
 //
-// Copyright (c) 2016 Jeongnim Kim and QMCPACK developers.
+// Copyright (c) 2019 QMCPACK developers.
 //
-// File developed by: Jeremy McMinnis, jmcminis@gmail.com, University of Illinois at Urbana-Champaign
+// File developed by: Peter Doak, doakpw@ornl.gov, Oak Ridge National Laboratory
+//                    Jeremy McMinnis, jmcminis@gmail.com, University of Illinois at Urbana-Champaign
 //                    Jeongnim Kim, jeongnim.kim@gmail.com, University of Illinois at Urbana-Champaign
 //                    Mark A. Berrill, berrillma@ornl.gov, Oak Ridge National Laboratory
 //
@@ -35,22 +36,27 @@ class RandomNumberControl : public OhmmsElementBase
 {
 public:
   typedef RandomGenerator_t::uint_type uint_type;
-  static PrimeNumberSet<uint_type> PrimeNumbers;
+  PrimeNumberSet<uint_type> PrimeNumbers;
   //children random number generator
-   std::vector<RandomGenerator_t*> Children;
+  std::vector<RandomGenerator_t*> Children;
 
   /// constructors and destructors
-  RandomNumberControl(const char* aname = "random");
+  RandomNumberControl(); //const std::string& = "random");
+  RandomNumberControl(int initial_children); //, const std::string& = "random");
 
+  RandomNumberControl(const RandomNumberControl& other);
+  
   bool get(std::ostream& os) const;
   bool put(std::istream& is);
   bool put(xmlNodePtr cur);
   void reset();
    void test();
 
-   void make_seeds();
-   void make_children();
-
+   [[deprecated]] void make_seeds();
+   [[deprecated]] void make_children();
+  void make_seeds(int initial_children);
+  void make_children(int initial_children);
+  
   xmlNodePtr initialize(xmlXPathContextPtr);
 
   /** read in parallel or serial
@@ -90,10 +96,11 @@ public:
    */
   RandomGenerator_t& get_random() { return random_; }
 private:
+
   RandomGenerator_t random_;
   bool NeverBeenInitialized;
   xmlNodePtr myCur;
-   uint_type Offset;
+  uint_type Offset;
 };
 } // namespace qmcplusplus
 

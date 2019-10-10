@@ -55,6 +55,8 @@ TEST_CASE("HamiltonianPool", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
+  RandomNumberControl random_control(8);
+
   HamiltonianPool hpool(c);
 
   REQUIRE(hpool.empty());
@@ -70,13 +72,13 @@ TEST_CASE("HamiltonianPool", "[qmcapp]")
 
   xmlNodePtr root = doc.getRoot();
 
-  ParticleSetPool pp(c);
+  ParticleSetPool pp(c, random_control);
   ParticleSet* qp = createElectronParticleSet();
   pp.addParticleSet(qp);
 
   hpool.setParticleSetPool(&pp);
 
-  WaveFunctionPool wfp(c);
+  WaveFunctionPool wfp(c, random_control);
   TrialWaveFunction psi(c);
   wfp.setParticleSetPool(&pp);
   wfp.setPrimary(&psi);

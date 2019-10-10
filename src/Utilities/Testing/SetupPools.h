@@ -13,9 +13,9 @@
 #define QMCPLUSPLUS_SETUP_POOLS_H
 
 #include "OhmmsApp/RandomNumberControl.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
+#include "Utilities/Testing/MinimalParticlePool.h"
+#include "Utilities/Testing/MinimalWaveFunctionPool.h"
+#include "Utilities/Testing/MinimalHamiltonianPool.h"
 #include "type_traits/template_types.hpp"
 
 namespace qmcplusplus
@@ -39,6 +39,8 @@ public:
   xmlNodePtr node;
 
   Communicate* comm;
+protected:
+  RandomNumberControl& random_control_;
 };
 
 } // namespace testing

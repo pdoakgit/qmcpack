@@ -38,14 +38,34 @@
 namespace qmcplusplus
 {
 ///initialize the static data members
-PrimeNumberSet<RandomGenerator_t::uint_type> RandomNumberControl::PrimeNumbers;
+// PrimeNumberSet<RandomGenerator_t::uint_type> RandomNumberControl::PrimeNumbers;
 // std::vector<RandomGenerator_t*> RandomNumberControl::Children;
 // RandomGenerator_t::uint_type RandomNumberControl::Offset = 11u;
 
 /// constructors and destructors
-RandomNumberControl::RandomNumberControl(const char* aname)
-    : OhmmsElementBase(aname), NeverBeenInitialized(true), myCur(NULL) //, Offset(5)
-{}
+RandomNumberControl::RandomNumberControl() //const std::string& aname)
+    : OhmmsElementBase("random"), NeverBeenInitialized(false), myCur(NULL) //, Offset(5)
+{
+}
+
+/** For testing 
+ */
+RandomNumberControl::RandomNumberControl(int initial_children) //, const std::string& aname)
+    : OhmmsElementBase("random"), NeverBeenInitialized(false), myCur(NULL)
+{
+  std::vector<uint_type> mySeeds;
+  int pid    = 0;
+  int nprocs = 1;
+  //allocate a bunch of primes
+  make_seeds(initial_children);
+  NeverBeenInitialized = false;
+  app_log() << std::endl;  
+}
+
+RandomNumberControl::RandomNumberControl(const RandomNumberControl& other) : NeverBeenInitialized(other.NeverBeenInitialized), Children(other.Children), random_(other.random_), myCur(other.myCur), Offset(other.Offset)
+{
+}
+
 
 /// generic output
 bool RandomNumberControl::get(std::ostream& os) const
@@ -71,8 +91,14 @@ bool RandomNumberControl::put(std::istream& is) { return true; }
 /// reset the generator
 void RandomNumberControl::reset() { make_seeds(); }
 
+/// Legacy reset the generator
+[[deprecated]] void RandomNumberControl::make_seeds()
+{
+  make_seeds(omp_get_max_threads());
+}
+
 /// reset the generator
-void RandomNumberControl::make_seeds()
+void RandomNumberControl::make_seeds(int total_num_children)
 {
   int pid         = OHMMS::Controller->rank();
   int nprocs      = OHMMS::Controller->size();
@@ -81,13 +107,33 @@ void RandomNumberControl::make_seeds()
   //OHMMS::Controller->bcast(iseed);//broadcast the seed
   Offset = iseed;
   std::vector<uint_type> mySeeds;
-  RandomNumberControl::PrimeNumbers.get(Offset, nprocs * (omp_get_max_threads() + 2), mySeeds);
+  PrimeNumbers.get(Offset, nprocs * (total_num_children + 2), mySeeds);
   random_.init(pid, nprocs, mySeeds[pid], Offset + pid);
   //change children as well
-  make_children();
+  make_children(total_num_children);
 }
 
-void RandomNumberControl::make_children()
+void RandomNumberControl::make_children(int total_num_children)
+{
+  int n        = total_num_children - Children.size();
+  while (n)
+  {
+    Children.push_back(new RandomGenerator_t);
+    n--;
+  }
+  int rank       = OHMMS::Controller->rank();
+  int nprocs     = OHMMS::Controller->size();
+  int baseoffset = Offset + nprocs + total_num_children * rank;
+  std::vector<uint_type> myprimes;
+  PrimeNumbers.get(baseoffset, total_num_children, myprimes);
+  for (int ip = 0; ip < total_num_children; ip++)
+  {
+    int offset = baseoffset + ip;
+    Children[ip]->init(rank, nprocs, myprimes[ip], offset);
+  }
+}
+
+[[deprecated]] void RandomNumberControl::make_children()
 {
   int nthreads = omp_get_max_threads();
   int n        = nthreads - Children.size();
@@ -389,6 +435,8 @@ void RandomNumberControl::read_rank_0(hdf_archive& hin, Communicate* comm)
   }
 
   std::vector<uint_type>::iterator vt_it(vt.begin());
+
+  make_children(nthreads);
   for (int i = 0; i < nthreads; i++, vt_it += shape[1])
   {
     std::vector<uint_type> c(vt_it, vt_it + shape[1]);

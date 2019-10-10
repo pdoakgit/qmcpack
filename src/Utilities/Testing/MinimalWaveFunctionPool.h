@@ -37,7 +37,7 @@ class MinimalWaveFunctionPool
 
 public:
   MinimalWaveFunctionPool() : comm_(nullptr) {}
-  WaveFunctionPool operator()(RandomNumberControl random_control, Communicate* comm, ParticleSetPool* particle_pool)
+  WaveFunctionPool operator()(RandomNumberControl& random_control, Communicate* comm, ParticleSetPool* particle_pool)
   {
     comm_ = comm;
     WaveFunctionPool wp(comm_, random_control);

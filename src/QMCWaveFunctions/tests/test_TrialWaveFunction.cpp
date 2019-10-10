@@ -86,7 +86,7 @@ TEST_CASE("TrialWaveFunction", "[wavefunction]")
   elec_.resetGroups();
   elec_.createSK(); // needed by AoS J2 for ChiesaKEcorrection
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl{c, random_control};
   ptcl.addParticleSet(&elec_);
   ptcl.addParticleSet(&ions_);

@@ -26,7 +26,8 @@ TEST_CASE("DMCBatched::calc_default_local_walkers", "[drivers]")
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
 
-  SetupDMCTest dtest(1);
+  RandomNumberControl random_control(8);
+  SetupDMCTest dtest(random_control, 1);
 
 
   auto testWRTWalkersPerRank = [&dtest](int walkers_per_rank) {

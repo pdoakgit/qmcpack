@@ -14,14 +14,14 @@
 
 #include "type_traits/template_types.hpp"
 #include "QMCHamiltonians/QMCHamiltonian.h"
-#include "QMCDrivers/tests/SetupPools.h"
+#include "Utilities/Testing/SetupPools.h"
 
 namespace qmcplusplus
 {
 TEST_CASE("QMCHamiltonian::flex_evaluate", "[hamiltonian]")
 {
   using namespace testing;
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   TrialWaveFunction twf(pools.comm);

@@ -46,6 +46,14 @@ TrialWaveFunction::TrialWaveFunction(Communicate* c)
 {
   ClassName = "TrialWaveFunction";
   myName    = "psi0";
+  myTimers.push_back(TimerManager.createTimer("V timer"));
+  myTimers.push_back(TimerManager.createTimer("VGL timer"));
+  myTimers.push_back(TimerManager.createTimer("ACCEPT timer"));
+  myTimers.push_back(TimerManager.createTimer("NL_TIMER timer"));
+  myTimers.push_back(TimerManager.createTimer("RECOMPUTE timer"));
+  myTimers.push_back(TimerManager.createTimer("BUFFER timer"));
+  myTimers.push_back(TimerManager.createTimer("DERIVS timer"));
+  myTimers.push_back(TimerManager.createTimer("TIMER_skip"));
 }
 
 /** Destructor
@@ -989,7 +997,7 @@ std::vector<std::reference_wrapper<WaveFunctionComponent>> TrialWaveFunction::ex
 }
 
 std::vector<WaveFunctionComponent*> TrialWaveFunction::extractWFCPtrList(const UPtrVector<TrialWaveFunction>& WF_list,
-                                                                        int id)
+                                                                         int id)
 {
   std::vector<WaveFunctionComponent*> WFC_list;
   WFC_list.reserve(WF_list.size());
@@ -999,7 +1007,7 @@ std::vector<WaveFunctionComponent*> TrialWaveFunction::extractWFCPtrList(const U
 }
 
 std::vector<WaveFunctionComponent*> TrialWaveFunction::extractWFCPtrList(const std::vector<TrialWaveFunction*>& WF_list,
-                                                                        int id) const
+                                                                         int id) const
 {
   std::vector<WaveFunctionComponent*> WFC_list;
   WFC_list.reserve(WF_list.size());

@@ -133,7 +133,7 @@ void QMCDriverNew::process(xmlNodePtr cur)
 
   if (!branch_engine_)
   {
-    branch_engine_ = new SimpleFixedNodeBranch(qmcdriver_input_.get_tau(), population_.get_num_global_walkers());
+    branch_engine_ = new SimpleFixedNodeBranch(qmcdriver_input_.get_tau(), population_.get_num_global_walkers(), random_control_);
   }
 
   //create and initialize estimator

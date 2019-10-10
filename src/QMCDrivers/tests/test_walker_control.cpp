@@ -431,7 +431,7 @@ TEST_CASE("Walker control swap walkers nonblocking", "[drivers][walker_control]"
 TEST_CASE("Walker control reconfiguration", "[drivers][walker_control]")
 {
   Communicate* c = OHMMS::Controller;
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   WalkerReconfigurationMPI wr(random_control, c);
 
   wr.dN.resize(c->size());

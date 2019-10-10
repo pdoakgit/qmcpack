@@ -101,7 +101,8 @@ TEST_CASE("DMC Particle-by-Particle advanceWalkers ConstantOrbital", "[drivers][
   DMCUpdatePbyPWithRejectionFast dmc(elec, psi, h, rg);
   EstimatorManagerBase EM;
   double tau = 0.1;
-  SimpleFixedNodeBranch branch(tau, 1);
+  RandomNumberControl random_control;
+  SimpleFixedNodeBranch branch(tau, 1, random_control);
   TraceManager TM;
   DriftModifierUNR DM;
   dmc.resetRun(&branch, &EM, &TM, &DM);
@@ -204,7 +205,8 @@ TEST_CASE("DMC Particle-by-Particle advanceWalkers LinearOrbital", "[drivers][dm
   DMCUpdatePbyPWithRejectionFast dmc(elec, psi, h, rg);
   EstimatorManagerBase EM;
   double tau = 0.1;
-  SimpleFixedNodeBranch branch(tau, 1);
+  RandomNumberControl random_control;
+  SimpleFixedNodeBranch branch(tau, 1, random_control);
   TraceManager TM;
   DriftModifierUNR DM;
   dmc.resetRun(&branch, &EM, &TM, &DM);

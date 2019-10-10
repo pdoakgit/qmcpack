@@ -13,10 +13,6 @@
 
 #include "Configuration.h"
 #include "QMCDrivers/ContextForSteps.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
-
 #include "OhmmsPETE/TinyVector.h"
 #include "OhmmsPETE/TinyVectorOps.h"
 #include "Estimators/tests/FakeEstimator.h"

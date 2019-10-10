@@ -90,7 +90,7 @@ TEST_CASE("Coulomb PBC A-B", "[hamiltonian]")
   elec.update();
 
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl(c, random_control);
 
 
@@ -175,7 +175,7 @@ TEST_CASE("Coulomb PBC A-B BCC H", "[hamiltonian]")
 #endif
   elec.update();
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl(c, random_control);
 
   CoulombPBCAB cab = CoulombPBCAB(ions, elec);

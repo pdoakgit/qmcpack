@@ -15,9 +15,7 @@
 #include "QMCDrivers/VMC/VMCDriverInput.h"
 #include "QMCDrivers/VMC/VMCBatched.h"
 #include "QMCDrivers/tests/ValidQMCInputSections.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
+#include "Utilities/Testing/SetupPools.h"
 #include "Concurrency/Info.hpp"
 #include "Concurrency/UtilityFunctions.hpp"
 
@@ -27,23 +25,15 @@ TEST_CASE("VMCBatched::calc_default_local_walkers", "[drivers]")
 {
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+
+  RandomNumberControl random_control(8);
+  SetupPools pools(random_control);
 
   Libxml2Document doc;
   doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_batch_index]);
   xmlNodePtr node = doc.getRoot();
   QMCDriverInput qmcdriver_input(3);
   qmcdriver_input.readXML(node);
-
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
 
   int num_ranks  = 4;
   int num_crowds = 8;
@@ -52,13 +42,13 @@ TEST_CASE("VMCBatched::calc_default_local_walkers", "[drivers]")
 
 
   auto testWRTWalkersPerRank = [&](int walkers_per_rank) {
-    MCPopulation population(num_ranks, particle_pool.getParticleSet("e"), wavefunction_pool.getPrimary(),
-                            hamiltonian_pool.getPrimary());
+    MCPopulation population(num_ranks, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(),
+                            pools.hamiltonian_pool->getPrimary());
     QMCDriverInput qmcdriver_copy(qmcdriver_input);
     VMCDriverInput vmcdriver_input("yes");
     VMCBatched vmc_batched(std::move(qmcdriver_copy), std::move(vmcdriver_input), population,
-                           *(wavefunction_pool.getPrimary()), *(hamiltonian_pool.getPrimary()), wavefunction_pool,
-                           comm);
+                           *(pools.wavefunction_pool->getPrimary()), *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control,
+                           pools.comm);
     vmc_batched.set_walkers_per_rank(walkers_per_rank, "testing");
     if (num_crowds < 8)
       vmc_batched.set_num_crowds(Concurrency::maxThreads(), "Insufficient threads available to match test input");

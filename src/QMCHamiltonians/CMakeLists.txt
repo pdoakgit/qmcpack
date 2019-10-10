@@ -108,7 +108,7 @@ ELSE(QMC_CUDA)
 ENDIF(QMC_CUDA)
 
 USE_FAKE_RNG(qmcham_unit)
-target_link_libraries(qmcham_unit qmcfakerng)
+target_link_libraries(qmcham_unit qmcfakerng qmcutil)
 #IF(QMC_BUILD_STATIC)
 
 #IF(QMC_BUILD_STATIC)

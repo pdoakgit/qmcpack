@@ -95,7 +95,7 @@ TEST_CASE("PlaneWave SPO from HDF for BCC H", "[wavefunction]")
   TrialWaveFunction psi(c);
   // Need 1 electron and 1 proton, somehow
   //ParticleSet target = ParticleSet();
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl(c, random_control);
   
   ptcl.addParticleSet(&elec);
@@ -250,7 +250,7 @@ TEST_CASE("PlaneWave SPO from HDF for LiH arb", "[wavefunction]")
 
 
   TrialWaveFunction psi(c);
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl(c, random_control);
   ptcl.addParticleSet(&elec);
   ptcl.addParticleSet(&ions);

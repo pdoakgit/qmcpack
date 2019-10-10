@@ -12,13 +12,10 @@
 #ifndef QMCPLUSPLUS_SETUP_DMCTEST_H
 #define QMCPLUSPLUS_SETUP_DMCTEST_H
 
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
 #include "Concurrency/Info.hpp"
 #include "Concurrency/UtilityFunctions.hpp"
 #include "QMCDrivers/DMC/DMCBatched.h"
-#include "QMCDrivers/tests/SetupPools.h"
+#include "Utilities/Testing/SetupPools.h"
 
 namespace qmcplusplus
 {
@@ -27,7 +24,7 @@ namespace testing
 class SetupDMCTest : public SetupPools
 {
 public:
-  SetupDMCTest(int nranks = 4) : num_ranks(nranks), qmcdrv_input(3)
+  SetupDMCTest(RandomNumberControl& random_control, int nranks = 4) : SetupPools(random_control), num_ranks(nranks), qmcdrv_input(3)
   {
     if (Concurrency::maxThreads<>() < 8)
       num_crowds = Concurrency::maxThreads<>();
@@ -55,6 +52,7 @@ public:
             *(wavefunction_pool->getPrimary()),
             *(hamiltonian_pool->getPrimary()),
             *(wavefunction_pool),
+            random_control_,
             comm};
   }
 

@@ -42,7 +42,8 @@ TEST_CASE("Fixed node branch", "[drivers][walker_control]")
 
   double tau = 0.5;
   int nideal = 1;
-  SimpleFixedNodeBranch fnb(tau, nideal);
+  RandomNumberControl random_control;
+  SimpleFixedNodeBranch fnb(tau, nideal, random_control);
 
   fnb.setEstimatorManager(&emb);
   REQUIRE(fnb.getEstimatorManager() == &emb);

@@ -195,7 +195,7 @@ struct SimpleFixedNodeBranch : public QMCTraits
   bool RN;
 
   ///Constructor
-  SimpleFixedNodeBranch(RealType tau, int nideal);
+  SimpleFixedNodeBranch(RealType tau, int nideal, RandomNumberControl& random_control);
 
   ///copy constructor
   SimpleFixedNodeBranch(const SimpleFixedNodeBranch& abranch);
@@ -426,15 +426,15 @@ struct SimpleFixedNodeBranch : public QMCTraits
 
 private:
   ///default constructor (disabled)
-  SimpleFixedNodeBranch() {}
+  SimpleFixedNodeBranch() = delete;
 
   ///set branch cutoff, max, filter
   void setBranchCutoff(FullPrecRealType variance,
                        FullPrecRealType targetSigma,
                        FullPrecRealType maxSigma,
                        int Nelec = 0);
-
-  RandomNumberControl random_control_;
+private:
+  RandomNumberControl& random_control_;
 };
 
 } // namespace qmcplusplus

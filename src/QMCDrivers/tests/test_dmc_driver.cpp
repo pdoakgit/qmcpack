@@ -99,7 +99,7 @@ TEST_CASE("DMC", "[drivers][dmc]")
 
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   
   
   HamiltonianPool hpool(c);

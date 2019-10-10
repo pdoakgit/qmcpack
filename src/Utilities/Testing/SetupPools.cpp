@@ -12,13 +12,13 @@
 #include <iostream>
 #include <catch.hpp>
 #include "Concurrency/UtilityFunctions.hpp"
-#include "QMCDrivers/tests/SetupPools.h"
+#include "Utilities/Testing/SetupPools.h"
 
 namespace qmcplusplus
 {
 namespace testing
 {
-SetupPools::SetupPools(RandomNumberControl& random_control)
+SetupPools::SetupPools(RandomNumberControl& random_control) : random_control_(random_control)
 {
   OHMMS::Controller->initialize(0, NULL);
   comm = OHMMS::Controller;

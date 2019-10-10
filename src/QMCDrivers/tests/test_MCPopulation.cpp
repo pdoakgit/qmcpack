@@ -15,28 +15,17 @@
 #include "OhmmsPETE/TinyVector.h"
 #include "QMCDrivers/MCPopulation.h"
 #include "QMCDrivers/tests/WalkerConsumer.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
+#include "Utilities/Testing/SetupPools.h"
 namespace qmcplusplus
 {
 TEST_CASE("MCPopulation::createWalkers", "[particle][population]")
 {
   using namespace testing;
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+  RandomNumberControl random_control(8);
+  SetupPools pools(random_control);
 
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
-
-  TrialWaveFunction twf(comm);
-  MCPopulation population(1, particle_pool.getParticleSet("e"), &twf, hamiltonian_pool.getPrimary());
+  TrialWaveFunction twf(pools.comm);
+  MCPopulation population(1, pools.particle_pool->getParticleSet("e"), &twf, pools.hamiltonian_pool->getPrimary());
 
   population.createWalkers(8);
   REQUIRE(population.get_walkers().size() == 8);
@@ -58,20 +47,11 @@ TEST_CASE("MCPopulation::createWalkers", "[particle][population]")
 TEST_CASE("MCPopulation::distributeWalkers", "[particle][population]")
 {
   using namespace testing;
-  Communicate* comm;
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
+  RandomNumberControl random_control(8);
+  SetupPools pools(random_control);
 
-  MinimalParticlePool mpp;
-  ParticleSetPool particle_pool = mpp(comm);
-  MinimalWaveFunctionPool wfp;
-  WaveFunctionPool wavefunction_pool = wfp(comm, &particle_pool);
-  wavefunction_pool.setPrimary(wavefunction_pool.getWaveFunction("psi0"));
-  MinimalHamiltonianPool mhp;
-  HamiltonianPool hamiltonian_pool = mhp(comm, &particle_pool, &wavefunction_pool);
-
-  MCPopulation population(1, particle_pool.getParticleSet("e"), wavefunction_pool.getPrimary(),
-                          hamiltonian_pool.getPrimary());
+  MCPopulation population(1, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(),
+                          pools.hamiltonian_pool->getPrimary());
 
   population.createWalkers(24);
   REQUIRE(population.get_walkers().size() == 24);

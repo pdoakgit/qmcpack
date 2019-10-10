@@ -17,10 +17,7 @@
 #include "QMCDrivers/DMC/WalkerControlMPI.h"
 #include "QMCDrivers/tests/ValidQMCInputSections.h"
 #include "QMCDrivers/tests/SetupDMCTest.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
-
+#include "Utilities/Testing/SetupPools.h"
 #include "Concurrency/Info.hpp"
 #include "Concurrency/UtilityFunctions.hpp"
 
@@ -35,7 +32,8 @@ struct UnifiedDriverWalkerControlMPITest
   void operator()()
   {
     using namespace testing;
-    SetupDMCTest dtest;
+    RandomNumberControl random_control(8);
+    SetupDMCTest dtest(random_control);
 
     WalkerControlMPI wc(dtest.comm);
     // This finishes setup of population as a side effect.

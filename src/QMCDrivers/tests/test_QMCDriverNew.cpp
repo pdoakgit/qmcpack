@@ -13,7 +13,7 @@
 #include "catch.hpp"
 
 #include "QMCDrivers/QMCDriverNew.h"
-#include "QMCDrivers/tests/SetupPools.h"
+#include "Utilities/Testing/SetupPools.h"
 #include "QMCDrivers/tests/QMCDriverNewTestWrapper.h"
 #include "QMCDrivers/tests/ValidQMCInputSections.h"
 #include "Message/Communicate.h"
@@ -29,7 +29,7 @@ TEST_CASE("QMCDriverNew tiny case", "[drivers]")
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   Libxml2Document doc;
@@ -66,7 +66,7 @@ TEST_CASE("QMCDriverNew integration", "[drivers]")
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   Libxml2Document doc;

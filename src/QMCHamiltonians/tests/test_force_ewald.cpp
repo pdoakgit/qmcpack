@@ -91,7 +91,7 @@ TEST_CASE("Chiesa Force BCC H Ewald3D", "[hamiltonian]")
 
   elec.createSK();
 
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   ParticleSetPool ptcl(c, random_control);
 
   ions.resetGroups();

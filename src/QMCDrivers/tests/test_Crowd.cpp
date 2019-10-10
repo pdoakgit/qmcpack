@@ -17,11 +17,7 @@
 #include "type_traits/template_types.hpp"
 #include "Estimators/tests/FakeEstimator.h"
 
-#include "QMCApp/tests/MinimalWaveFunctionPool.h"
-#include "QMCApp/tests/MinimalParticlePool.h"
-#include "QMCApp/tests/MinimalHamiltonianPool.h"
-
-#include "QMCDrivers/tests/SetupPools.h"
+#include "Utilities/Testing/SetupPools.h"
 
 namespace qmcplusplus
 {
@@ -100,7 +96,7 @@ TEST_CASE("Crowd integration", "[drivers]")
 TEST_CASE("Crowd::loadWalkers", "[particle]")
 {
   using namespace testing;
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   CrowdWithWalkers crowd_with_walkers(pools);
@@ -122,7 +118,7 @@ TEST_CASE("Crowd::loadWalkers", "[particle]")
 TEST_CASE("Crowd::get_accept_ratio", "[Drivers]")
 {
   using namespace testing;
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   CrowdWithWalkers crowd_with_walkers(pools);
@@ -138,7 +134,7 @@ TEST_CASE("Crowd::get_accept_ratio", "[Drivers]")
 TEST_CASE("Crowd redistribute walkers")
 {
   using namespace testing;
-  RandomNumberControl random_control;
+  RandomNumberControl random_control(8);
   SetupPools pools(random_control);
 
   CrowdWithWalkers crowd_with_walkers(pools);
