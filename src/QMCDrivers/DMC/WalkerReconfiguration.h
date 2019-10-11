@@ -16,7 +16,7 @@
 #define QMCPLUSPLUS_RECONFIGURATION_WALKER_CONTROL_H
 
 #include "QMCDrivers/WalkerControlBase.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 namespace qmcplusplus
 {

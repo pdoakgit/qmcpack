@@ -2,7 +2,7 @@
 
 #include "Configuration.h"
 #include "OhmmsData/libxmldefs.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 #include "mpi3/communicator.hpp"
 

@@ -32,17 +32,17 @@ namespace qmcplusplus
 template<class T, typename Alloc = std::allocator<T>>
 class ParticleAttrib : public Vector<T, Alloc>, public OhmmsObject
 {
-  typedef Vector<T, Alloc> __my_base;
+  typedef Vector<T, Alloc> my_base_;
 
 public:
   /// The unit type
   PosUnit InUnit;
 
   /** constructor with size n*/
-  explicit inline ParticleAttrib(size_t n = 0) : __my_base(n), InUnit(PosUnit::Cartesian) {}
+  explicit inline ParticleAttrib(size_t n = 0) : my_base_(n), InUnit(PosUnit::Cartesian) {}
 
   /** constructor with an initialized ref */
-  explicit inline ParticleAttrib(T* ref, size_t n) : __my_base(ref, n), InUnit(PosUnit::Cartesian) {}
+  explicit inline ParticleAttrib(T* ref, size_t n) : my_base_(ref, n), InUnit(PosUnit::Cartesian) {}
 
   ParticleAttrib(const ParticleAttrib& rhs) = default;
   inline ParticleAttrib& operator=(const ParticleAttrib& rhs) = default;

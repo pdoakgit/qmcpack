@@ -16,7 +16,7 @@
 //#include "Utilities/RandomGenerator.h"
 #include "Message/Communicate.h"
 #include "OhmmsData/Libxml2Doc.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 
 #include <stdio.h>
@@ -31,10 +31,32 @@ TEST_CASE("RandomNumberControl make_seeds", "[ohmmsapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
-  random_control.make_seeds();
+  RandomNumberControl random_control{c,8};
+  //random_control.make_seeds();
 
   REQUIRE(random_control.Children.size() > 0);
+}
+
+TEST_CASE("RandomNumberControl stack instantiation", "[ohmmsapp]")
+{
+  Communicate* c;
+  OHMMS::Controller->initialize(0, NULL);
+  c = OHMMS::Controller;
+
+  RandomNumberControl random_control{c,1};
+
+  double rd = (random_control.get_random())();
+  REQUIRE(random_control.Children.size() > 0);
+  REQUIRE(rd >= 0.0);
+  REQUIRE(rd < 1.0);
+
+  RandomNumberControl random_control2{c,2};
+
+  double rd2 = (random_control2.get_random())();
+  REQUIRE(random_control.Children.size() > 0);
+  REQUIRE(rd2 >= 0.0);
+  REQUIRE(rd2 < 1.0);
+
 }
 
 TEST_CASE("RandomNumberControl no random in xml", "[ohmmsapp]")
@@ -49,7 +71,7 @@ TEST_CASE("RandomNumberControl no random in xml", "[ohmmsapp]")
   bool okay = doc.parseFromString(xml_input);
   REQUIRE(okay);
 
-  RandomNumberControl rnc;
+  RandomNumberControl rnc{c};
 
   xmlXPathContextPtr context = doc.getXPathContext();
   rnc.initialize(context);
@@ -67,7 +89,7 @@ TEST_CASE("RandomNumberControl random in xml", "[ohmmsapp]")
   bool okay = doc.parseFromString(xml_input);
   REQUIRE(okay);
 
-  RandomNumberControl rnc;
+  RandomNumberControl rnc{c};
 
   xmlXPathContextPtr context = doc.getXPathContext();
   rnc.initialize(context);
@@ -75,7 +97,7 @@ TEST_CASE("RandomNumberControl random in xml", "[ohmmsapp]")
 
   rnc.write("rng_out", c);
 
-  RandomNumberControl rnc2;
+  RandomNumberControl rnc2{c};
   rnc2.read("rng_out", c);
   // not sure what to test here - for now make sure it doesn't crash.
 }

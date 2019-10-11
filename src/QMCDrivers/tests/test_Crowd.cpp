@@ -96,8 +96,9 @@ TEST_CASE("Crowd integration", "[drivers]")
 TEST_CASE("Crowd::loadWalkers", "[particle]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   CrowdWithWalkers crowd_with_walkers(pools);
   Crowd& crowd = crowd_with_walkers.get_crowd();
@@ -118,8 +119,9 @@ TEST_CASE("Crowd::loadWalkers", "[particle]")
 TEST_CASE("Crowd::get_accept_ratio", "[Drivers]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   CrowdWithWalkers crowd_with_walkers(pools);
   Crowd& crowd = crowd_with_walkers.get_crowd();
@@ -134,8 +136,9 @@ TEST_CASE("Crowd::get_accept_ratio", "[Drivers]")
 TEST_CASE("Crowd redistribute walkers")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   CrowdWithWalkers crowd_with_walkers(pools);
   Crowd& crowd = crowd_with_walkers.get_crowd();

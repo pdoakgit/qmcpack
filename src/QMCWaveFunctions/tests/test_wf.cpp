@@ -12,7 +12,7 @@
 
 #include "Message/catch_mpi_main.hpp"
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "OhmmsPETE/OhmmsMatrix.h"
 #include "Lattice/ParticleBConds.h"
@@ -82,7 +82,7 @@ TEST_CASE("Pade Jastrow", "[wavefunction]")
   TrialWaveFunction psi(c);
   // Need 1 electron and 1 proton, somehow
   //ParticleSet target = ParticleSet();
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool ptcl = ParticleSetPool(c, random_control);
 
   const char* particles = "<tmp> \

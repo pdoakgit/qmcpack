@@ -25,9 +25,9 @@ TEST_CASE("VMCBatched::calc_default_local_walkers", "[drivers]")
 {
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
-
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   Libxml2Document doc;
   doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_batch_index]);
@@ -47,7 +47,7 @@ TEST_CASE("VMCBatched::calc_default_local_walkers", "[drivers]")
     QMCDriverInput qmcdriver_copy(qmcdriver_input);
     VMCDriverInput vmcdriver_input("yes");
     VMCBatched vmc_batched(std::move(qmcdriver_copy), std::move(vmcdriver_input), population,
-                           *(pools.wavefunction_pool->getPrimary()), *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control,
+                           *(pools.wavefunction_pool->getPrimary()), *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), pools.random_control,
                            pools.comm);
     vmc_batched.set_walkers_per_rank(walkers_per_rank, "testing");
     if (num_crowds < 8)

@@ -17,7 +17,7 @@
 #include "QMCDrivers/VMC/VMCLinearOpt.h"
 #include "QMCDrivers/VMC/VMCUpdatePbyP.h"
 #include "QMCDrivers/VMC/VMCUpdateAll.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Message/OpenMP.h"
 #include "Optimize/VarList.h"
 #include "Numerics/LinearFit.h"
@@ -150,7 +150,7 @@ bool VMCLinearOpt::run()
   Estimators->stop(estimatorClones);
   //copy back the random states
   for (int ip = 0; ip < NumThreads; ++ip)
-    *(random_control_.Children[ip]) = *(Rng[ip]);
+    random_control_.Children[ip] = *(Rng[ip]);
   //finalize a qmc section
   return finalize(nBlocks);
 }
@@ -514,7 +514,7 @@ void VMCLinearOpt::resetRun()
 #if !defined(REMOVE_TRACEMANAGER)
       traceClones[ip] = Traces->makeClone();
 #endif
-      Rng[ip] = new RandomGenerator_t(*(random_control_.Children[ip]));
+      Rng[ip] = new RandomGenerator_t(random_control_.Children[ip]);
       hClones[ip]->setRandomGenerator(Rng[ip]);
       if (qmc_driver_mode[QMC_UPDATE_MODE])
       {

@@ -18,7 +18,7 @@
 #include "QMCDrivers/QMCDriverInterface.h"
 #include "QMCApp/WaveFunctionPool.h"
 #include "Message/Communicate.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 namespace qmcplusplus
 {

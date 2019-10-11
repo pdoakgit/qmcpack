@@ -22,7 +22,7 @@
 #define QMCPLUSPLUS_SIMPLE_FIXEDNODE_BRANCHER_H
 
 #include <Configuration.h>
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include <OhmmsData/ParameterSet.h>
 #include <Particle/MCWalkerConfiguration.h>
 #include <Estimators/BlockHistogram.h>

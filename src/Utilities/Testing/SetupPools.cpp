@@ -18,11 +18,8 @@ namespace qmcplusplus
 {
 namespace testing
 {
-SetupPools::SetupPools(RandomNumberControl& random_control) : random_control_(random_control)
+SetupPools::SetupPools(Communicate* comm) : random_control(comm, 8)
 {
-  OHMMS::Controller->initialize(0, NULL);
-  comm = OHMMS::Controller;
-
   std::cout << "SetupPools::SetupPools()\n";
   Concurrency::OverrideMaxThreads<> override(8);
   

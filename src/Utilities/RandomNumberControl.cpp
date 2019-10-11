@@ -17,7 +17,7 @@
 #include <Configuration.h>
 #include <Message/OpenMP.h>
 #include <OhmmsData/AttributeSet.h>
-#include <OhmmsApp/RandomNumberControl.h>
+#include "Utilities/RandomNumberControl.h"
 #include <Utilities/RandomGeneratorIO.h>
 #include <Utilities/Timer.h>
 #include <HDFVersion.h>
@@ -43,15 +43,15 @@ namespace qmcplusplus
 // RandomGenerator_t::uint_type RandomNumberControl::Offset = 11u;
 
 /// constructors and destructors
-RandomNumberControl::RandomNumberControl() //const std::string& aname)
-    : OhmmsElementBase("random"), NeverBeenInitialized(false), myCur(NULL) //, Offset(5)
+RandomNumberControl::RandomNumberControl(Communicate * comm, const std::string& aname)
+    : OhmmsElementBase(aname.c_str()), NeverBeenInitialized(true), myCur(NULL), comm_(comm) //, Offset(5)
 {
 }
 
 /** For testing 
  */
-RandomNumberControl::RandomNumberControl(int initial_children) //, const std::string& aname)
-    : OhmmsElementBase("random"), NeverBeenInitialized(false), myCur(NULL)
+RandomNumberControl::RandomNumberControl(Communicate * comm, int initial_children, const std::string& aname)
+    : OhmmsElementBase(aname.c_str()), NeverBeenInitialized(true), myCur(nullptr), comm_(comm)
 {
   std::vector<uint_type> mySeeds;
   int pid    = 0;
@@ -62,10 +62,13 @@ RandomNumberControl::RandomNumberControl(int initial_children) //, const std::st
   app_log() << std::endl;  
 }
 
-RandomNumberControl::RandomNumberControl(const RandomNumberControl& other) : NeverBeenInitialized(other.NeverBeenInitialized), Children(other.Children), random_(other.random_), myCur(other.myCur), Offset(other.Offset)
+// RandomNumberControl::RandomNumberControl(const RandomNumberControl& other) : NeverBeenInitialized(other.NeverBeenInitialized), Children(other.Children), random_(other.random_), myCur(other.myCur), Offset(other.Offset)
+// {
+// }
+
+RandomNumberControl::~RandomNumberControl()
 {
 }
-
 
 /// generic output
 bool RandomNumberControl::get(std::ostream& os) const
@@ -74,7 +77,7 @@ bool RandomNumberControl::get(std::ostream& os) const
   {
     for (int ip = 0; ip < omp_get_max_threads(); ip++)
     {
-      Children[ip]->write(os);
+      Children[ip].write(os);
       os << std::endl;
     }
   }
@@ -100,11 +103,11 @@ void RandomNumberControl::reset() { make_seeds(); }
 /// reset the generator
 void RandomNumberControl::make_seeds(int total_num_children)
 {
-  int pid         = OHMMS::Controller->rank();
-  int nprocs      = OHMMS::Controller->size();
+  int pid         = comm_->rank();
+  int nprocs      = comm_->size();
   uint_type iseed = static_cast<uint_type>(std::time(0)) % 1024;
-  mpi::bcast(*OHMMS::Controller, iseed);
-  //OHMMS::Controller->bcast(iseed);//broadcast the seed
+  mpi::bcast(*comm_, iseed);
+  //comm_->bcast(iseed);//broadcast the seed
   Offset = iseed;
   std::vector<uint_type> mySeeds;
   PrimeNumbers.get(Offset, nprocs * (total_num_children + 2), mySeeds);
@@ -118,18 +121,18 @@ void RandomNumberControl::make_children(int total_num_children)
   int n        = total_num_children - Children.size();
   while (n)
   {
-    Children.push_back(new RandomGenerator_t);
+    Children.push_back(RandomGenerator_t{});
     n--;
   }
-  int rank       = OHMMS::Controller->rank();
-  int nprocs     = OHMMS::Controller->size();
+  int rank       = comm_->rank();
+  int nprocs     = comm_->size();
   int baseoffset = Offset + nprocs + total_num_children * rank;
   std::vector<uint_type> myprimes;
   PrimeNumbers.get(baseoffset, total_num_children, myprimes);
   for (int ip = 0; ip < total_num_children; ip++)
   {
     int offset = baseoffset + ip;
-    Children[ip]->init(rank, nprocs, myprimes[ip], offset);
+    Children[ip].init(rank, nprocs, myprimes[ip], offset);
   }
 }
 
@@ -139,18 +142,18 @@ void RandomNumberControl::make_children(int total_num_children)
   int n        = nthreads - Children.size();
   while (n)
   {
-    Children.push_back(new RandomGenerator_t);
+    Children.push_back(RandomGenerator_t{});
     n--;
   }
-  int rank       = OHMMS::Controller->rank();
-  int nprocs     = OHMMS::Controller->size();
+  int rank       = comm_->rank();
+  int nprocs     = comm_->size();
   int baseoffset = Offset + nprocs + nthreads * rank;
   std::vector<uint_type> myprimes;
   PrimeNumbers.get(baseoffset, nthreads, myprimes);
   for (int ip = 0; ip < nthreads; ip++)
   {
     int offset = baseoffset + ip;
-    Children[ip]->init(rank, nprocs, myprimes[ip], offset);
+    Children[ip].init(rank, nprocs, myprimes[ip], offset);
   }
 }
 
@@ -161,48 +164,48 @@ xmlNodePtr RandomNumberControl::initialize(xmlXPathContextPtr acontext)
   return myCur;
 }
 
-void RandomNumberControl::test()
-{
-  /* Add random number generator tester
-  */
-  int nthreads = omp_get_max_threads();
-  std::vector<double> avg(nthreads), avg2(nthreads);
-#pragma omp parallel for
-  for (int ip = 0; ip < nthreads; ++ip)
-  {
-    const int n = 1000000;
-    double sum = 0.0, sum2 = 0.0;
-    RandomGenerator_t& myrand(*Children[ip]);
-    for (int i = 0; i < n; ++i)
-    {
-      double r = myrand.rand();
-      sum  += r;
-      sum2 += r * r;
-    }
-    avg[ip]  = sum / static_cast<double>(n);
-    avg2[ip] = sum2 / static_cast<double>(n);
-  }
-  std::vector<double> avg_tot(nthreads * OHMMS::Controller->size()), avg2_tot(nthreads * OHMMS::Controller->size());
-  mpi::gather(*OHMMS::Controller, avg, avg_tot);
-  mpi::gather(*OHMMS::Controller, avg2, avg2_tot);
-  double avg_g  = 0.0;
-  double avg2_g = 0.0;
-  for (int i = 0, ii = 0; i < OHMMS::Controller->size(); ++i)
-  {
-    for (int ip = 0; ip < nthreads; ++ip, ++ii)
-    {
-      app_log() << "RNGTest " << std::setw(4) << i << std::setw(4) << ip << std::setw(20) << avg_tot[ii]
-                << std::setw(20) << avg2_tot[ii] - avg_tot[ii] * avg_tot[ii] << std::endl;
-      avg_g  += avg_tot[ii];
-      avg2_g += avg2_tot[ii];
-    }
-  }
-  avg_g  /= static_cast<double>(nthreads * OHMMS::Controller->size());
-  avg2_g /= static_cast<double>(nthreads * OHMMS::Controller->size());
-  app_log() << "RNGTest " << std::setw(4) << OHMMS::Controller->size() << std::setw(4) << nthreads << std::setw(20)
-            << avg_g << std::setw(20) << avg2_g - avg_g * avg_g << std::endl;
-  app_log().flush();
-}
+// void RandomNumberControl::test()
+// {
+//   /* Add random number generator tester
+//   */
+//   int nthreads = omp_get_max_threads();
+//   std::vector<double> avg(nthreads), avg2(nthreads);
+// #pragma omp parallel for
+//   for (int ip = 0; ip < nthreads; ++ip)
+//   {
+//     const int n = 1000000;
+//     double sum = 0.0, sum2 = 0.0;
+//     RandomGenerator_t& myrand = Children[ip];
+//     for (int i = 0; i < n; ++i)
+//     {
+//       double r = myrand();
+//       sum  += r;
+//       sum2 += r * r;
+//     }
+//     avg[ip]  = sum / static_cast<double>(n);
+//     avg2[ip] = sum2 / static_cast<double>(n);
+//   }
+//   std::vector<double> avg_tot(nthreads * comm_->size()), avg2_tot(nthreads * comm_->size());
+//   mpi::gather(*comm_, avg, avg_tot);
+//   mpi::gather(*comm_, avg2, avg2_tot);
+//   double avg_g  = 0.0;
+//   double avg2_g = 0.0;
+//   for (int i = 0, ii = 0; i < comm_->size(); ++i)
+//   {
+//     for (int ip = 0; ip < nthreads; ++ip, ++ii)
+//     {
+//       app_log() << "RNGTest " << std::setw(4) << i << std::setw(4) << ip << std::setw(20) << avg_tot[ii]
+//                 << std::setw(20) << avg2_tot[ii] - avg_tot[ii] * avg_tot[ii] << std::endl;
+//       avg_g  += avg_tot[ii];
+//       avg2_g += avg2_tot[ii];
+//     }
+//   }
+//   avg_g  /= static_cast<double>(nthreads * comm_->size());
+//   avg2_g /= static_cast<double>(nthreads * comm_->size());
+//   app_log() << "RNGTest " << std::setw(4) << comm_->size() << std::setw(4) << nthreads << std::setw(20)
+//             << avg_g << std::setw(20) << avg2_g - avg_g * avg_g << std::endl;
+//   app_log().flush();
+// }
 
 bool RandomNumberControl::put(xmlNodePtr cur)
 {
@@ -224,8 +227,8 @@ bool RandomNumberControl::put(xmlNodePtr cur)
     int pid    = 0;
     if (init_mpi)
     {
-      pid    = OHMMS::Controller->rank();
-      nprocs = OHMMS::Controller->size();
+      pid    = comm_->rank();
+      nprocs = comm_->size();
     }
     app_summary() << " Random Number" << std::endl;
     app_summary() << " -------------" << std::endl;
@@ -233,7 +236,7 @@ bool RandomNumberControl::put(xmlNodePtr cur)
     {
       offset_in = static_cast<int>(static_cast<uint_type>(std::time(0)) % 1024);
       app_summary() << "  Offset for the random number seeds based on time: " << offset_in << std::endl;
-      mpi::bcast(*OHMMS::Controller, offset_in);
+      mpi::bcast(*comm_, offset_in);
     }
     else
     {
@@ -312,8 +315,8 @@ void RandomNumberControl::read_parallel(hdf_archive& hin, Communicate* comm)
   vt.resize(nthreads * random_.state_size());                              //buffer for children[ip]
   mt.resize(random_.state_size()); //buffer for single thread Random object of random nums
 
-  std::array<int, 2> shape{comm->size() * nthreads, random_.state_size()}; //global dims of children dataset
-  std::array<int, 2> counts{nthreads, random_.state_size()}; //local dimensions of dataset
+  std::array<int, 2> shape{comm->size() * nthreads, static_cast<int>(random_.state_size())}; //global dims of children dataset
+  std::array<int, 2> counts{nthreads, static_cast<int>(random_.state_size())}; //local dimensions of dataset
   std::array<int, 2> offsets{comm->rank() * nthreads, 0};   //offsets for each process to read in
 
   hin.push("random"); //group that holds children[ip] random nums
@@ -333,7 +336,7 @@ void RandomNumberControl::read_parallel(hdf_archive& hin, Communicate* comm)
   for (int ip = 0; ip < nthreads; ip++, vt_it += shape[1])
   {
     std::vector<uint_type> c(vt_it, vt_it + shape[1]);
-    Children[ip]->load(c); //load random nums back to program from buffer
+    Children[ip].load(c); //load random nums back to program from buffer
   }
   random_.load(mt); //load random nums back to prog from buffer
 }
@@ -343,20 +346,20 @@ void RandomNumberControl::write_parallel(hdf_archive& hout, Communicate* comm)
 {
   int nthreads = omp_get_max_threads();
   std::vector<uint_type> vt, mt;
-  TinyVector<int, 3> shape_hdf5(comm->size(), nthreads, random_.state_size()); //configuration at write time
-  vt.reserve(nthreads * random_.state_size()); //buffer for random numbers from children[ip] of each thread
+  TinyVector<int, 3> shape_hdf5(comm->size(), nthreads, static_cast<int>(random_.state_size())); //configuration at write time
+  vt.reserve(nthreads * static_cast<int>(random_.state_size())); //buffer for random numbers from children[ip] of each thread
   mt.reserve(random_.state_size());            //buffer for random numbers from single Random object
 
   for (int ip = 0; ip < nthreads; ++ip)
   {
     std::vector<uint_type> c;
-    Children[ip]->save(c);
+    Children[ip].save(c);
     vt.insert(vt.end(), c.begin(), c.end()); //get nums from each thread into buffer
   }
   random_.save(mt); //get nums for single random object (no threads)
 
-  std::array<int, 2> shape{comm->size() * nthreads, random_.state_size()}; //global dimensions
-  std::array<int, 2> counts{nthreads, random_.state_size()};               //local dimensions
+  std::array<int, 2> shape{comm->size() * nthreads, static_cast<int>(random_.state_size())}; //global dimensions
+  std::array<int, 2> counts{nthreads, static_cast<int>(random_.state_size())};               //local dimensions
   std::array<int, 2> offsets{comm->rank() * nthreads, 0};                 //offset for the file write
 
   hout.push(hdf::main_state);
@@ -381,9 +384,9 @@ void RandomNumberControl::read_rank_0(hdf_archive& hin, Communicate* comm)
 {
   int nthreads = omp_get_max_threads();
   std::vector<uint_type> vt, vt_tot, mt, mt_tot;
-  TinyVector<int, 3> shape_now(comm->size(), nthreads, random_.state_size()); //current configuration
+  TinyVector<int, 3> shape_now(comm->size(), nthreads, static_cast<int>(random_.state_size())); //current configuration
   TinyVector<int, 3> shape_hdf5;                                             //configuration when hdf5 file was written
-  std::array<int, 2> shape{comm->size() * nthreads, random_.state_size()};    //dimensions of children dataset
+  std::array<int, 2> shape{comm->size() * nthreads, static_cast<int>(random_.state_size())};    //dimensions of children dataset
 
   //grab configuration of threads/procs and Random.state_size() in hdf5 file
   if (comm->rank() == 0)
@@ -440,7 +443,7 @@ void RandomNumberControl::read_rank_0(hdf_archive& hin, Communicate* comm)
   for (int i = 0; i < nthreads; i++, vt_it += shape[1])
   {
     std::vector<uint_type> c(vt_it, vt_it + shape[1]);
-    Children[i]->load(c); //read seeds for each thread from buffer back into object
+    Children[i].load(c); //read seeds for each thread from buffer back into object
   }
   random_.load(mt); //read seeds back into object
 }
@@ -450,15 +453,15 @@ void RandomNumberControl::write_rank_0(hdf_archive& hout, Communicate* comm)
 {
   int nthreads = omp_get_max_threads();
   std::vector<uint_type> vt, vt_tot, mt, mt_tot;
-  std::array<int, 2> shape{comm->size() * nthreads, random_.state_size()};     //dimensions of children dataset
-  TinyVector<int, 3> shape_hdf5(comm->size(), nthreads, random_.state_size()); //configuration at write time
-  vt.reserve(nthreads * random_.state_size()); //buffer for children[ip] (Random object of seeds for each thread)
+  std::array<int, 2> shape{comm->size() * nthreads, static_cast<int>(random_.state_size())};     //dimensions of children dataset
+  TinyVector<int, 3> shape_hdf5(comm->size(), nthreads, static_cast<int>(random_.state_size())); //configuration at write time
+  vt.reserve(nthreads * static_cast<int>(random_.state_size())); //buffer for children[ip] (Random object of seeds for each thread)
   mt.reserve(random_.state_size()); //buffer for single Random object of seeds, one per proc regardless of thread num
 
   for (int i = 0; i < nthreads; ++i)
   {
     std::vector<uint_type> c;
-    Children[i]->save(c);
+    Children[i].save(c);
     vt.insert(vt.end(), c.begin(), c.end()); //copy children[nthreads] seeds to buffer
   }
   random_.save(mt); //copy random_th seeds to buffer

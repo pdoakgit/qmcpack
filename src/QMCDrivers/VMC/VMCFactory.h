@@ -14,7 +14,7 @@
 #ifndef QMCPLUSPLUS_VMC_FACTORY_H
 #define QMCPLUSPLUS_VMC_FACTORY_H
 #include "QMCDrivers/QMCDriver.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 namespace qmcplusplus
 {

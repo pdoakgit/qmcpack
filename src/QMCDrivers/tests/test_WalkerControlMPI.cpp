@@ -32,8 +32,9 @@ struct UnifiedDriverWalkerControlMPITest
   void operator()()
   {
     using namespace testing;
-    RandomNumberControl random_control(8);
-    SetupDMCTest dtest(random_control);
+    OHMMS::Controller->initialize(0, NULL);
+    Communicate* comm{OHMMS::Controller};
+    SetupDMCTest dtest(comm, comm->size());
 
     WalkerControlMPI wc(dtest.comm);
     // This finishes setup of population as a side effect.

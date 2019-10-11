@@ -13,7 +13,7 @@
 #define QMCPLUSPLUS_MINIMALPARTICLEPOOL_H
 
 #include "Message/Communicate.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "QMCApp/ParticleSetPool.h"
 
@@ -77,7 +77,7 @@ public:
     pp.put(part_ion);
     xmlNodePtr part_elec = xmlNextElementSibling(part_ion);
     pp.put(part_elec);
-    pp.randomize();
+    //pp.randomize();
 
     return pp;
   }

@@ -25,7 +25,7 @@
 #include "Configuration.h"
 #include "Utilities/PooledData.h"
 #include "Utilities/NewTimer.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "QMCWaveFunctions/TrialWaveFunction.h"
 //#include "QMCApp/WaveFunctionPool.h"
 #include "QMCHamiltonians/QMCHamiltonian.h"

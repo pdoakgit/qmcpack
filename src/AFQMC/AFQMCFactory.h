@@ -13,7 +13,7 @@
 #include <queue>
 #include<algorithm>
 #include<Message/MPIObjectBase.h>
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 
 #include"mpi3/communicator.hpp"
 

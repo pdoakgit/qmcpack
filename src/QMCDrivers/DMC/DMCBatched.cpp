@@ -357,11 +357,9 @@ void DMCBatched::advanceWalkers(const StateForThread& sft,
     stalled_walker.Weight *= sft.branch_engine.branchWeight(stalled_new_walker_energy, stalled_old_walker_energy);
   }
 
-
   //myTimers[DMC_tmoves]->start();
   std::vector<int> walker_non_local_moves_accepted(
       QMCHamiltonian::flex_makeNonLocalMoves(walker_hamiltonians, walker_elecs));
-
 
   // could be premature optimization
   int num_moved_nonlocal   = 0;

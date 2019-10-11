@@ -18,7 +18,7 @@
 #include "OhmmsData/OhmmsElementBase.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "OhmmsApp/ProjectData.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include <stack>
 /**@defgroup qmcapp QMC Application Group
  * @brief Application-level classes to manage QMC simulations.
@@ -67,7 +67,7 @@ protected:
   ProjectData myProject;
 
   ///random number controller
-  RandomNumberControl myRandomControl;
+  //RandomNumberControl myRandomControl(c);
 
   ///open a new document
   bool pushDocument(const std::string& infile);

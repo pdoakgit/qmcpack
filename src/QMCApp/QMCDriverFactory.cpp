@@ -23,7 +23,7 @@
 #include <queue>
 
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "QMCDrivers/MCPopulation.h"
 #include "qmc_common.h"
 #include "QMCApp/QMCDriverFactory.h"

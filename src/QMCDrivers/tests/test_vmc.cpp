@@ -14,7 +14,7 @@
 
 
 #include "Utilities/RandomGenerator.h"
-#include "Utilities/FakeRandom.h"
+//#include "Utilities/FakeRandom.h"
 #include "OhmmsData/Libxml2Doc.h"
 #include "OhmmsPETE/OhmmsMatrix.h"
 #include "Lattice/ParticleBConds.h"
@@ -84,14 +84,11 @@ TEST_CASE("VMC Particle-by-Particle advanceWalkers", "[drivers][vmc]")
 #endif
   elec.update();
 
-
   TrialWaveFunction psi(c);
   ConstantOrbital* orb  = new ConstantOrbital;
   psi.addComponent(orb, "Constant");
   psi.registerData(elec, elec.WalkerList[0]->DataSet);
   elec.WalkerList[0]->DataSet.allocate();
-
-  //FakeRandom rg;
 
   QMCHamiltonian h;
   h.addOperator(new BareKineticEnergy<double>(elec), "Kinetic");
@@ -99,7 +96,7 @@ TEST_CASE("VMC Particle-by-Particle advanceWalkers", "[drivers][vmc]")
 
   elec.resetWalkerProperty(); // get memory corruption w/o this
 
-  RandomNumberControl random_control(1);
+  RandomNumberControl random_control(c,8);
   VMCUpdatePbyP vmc(elec, psi, h, random_control.get_random());
   EstimatorManagerBase EM;
   SimpleFixedNodeBranch branch(0.1, 1, random_control);

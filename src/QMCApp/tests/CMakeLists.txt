@@ -24,7 +24,7 @@ SET(UTEST_HDF_INPUT ${qmcpack_SOURCE_DIR}/tests/solids/diamondC_1x1x1_pp/pwscf.p
 EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory "${UTEST_DIR}")
 MAYBE_SYMLINK(${UTEST_HDF_INPUT} ${UTEST_DIR}/pwscf.pwscf.h5)
 
-ADD_EXECUTABLE(${UTEST_EXE} test_project_data.cpp test_rng_control.cpp test_particle_pool.cpp
+ADD_EXECUTABLE(${UTEST_EXE} test_project_data.cpp test_particle_pool.cpp
   test_wavefunction_pool.cpp test_hamiltonian_pool.cpp)
 
 IF(QMC_CUDA)

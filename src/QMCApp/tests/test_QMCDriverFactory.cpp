@@ -31,8 +31,11 @@ namespace qmcplusplus
 TEST_CASE("QMCDriverFactory create VMC Driver", "[qmcapp]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+
+  SetupPools pools(comm);
 
   QMCDriverFactory driver_factory;
 
@@ -53,15 +56,16 @@ TEST_CASE("QMCDriverFactory create VMC Driver", "[qmcapp]")
                             pools.hamiltonian_pool->getPrimary());
 
   qmc_driver = driver_factory.newQMCDriver(std::move(last_driver), 0, node, das, *qmc_system, *(pools.particle_pool),
-                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, random_control, pools.comm);
+                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, pools.random_control, pools.comm);
   REQUIRE(qmc_driver != nullptr);
 }
 
 TEST_CASE("QMCDriverFactory create VMCBatched driver", "[qmcapp]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   QMCDriverFactory driver_factory;
 
@@ -81,15 +85,17 @@ TEST_CASE("QMCDriverFactory create VMCBatched driver", "[qmcapp]")
                             pools.hamiltonian_pool->getPrimary());
 
   qmc_driver = driver_factory.newQMCDriver(std::move(last_driver), 0, node, das, *qmc_system, *(pools.particle_pool),
-                                           *(pools.wavefunction_pool),*(pools.hamiltonian_pool), population, random_control, pools.comm);
+                                           *(pools.wavefunction_pool),*(pools.hamiltonian_pool), population, pools.random_control, pools.comm);
   REQUIRE(qmc_driver != nullptr);
 }
 
 TEST_CASE("QMCDriverFactory create DMC driver", "[qmcapp]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+
+  SetupPools pools(comm);
   
   QMCDriverFactory driver_factory;
 
@@ -109,15 +115,16 @@ TEST_CASE("QMCDriverFactory create DMC driver", "[qmcapp]")
                             pools.hamiltonian_pool->getPrimary());
 
   qmc_driver = driver_factory.newQMCDriver(std::move(last_driver), 0, node, das, *qmc_system, *(pools.particle_pool),
-                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, random_control, pools.comm);
+                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, pools.random_control, pools.comm);
   REQUIRE(qmc_driver != nullptr);
 }
 
 TEST_CASE("QMCDriverFactory create DMCBatched driver", "[qmcapp]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};  
+  SetupPools pools(comm);
 
   QMCDriverFactory driver_factory;
 
@@ -137,7 +144,7 @@ TEST_CASE("QMCDriverFactory create DMCBatched driver", "[qmcapp]")
                             pools.hamiltonian_pool->getPrimary());
 
   qmc_driver = driver_factory.newQMCDriver(std::move(last_driver), 0, node, das, *qmc_system, *(pools.particle_pool),
-                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, random_control, pools.comm);
+                                           *(pools.wavefunction_pool), *(pools.hamiltonian_pool), population, pools.random_control, pools.comm);
   REQUIRE(qmc_driver != nullptr);
 }
 

@@ -23,7 +23,7 @@
 
 #include "Configuration.h"
 #include "OhmmsData/ParameterSet.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Utilities/PooledData.h"
 #include "Utilities/NewTimer.h"
 #include "QMCWaveFunctions/TrialWaveFunction.h"

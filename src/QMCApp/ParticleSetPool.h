@@ -18,7 +18,7 @@
 #ifndef QMCPLUSPLUS_PARTICLESETPOOL_H
 #define QMCPLUSPLUS_PARTICLESETPOOL_H
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include "Particle/MCWalkerConfiguration.h"
 #include "Message/MPIObjectBase.h"

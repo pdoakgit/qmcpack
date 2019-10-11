@@ -134,7 +134,10 @@ NonLocalECPotential::Return_t NonLocalECPotential::evaluateWithIonDerivs(Particl
 
   for (int ipp = 0; ipp < PPset.size(); ipp++)
     if (PPset[ipp])
-      PPset[ipp]->randomize_grid(*myRNG);
+      if(myRNG == nullptr)
+        throw std::runtime_error("myRNG never initialized");
+      else
+        PPset[ipp]->randomize_grid(*myRNG);
   //loop over all the ions
   const auto& myTable = P.getDistTable(myTableIndex);
   // clear all the electron and ion neighbor lists

@@ -24,7 +24,7 @@ namespace testing
 class SetupDMCTest : public SetupPools
 {
 public:
-  SetupDMCTest(RandomNumberControl& random_control, int nranks = 4) : SetupPools(random_control), num_ranks(nranks), qmcdrv_input(3)
+  SetupDMCTest(Communicate* comm, int nranks = 4) : SetupPools(comm), num_ranks(nranks), qmcdrv_input(3)
   {
     if (Concurrency::maxThreads<>() < 8)
       num_crowds = Concurrency::maxThreads<>();
@@ -52,7 +52,7 @@ public:
             *(wavefunction_pool->getPrimary()),
             *(hamiltonian_pool->getPrimary()),
             *(wavefunction_pool),
-            random_control_,
+            random_control,
             comm};
   }
 

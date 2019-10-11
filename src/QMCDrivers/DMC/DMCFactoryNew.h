@@ -12,7 +12,7 @@
 
 #ifndef QMCPLUSPLUS_DMCFACTORYNEW_H
 #define QMCPLUSPLUS_DMCFACTORYNEW_H
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "QMCDrivers/QMCDriverInterface.h"
 #include "QMCApp/WaveFunctionPool.h"
 #include "Message/Communicate.h"

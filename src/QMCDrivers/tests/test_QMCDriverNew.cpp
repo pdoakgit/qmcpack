@@ -29,8 +29,9 @@ TEST_CASE("QMCDriverNew tiny case", "[drivers]")
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
 
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   Libxml2Document doc;
   bool okay = doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_tiny_index]);
@@ -41,7 +42,7 @@ TEST_CASE("QMCDriverNew tiny case", "[drivers]")
 
   MCPopulation population(1, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(), pools.hamiltonian_pool->getPrimary());
   QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(pools.wavefunction_pool->getPrimary()),
-                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control, pools.comm);
+                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), pools.random_control, pools.comm);
 
   // setStatus must be called before process
   std::string root_name{"Test"};
@@ -66,8 +67,10 @@ TEST_CASE("QMCDriverNew integration", "[drivers]")
   using namespace testing;
   Concurrency::OverrideMaxThreads<> override(8);
 
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
+
 
   Libxml2Document doc;
   bool okay = doc.parseFromString(valid_vmc_input_sections[valid_vmc_input_vmc_batch_index]);
@@ -78,7 +81,7 @@ TEST_CASE("QMCDriverNew integration", "[drivers]")
 
   MCPopulation population(4, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(), pools.hamiltonian_pool->getPrimary());
   QMCDriverNewTestWrapper qmcdriver(std::move(qmcdriver_input), population, *(pools.wavefunction_pool->getPrimary()),
-                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), random_control, pools.comm);
+                                    *(pools.hamiltonian_pool->getPrimary()), *(pools.wavefunction_pool), pools.random_control, pools.comm);
 
   // setStatus must be called before process
   std::string root_name{"Test"};

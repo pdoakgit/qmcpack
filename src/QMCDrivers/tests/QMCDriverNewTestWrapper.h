@@ -11,7 +11,7 @@
 
 #ifndef QMCPLUSPLUS_QMCDRIVERNEWTESTWRAPPER_H
 #define QMCPLUSPLUS_QMCDRIVERNEWTESTWRAPPER_H
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "QMCDrivers/QMCDriverNew.h"
 #include "QMCDrivers/DriverTraits.h"
 

@@ -32,7 +32,7 @@
 #include "OhmmsData/AttributeSet.h"
 #include "Message/Communicate.h"
 #include "Message/CommOperators.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "HDFVersion.h"
 #include "qmc_common.h"
 #include "Concurrency/Info.hpp"
@@ -364,7 +364,7 @@ void QMCDriverNew::createRngsStepContexts()
 
   for(int i = 0; i < num_crowds_; ++i)
   {
-    Rng[i].reset(new RandomGenerator_t(*(random_control_.Children[i])));
+    Rng[i].reset(new RandomGenerator_t(random_control_.Children[i]));
     step_contexts_[i].reset(new ContextForSteps(crowds_[i]->size(), population_.get_num_particles(),
                                             population_.get_particle_group_indexes(), *(Rng[i])));
   }

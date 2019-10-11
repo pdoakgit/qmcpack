@@ -39,6 +39,7 @@ MomentumEstimator::Return_t MomentumEstimator::evaluate(ParticleSet& P)
 {
   const int np = P.getTotalNum();
   const int nk = kPoints.size();
+  // what is M?
   for (int s = 0; s < M; ++s)
   {
     PosType newpos;

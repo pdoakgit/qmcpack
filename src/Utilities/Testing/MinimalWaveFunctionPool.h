@@ -45,7 +45,7 @@ public:
 
     Libxml2Document* doc = new Libxml2Document;
     bool okay            = doc->parseFromString(wf_input);
-    REQUIRE(okay);
+    REQUIRE(okay == true);
 
     xmlNodePtr root = doc->getRoot();
 

@@ -24,7 +24,7 @@
 #include "OhmmsData/AttributeSet.h"
 #include "Message/Communicate.h"
 #include "Message/CommOperators.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "HDFVersion.h"
 #include <qmc_common.h>
 #include <limits>

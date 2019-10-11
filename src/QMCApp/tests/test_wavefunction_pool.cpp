@@ -85,7 +85,7 @@ TEST_CASE("WaveFunctionPool", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   WaveFunctionPool wp(c, random_control);
 
   REQUIRE(wp.empty() == true);

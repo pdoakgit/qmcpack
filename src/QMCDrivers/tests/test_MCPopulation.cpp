@@ -21,8 +21,9 @@ namespace qmcplusplus
 TEST_CASE("MCPopulation::createWalkers", "[particle][population]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   TrialWaveFunction twf(pools.comm);
   MCPopulation population(1, pools.particle_pool->getParticleSet("e"), &twf, pools.hamiltonian_pool->getPrimary());
@@ -47,8 +48,9 @@ TEST_CASE("MCPopulation::createWalkers", "[particle][population]")
 TEST_CASE("MCPopulation::distributeWalkers", "[particle][population]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+  SetupPools pools(comm);
 
   MCPopulation population(1, pools.particle_pool->getParticleSet("e"), pools.wavefunction_pool->getPrimary(),
                           pools.hamiltonian_pool->getPrimary());

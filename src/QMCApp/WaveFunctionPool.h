@@ -17,7 +17,7 @@
 #ifndef QMCPLUSPLUS_WAVEFUNCTIONPOOL_H
 #define QMCPLUSPLUS_WAVEFUNCTIONPOOL_H
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include "Message/MPIObjectBase.h"
 #include "QMCWaveFunctions/WaveFunctionFactory.h"
@@ -112,7 +112,7 @@ private:
    */
   ParticleSetPool* ptcl_pool_;
 
-  RandomNumberControl random_control_;
+  RandomNumberControl& random_control_;
 };
 } // namespace qmcplusplus
 #endif

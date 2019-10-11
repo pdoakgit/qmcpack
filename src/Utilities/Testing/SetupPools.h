@@ -12,7 +12,7 @@
 #ifndef QMCPLUSPLUS_SETUP_POOLS_H
 #define QMCPLUSPLUS_SETUP_POOLS_H
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Utilities/Testing/MinimalParticlePool.h"
 #include "Utilities/Testing/MinimalWaveFunctionPool.h"
 #include "Utilities/Testing/MinimalHamiltonianPool.h"
@@ -25,7 +25,7 @@ namespace testing
 class SetupPools
 {
 public:
-  SetupPools(RandomNumberControl& random_control);
+  SetupPools(Communicate* comm);
 
   MinimalParticlePool mpp;
   MinimalWaveFunctionPool wfp;
@@ -39,8 +39,7 @@ public:
   xmlNodePtr node;
 
   Communicate* comm;
-protected:
-  RandomNumberControl& random_control_;
+  RandomNumberControl random_control;
 };
 
 } // namespace testing

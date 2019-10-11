@@ -91,7 +91,7 @@ public:
 
   inline void read(std::istream& rin) { rin >> uni; }
 
-  inline void write(std::ostream& rout) { rout << uni; }
+  inline void write(std::ostream& rout) const { rout << uni; }
 
   inline void save(std::vector<uint_type>& curstate) const
   {

@@ -15,7 +15,7 @@
 
 
 #include "QMCDrivers/VMC/VMC_CUDA.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Utilities/RandomGenerator.h"
 #include "ParticleBase/RandomSeqGenerator.h"
 #include "Message/CommOperators.h"

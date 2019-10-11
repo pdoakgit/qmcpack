@@ -19,7 +19,7 @@
 #include "QMCDrivers/VMC/VMC.h"
 #include "QMCDrivers/VMC/VMCUpdatePbyP.h"
 #include "QMCDrivers/VMC/VMCUpdateAll.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Message/OpenMP.h"
 #include "Message/CommOperators.h"
 #include "Utilities/RunTimeManager.h"
@@ -129,7 +129,7 @@ bool VMC::run()
   //copy back the random states
 #ifndef USE_FAKE_RNG
   for (int ip = 0; ip < NumThreads; ++ip)
-    *(random_control_.Children[ip]) = *(Rng[ip]);
+    random_control_.Children[ip] = *(Rng[ip]);
 #endif
   ///write samples to a file
   bool wrotesamples = DumpConfig;
@@ -177,7 +177,7 @@ void VMC::resetRun()
 #ifdef USE_FAKE_RNG
       Rng[ip] = new FakeRandom();
 #else
-      Rng[ip] = new RandomGenerator_t(*(random_control_.Children[ip]));
+      Rng[ip] = new RandomGenerator_t(random_control_.Children[ip]);
       hClones[ip]->setRandomGenerator(Rng[ip]);
 #endif
       if (qmc_driver_mode[QMC_UPDATE_MODE])

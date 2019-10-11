@@ -21,8 +21,10 @@ namespace qmcplusplus
 TEST_CASE("QMCHamiltonian::flex_evaluate", "[hamiltonian]")
 {
   using namespace testing;
-  RandomNumberControl random_control(8);
-  SetupPools pools(random_control);
+  OHMMS::Controller->initialize(0, NULL);
+  Communicate* comm{OHMMS::Controller};
+
+  SetupPools pools(comm);
 
   TrialWaveFunction twf(pools.comm);
 

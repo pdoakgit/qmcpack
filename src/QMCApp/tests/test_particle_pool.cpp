@@ -31,7 +31,7 @@ TEST_CASE("ParticleSetPool", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool pp(c, random_control);
 
   // See ParticleIO/tests/test_xml_io.cpp for particle parsing
@@ -81,7 +81,7 @@ TEST_CASE("ParticleSetPool random", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool pp(c, random_control);
 
   // See ParticleIO/tests/test_xml_io.cpp for particle parsing
@@ -131,7 +131,7 @@ TEST_CASE("ParticleSetPool putTileMatrix", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool pp(c, random_control);
 
   const char* tile_matrix = "<tmp tilematrix='1 0 0 1 1 0 2 1 1'/>";
@@ -162,7 +162,7 @@ TEST_CASE("ParticleSetPool putLattice", "[qmcapp]")
   OHMMS::Controller->initialize(0, NULL);
   c = OHMMS::Controller;
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool pp(c, random_control);
 
   const char* lattice = "<parameter name='lattice'> </parameter>";

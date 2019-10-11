@@ -45,7 +45,7 @@ public:
   TrialWaveFunction& refPsi;
   ///lattice vector
   ParticleSet::ParticleLayout_t Lattice;
-  ///random generator
+  ///random generator -- TODO: should be reference or better yet handed into calls that need it
   RandomGenerator_t myRNG;
   ///sample positions
   std::vector<PosType> vPos;

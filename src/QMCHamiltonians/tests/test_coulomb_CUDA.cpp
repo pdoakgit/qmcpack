@@ -91,7 +91,7 @@ TEST_CASE("Coulomb PBC A-B CUDA", "[hamiltonian][CUDA]")
   elec.update();
 
 
-  RandomNumberControl random_control(8); ParticlesSetPool ptcl(c, random_control);
+  RandomNumberControl random_control(c, 8); ParticlesSetPool ptcl(c, random_control);
 
 
   CoulombPBCAB_CUDA cab = CoulombPBCAB_CUDA(ions, elec);
@@ -175,7 +175,7 @@ TEST_CASE("Coulomb PBC AB CUDA BCC H", "[hamiltonian][CUDA]")
   elec.copyWalkersToGPU();
   elec.updateLists_GPU();
 
-  RandomNumberControl random_control(8); ParticlesSetPool ptcl(c, random_control);
+  RandomNumberControl random_control(c, 8); ParticlesSetPool ptcl(c, random_control);
 
 
   CoulombPBCAB_CUDA cab = CoulombPBCAB_CUDA(ions, elec);

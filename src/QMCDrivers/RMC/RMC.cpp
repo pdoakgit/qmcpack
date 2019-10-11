@@ -19,7 +19,7 @@
 #include "QMCDrivers/RMC/RMCUpdateAll.h"
 #include "QMCDrivers/DriftOperators.h"
 #include "ParticleBase/ParticleAttribOps.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Message/OpenMP.h"
 #include "Message/CommOperators.h"
 #include "Particle/Reptile.h"
@@ -129,7 +129,7 @@ bool RMC::run()
   Estimators->stop(estimatorClones);
   //copy back the random states
   for (int ip = 0; ip < NumThreads; ++ip)
-    *(random_control_.Children[ip]) = *(Rng[ip]);
+    random_control_.Children[ip] = *(Rng[ip]);
   //return nbeads and stuff to its original unset state;
   resetVars();
   return finalize(nBlocks);
@@ -214,7 +214,7 @@ void RMC::resetRun()
       estimatorClones[ip] = new EstimatorManagerBase(*Estimators); //,*hClones[ip]);
       estimatorClones[ip]->resetTargetParticleSet(*wClones[ip]);
       estimatorClones[ip]->setCollectionMode(false);
-      Rng[ip] = new RandomGenerator_t(*(random_control_.Children[ip]));
+      Rng[ip] = new RandomGenerator_t(random_control_.Children[ip]);
 #if !defined(REMOVE_TRACEMANAGER)
       traceClones[ip] = Traces->makeClone();
 #endif

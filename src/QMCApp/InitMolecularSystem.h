@@ -17,7 +17,7 @@
 #ifndef QMCPLUSPLUS_INITMOLECULARSYSTEM_H
 #define QMCPLUSPLUS_INITMOLECULARSYSTEM_H
 
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "OhmmsData/OhmmsElementBase.h"
 #include <map>
 

@@ -322,7 +322,8 @@ bool QMCMain::executeQMCSection(xmlNodePtr cur, bool reuse)
   a.add(random_test, "testrng");
   a.put(cur);
   if (random_test == "yes")
-    get_random_control().test();
+    throw std::runtime_error("random control test not current supported");
+    //get_random_control().test();
   if (qmcSystem == 0)
     qmcSystem = ptclPool->getWalkerSet(target);
   bool success = runQMC(cur, reuse);
@@ -391,7 +392,7 @@ bool QMCMain::validateXML()
   }
 
   //initialize the random number generator
-  xmlNodePtr rptr = myRandomControl.initialize(m_context);
+  xmlNodePtr rptr = random_control_.initialize(m_context);
   //preserve the input order
   xmlNodePtr cur = XmlDocStack.top()->getRoot()->children;
   lastInputNode  = NULL;

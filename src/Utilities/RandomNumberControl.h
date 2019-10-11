@@ -38,22 +38,23 @@ public:
   typedef RandomGenerator_t::uint_type uint_type;
   PrimeNumberSet<uint_type> PrimeNumbers;
   //children random number generator
-  std::vector<RandomGenerator_t*> Children;
+  std::vector<RandomGenerator_t> Children;
 
   /// constructors and destructors
-  RandomNumberControl(); //const std::string& = "random");
-  RandomNumberControl(int initial_children); //, const std::string& = "random");
-
+  RandomNumberControl(Communicate* comm, const std::string& = "RandomControl"); //const std::string& = "random");
+  RandomNumberControl(Communicate* comm, int initial_children, const std::string& = "RandomControl"); //, const std::string& = "random");
   RandomNumberControl(const RandomNumberControl& other);
+
+  ~RandomNumberControl();
   
   bool get(std::ostream& os) const;
   bool put(std::istream& is);
   bool put(xmlNodePtr cur);
   void reset();
-   void test();
+  void test();
 
-   [[deprecated]] void make_seeds();
-   [[deprecated]] void make_children();
+  [[deprecated]] void make_seeds();
+  [[deprecated]] void make_children();
   void make_seeds(int initial_children);
   void make_children(int initial_children);
   
@@ -96,7 +97,7 @@ public:
    */
   RandomGenerator_t& get_random() { return random_; }
 private:
-
+  Communicate* comm_;  
   RandomGenerator_t random_;
   bool NeverBeenInitialized;
   xmlNodePtr myCur;

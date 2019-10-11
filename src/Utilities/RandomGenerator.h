@@ -84,13 +84,20 @@ typedef FakeRandom RandomGenerator_t;
 
 #ifdef HAVE_LIBBOOST
 
+#include "Utilities/StdRand.h"
 #include "Utilities/BoostRandom.h"
 namespace qmcplusplus
 {
-template<class T>
-using RandomGenerator = BoostRandom<T>;
-typedef BoostRandom<OHMMS_PRECISION_FULL> RandomGenerator_t;
+using RandomGenerator_t = StdRand<OHMMS_PRECISION_FULL>;
+
 } // namespace qmcplusplus
+// #include "Utilities/BoostRandom.h"
+// namespace qmcplusplus
+// {
+// template<class T>
+// using RandomGenerator = BoostRandom<T>;
+// typedef BoostRandom<OHMMS_PRECISION_FULL> RandomGenerator_t;
+// } // namespace qmcplusplus
 #else
 
 #ifdef USE_SPRNG

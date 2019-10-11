@@ -20,7 +20,7 @@
 #define QMCPLUSPLUS_DMC_H
 #include "QMCDrivers/QMCDriver.h"
 #include "QMCDrivers/CloneManager.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 namespace qmcplusplus
 {
 /** @ingroup QMCDrivers

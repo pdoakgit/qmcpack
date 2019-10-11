@@ -26,7 +26,7 @@
 #include "Message/OpenMP.h"
 #include "Utilities/Timer.h"
 #include "Utilities/RunTimeManager.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Utilities/ProgressReportEngine.h"
 #include <qmc_common.h>
 #include "Utilities/FairDivide.h"
@@ -112,7 +112,7 @@ void DMC::resetUpdateEngines()
 #ifdef USE_FAKE_RNG
       Rng[ip] = new FakeRandom();
 #else
-      Rng[ip] = new RandomGenerator_t(*random_control_.Children[ip]);
+      Rng[ip] = new RandomGenerator_t(random_control_.Children[ip]);
       hClones[ip]->setRandomGenerator(Rng[ip]);
 #endif
       if (qmc_driver_mode[QMC_UPDATE_MODE])
@@ -255,7 +255,7 @@ bool DMC::run()
     {
 #ifndef USE_FAKE_RNG
       for (int ip = 0; ip < NumThreads; ip++)
-        *(random_control_.Children[ip]) = *(Rng[ip]);
+        random_control_.Children[ip] = *(Rng[ip]);
 #endif
     }
     recordBlock(block);
@@ -274,7 +274,7 @@ bool DMC::run()
   //for(int ip=0; ip<NumThreads; ip++) Movers[ip]->stopRun();
 #ifndef USE_FAKE_RNG
   for (int ip = 0; ip < NumThreads; ip++)
-    *(random_control_.Children[ip]) = *(Rng[ip]);
+    random_control_.Children[ip] = *(Rng[ip]);
 #endif
   Estimators->stop();
   for (int ip = 0; ip < NumThreads; ++ip)

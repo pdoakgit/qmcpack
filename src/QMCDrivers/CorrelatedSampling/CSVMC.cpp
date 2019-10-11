@@ -19,7 +19,7 @@
 #include "QMCDrivers/CorrelatedSampling/CSVMCUpdatePbyP.h"
 #include "Estimators/CSEnergyEstimator.h"
 #include "QMCDrivers/DriftOperators.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 #include "Message/OpenMP.h"
 #include "Message/CommOperators.h"
 #include "Utilities/FairDivide.h"
@@ -197,7 +197,7 @@ bool CSVMC::run()
 #endif
   //copy back the random states
   for (int ip = 0; ip < NumThreads; ++ip)
-    *(random_control_.Children[ip]) = *(Rng[ip]);
+    random_control_.Children[ip] = *(Rng[ip]);
   ///write samples to a file
   bool wrotesamples = DumpConfig;
   if (DumpConfig)
@@ -247,7 +247,7 @@ void CSVMC::resetRun()
 #if !defined(REMOVE_TRACEMANAGER)
       traceClones[ip] = Traces->makeClone();
 #endif
-      Rng[ip] = new RandomGenerator_t(*(random_control_.Children[ip]));
+      Rng[ip] = new RandomGenerator_t(random_control_.Children[ip]);
 
       if (qmc_driver_mode[QMC_UPDATE_MODE])
       {

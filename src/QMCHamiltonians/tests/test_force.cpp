@@ -94,7 +94,7 @@ TEST_CASE("Bare Force", "[hamiltonian]")
 #endif
   elec.update();
 
-  RandomNumberControl random_control(8);
+  RandomNumberControl random_control(c, 8);
   ParticleSetPool ptcl(c, random_control);
 
   BareForce force(ions, elec);

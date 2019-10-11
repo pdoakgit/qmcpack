@@ -130,7 +130,6 @@ endif()
   ####################################
   SET(UTILITIES
     qmc_common.cpp
-    Utilities/RandomGenerator.cpp
     Utilities/OhmmsObject.cpp
     Utilities/SpeciesSet.cpp
     Utilities/SimpleParser.cpp
@@ -142,7 +141,7 @@ endif()
     Utilities/unit_conversion.cpp
     OhmmsData/Libxml2Doc.cpp
     OhmmsApp/ProjectData.cpp
-    OhmmsApp/RandomNumberControl.cpp
+    Utilities/RandomNumberControl.cpp
     Numerics/OhmmsBlas.cpp
     Numerics/OptimizableFunctorBase.cpp
     Numerics/SmoothFunctions.cpp

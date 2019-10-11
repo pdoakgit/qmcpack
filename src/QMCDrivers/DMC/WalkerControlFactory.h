@@ -15,7 +15,7 @@
 #define QMCPLUSPLUS_WALKER_CONTROL_FACTORY_H
 
 #include "QMCDrivers/WalkerControlBase.h"
-#include "OhmmsApp/RandomNumberControl.h"
+#include "Utilities/RandomNumberControl.h"
 namespace qmcplusplus
 {
 /** function to create WalkerControlBase or its derived class
