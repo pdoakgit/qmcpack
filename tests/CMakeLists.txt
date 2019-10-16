@@ -16,6 +16,7 @@ ELSE()
   MESSAGE("QE_BIN is not set. Tests of pw2qmcpack and QE/PWSCF will not be performed.")
 ENDIF()
 
+#ACTUALLY NO TESTS are added after this except AFQMC workflow so this is a bit strange
 message("Adding system tests for QMCPACK")
 
 IF (NOT TEST_MAX_PROCS )

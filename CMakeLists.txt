@@ -42,7 +42,6 @@ SET(QMCPACK_VERSION_MINOR 8)
 SET(QMCPACK_VERSION_PATCH 9)
 SET(QMCPACK_VERSION "${QMCPACK_VERSION_MAJOR}.${QMCPACK_VERSION_MINOR}.${QMCPACK_VERSION_PATCH}")
 
-
 ######################################################################
 # Verify QE executables present if QE_BIN specified
 ######################################################################
@@ -50,6 +49,10 @@ IF ( DEFINED QE_BIN )
   INCLUDE(CMake/run_qe.cmake)
   VERIFY_QE_PRESENT( ${QE_BIN} )
 ENDIF()
+
+# These prevenet repeatedly launching the python interpreter to check for modules
+SET_PROPERTY(GLOBAL PROPERTY QMC_PYTHON_MODULES_FOUND "")
+SET_PROPERTY(GLOBAL PROPERTY QMC_PYTHON_MODULES_MISSING "")
 
 ######################################################################
 # Verify PYSCF package is present
