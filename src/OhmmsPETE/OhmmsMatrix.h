@@ -22,7 +22,7 @@
 
 namespace qmcplusplus
 {
-template<class T, typename Alloc = std::allocator<T>>
+template<class T, typename Alloc = std::allocator<T>, typename Container_t = Vector<T,Alloc>>
 class Matrix
 {
 public:
@@ -30,10 +30,10 @@ public:
   typedef T value_type;
   typedef T* pointer;
   typedef const T* const_pointer;
-  typedef Vector<T, Alloc> Container_t;
+
   typedef typename Container_t::size_type size_type;
   typedef typename Container_t::iterator iterator;
-  typedef Matrix<T, Alloc> This_t;
+  typedef Matrix<T, Alloc, Container_t> This_t;
 
   Matrix() : D1(0), D2(0), TotSize(0) {} // Default Constructor initializes to zero.
 
