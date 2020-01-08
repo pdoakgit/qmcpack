@@ -281,6 +281,13 @@ std::unique_ptr<QMCDriverInterface> QMCDriverFactory::createQMCDriver(xmlNodePtr
   else if (das.new_run_type == QMCRunType::DMC_BATCH)
   {
     DMCFactoryNew fac(cur, das.what_to_do[UPDATE_MODE], qmc_common.qmc_counter);
+    //DMC is a driver that was run with an existing population.
+    //However the variable size data members coupled to the "buffer" is updated
+    //Which means a great deal of state and sequence needs to be managed to
+    //avoid memory corruption.
+    //Perhaps when/if the buffer design is fixed reallocting buffers can be
+    //avoided until then we are creating fresh walkers to avoid porting the state machinery
+    //from legacy.
     new_driver.reset(
         fac.create(population, *primaryPsi, *primaryH, wavefunction_pool, comm));
   }

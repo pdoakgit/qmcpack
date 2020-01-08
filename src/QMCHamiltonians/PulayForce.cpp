@@ -135,7 +135,7 @@ PulayForce::Return_t PulayForce::evaluate(ParticleSet& P)
           P.G[elec] * static_cast<ParticleSet::SingleParticleValue_t>(WarpNorm[elec] * WarpFunction(d_ab.r(nn)));
 #endif
     //GradLogPsi[ion] -= P.G[elec] * (ParticleSet::Scalar_t)(WarpNorm[elec] * WarpFunction(d_ab.r(nn)));
-    RealType E = tWalker->Properties(0, LOCALENERGY);
+    RealType E = tWalker->Properties(LOCALENERGY);
     // EGradLogPsi[ion] = P.getPropertyBase()[LOCALENERGY] * GradLogPsi[ion];
     EGradLogPsi[ion] = E * GradLogPsi[ion];
   }

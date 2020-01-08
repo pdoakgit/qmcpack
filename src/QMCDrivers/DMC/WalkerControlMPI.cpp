@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
+#include <cmath>
 #include <queue>
 #include <QMCDrivers/DMC/WalkerControlMPI.h>
 #include <Utilities/IteratorUtility.h>
@@ -147,6 +148,7 @@ int WalkerControlMPI::branch(int iter, MCPopulation& pop, FullPrecRealType trigg
   myTimers[DMC_MPI_branch]->start();
   myTimers[DMC_MPI_prebalance]->start();
 
+  std::fill(curData.begin(), curData.end(), 0);
   // This has the same ridiculous side effect as SortWalkers
   // i.e. it updates most of curData
   PopulationAdjustment adjust(calcPopulationAdjustment(pop));
@@ -191,11 +193,17 @@ int WalkerControlMPI::branch(int iter, MCPopulation& pop, FullPrecRealType trigg
   // //update the global number of walkers and offsets
 
   myComm->allreduce(curData);
-  pop.set_num_global_walkers(Cur_pop);
-  pop.set_walker_offsets(FairOffSet);
 
-  // myTimers[DMC_MPI_branch]->stop();
-  return Cur_pop;
+  // Discover the population now
+  pop.syncWalkersPerNode(getCommunicator());
+
+  // As opposed to thinking its in our local state.
+  // pop.set_num_global_walkers(Cur_pop);
+  // pop.set_walker_offsets(FairOffSet);
+
+  myTimers[DMC_MPI_branch]->stop();
+  return pop.get_num_global_walkers();
+  //return Cur_pop;
 }
 
 // determine new walker population on each node
@@ -619,15 +627,21 @@ void WalkerControlMPI::swapWalkersSimple(MCPopulation& pop,
       recv_requests[im].wait();
       // if (done_with_message[im] != 1)
       // {
-        // if (recv_requests[im].completed())
-        // {
-          recv_messages_reduced[im].walker[0].get().copyFromBuffer();
-          // for (int iw = 1; iw < recv_messages_reduced[im].multiplicity; ++iw)
-          // {
-            // std::memcpy(recv_messages_reduced[im].walker[0].get().DataSet.data(),
-            //             recv_messages_reduced[im].walker[0].get().DataSet.data(),
-            //             recv_messages_reduced[im].walker[0].get().DataSet.byteSize());
-            //recv_messages_reduced[im].walker[iw].get().copyFromBuffer();
+      // if (recv_requests[im].completed())
+      // {
+      recv_messages_reduced[im].walker[0].get().copyFromBuffer();
+      MCPWalker& walker_to_check = recv_messages_reduced[im].walker[0];
+      for(auto property : walker_to_check.Properties)
+      {
+        if(std::isnan( property ))
+           throw std::runtime_error("received property is nan!");
+      }
+      // for (int iw = 1; iw < recv_messages_reduced[im].multiplicity; ++iw)
+      // {
+      // std::memcpy(recv_messages_reduced[im].walker[0].get().DataSet.data(),
+      //             recv_messages_reduced[im].walker[0].get().DataSet.data(),
+      //             recv_messages_reduced[im].walker[0].get().DataSet.byteSize());
+      //recv_messages_reduced[im].walker[iw].get().copyFromBuffer();
       //     }
       //     done_with_message[im] = 1;
       //   }

@@ -389,11 +389,12 @@ int WalkerControlBase::branch(int iter, MCPopulation& pop, FullPrecRealType trig
   // This happens as a side effect of killing or spawning walkers
 
   WalkerControlBase::onRankSpawnKill(pop, std::move(adjust));
-  
-  std::for_each(pop.get_walkers().begin(), pop.get_walkers().end(), [](auto& walker) {
+
+  for (UPtr<MCPWalker>& walker : pop.get_walkers())
+  {
     walker->Weight       = 1.0;
     walker->Multiplicity = 1.0;
-  });
+  }
 
   pop.syncWalkersPerNode(getCommunicator());
 
