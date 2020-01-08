@@ -26,6 +26,39 @@ public:
       std::fill_n(Base::X, n, val);
   }
 
+  /**@{*/
+  /** Methods for assignment or copy of identically sized or smaller
+   *  ConstantSizeVector<T, Alloc>.
+   *
+   *  They all are cast to use Vector's PETE assign,
+   */
+  void copy(const Vector<T, Alloc>& rhs)
+  {
+    if (this->size() != rhs.size())
+      throw std::runtime_error("copy from Matrix called, Protected Matrix may not be resized");
+    assign(static_cast<Vector<T, Alloc>&>(*this), rhs);
+  }
+  void copy(const ConstantSizeVector& rhs)
+  {
+    if (this->size() != rhs.size())
+      throw std::runtime_error("copy from Protected Matrix called, Protected Matrix may not be resized");
+    assign(static_cast<Vector<T, Alloc>&>(*this), rhs);
+  }
+  ConstantSizeVector& operator=(const ConstantSizeVector& rhs)
+  {
+    if (this->size() != rhs.size())
+      throw std::runtime_error("operator= called, Protected Matrix may not be resized");
+    return static_cast<ConstantSizeVector&>(assign(static_cast<ConstantSizeVector<T, Alloc>&>(*this), rhs));
+  }
+  template<class RHS, typename Allocator = Alloc, typename = IsHostSafe<Allocator>>
+  // This probably should get some sort of SFINAE protection
+  ConstantSizeVector& operator=(const RHS& rhs) {
+    if (this->size() != rhs.size())
+      throw std::runtime_error("templated operator= called, Protected Matrix may not be resized");
+    return static_cast<ConstantSizeVector&>(assign(static_cast<RHS&>(*this), rhs));
+  }
+  /**}@*/
+  
   void resize(size_t n, T val = T())
   {
     if (n <= n_max_)
