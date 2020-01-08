@@ -177,6 +177,8 @@ ENDIF()
     TARGET_LINK_LIBRARIES(qmcutil ${CUDA_LIBRARIES})
   ENDIF(HAVE_CUDA)
 
+  SUBDIRS(MinimalContainers)
+
   # For unit tests, enable use for the fake RNG
   FUNCTION( USE_FAKE_RNG TARGET )
     TARGET_COMPILE_DEFINITIONS(${TARGET} PRIVATE "USE_FAKE_RNG")
