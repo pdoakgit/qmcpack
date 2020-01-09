@@ -157,7 +157,7 @@ public:
    *  It can access into it as if it were a raw FullPrecRealType array.
    *  
    */
-  template<class IT, typename = std::enable_if_t<std::is_same<std::add_pointer<FullPrecRealType>, IT>::value>>
+  template<class IT, typename = std::enable_if_t<std::is_same<std::add_pointer<FullPrecRealType>::type, IT>::value>>
   inline void saveProperty(IT first)
   {
     first[WP::LOCALPOTENTIAL] = LocalEnergy - KineticEnergy;
@@ -165,10 +165,10 @@ public:
   }
   /**@}*/
 
-  template<class IT, typename = std::enable_if_t<std::is_same<std::add_pointer<FullPrecRealType>, IT>::value>>
+  template<class IT, typename = std::enable_if_t<std::is_same<std::add_pointer<FullPrecRealType>::type, IT>::value>>
   inline void setProperty(IT first)
   {
-    //       LocalEnergy=first[LOCALENERGY];
+    //       LocalEnergy=first[WP::LOCALENERGY];
     //       KineticEnergy=LocalEnergy-first[LOCALPOTENTIAL];
     copy(first + myIndex, first + myIndex + Observables.size(), Observables.begin());
   }

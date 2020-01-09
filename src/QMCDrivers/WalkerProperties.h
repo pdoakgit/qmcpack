@@ -11,6 +11,8 @@
 #ifndef QMCPLUSPLUS_WALKERPROPERTIES_H
 #define QMCPLUSPLUS_WALKERPROPERTIES_H
 
+#include <cstdint>
+
 namespace qmcplusplus
 {
 struct WalkerProperties

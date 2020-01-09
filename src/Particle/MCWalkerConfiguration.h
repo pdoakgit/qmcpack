@@ -68,7 +68,7 @@ public:
   };
 
   ///container type of the Properties of a Walker
-  using  PropertyContainer_t = Matrix<FullPrecRealType>;
+  using  PropertyContainer_t = Walker_t::PropertyContainer_t;
   ///container type of Walkers
   typedef std::vector<Walker_t*> WalkerList_t;
   /// FIX: a type alias of iterator for an object should not be for just one of many objects it holds.

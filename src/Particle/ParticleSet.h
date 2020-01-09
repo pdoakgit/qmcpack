@@ -73,7 +73,7 @@ public:
   /// walker type
   typedef Walker<QMCTraits, PtclOnLatticeTraits> Walker_t;
   /// container type to store the property
-  using PropertyContainer_t = Matrix<FullPrecRealType>;
+  using PropertyContainer_t = Walker_t::PropertyContainer_t;
   /// buffer type for a serialized buffer
   typedef PooledData<RealType> Buffer_t;
 

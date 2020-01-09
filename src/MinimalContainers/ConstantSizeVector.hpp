@@ -92,7 +92,7 @@ public:
   }
 
   template<typename allocator = ALLOC, typename = IsHostSafe<allocator>>
-  T& operator()(size_t i) const
+  const T& operator()(size_t i) const
   {
     return data_[i];
   }

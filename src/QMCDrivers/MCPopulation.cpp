@@ -102,7 +102,7 @@ void MCPopulation::createWalkers(IndexType num_walkers)
     walker_ptr->R = elec_particle_set_->R;
     // Side effect of this changes size of walker_ptr->Properties if done after registerData() you end up with
     // a bad buffer.
-    static_cast<Matrix<FullPrecRealType>>(walker_ptr->Properties) = elec_particle_set_->Properties;
+    walker_ptr->Properties = elec_particle_set_->Properties;
     walker_ptr->registerData();
         
   };
