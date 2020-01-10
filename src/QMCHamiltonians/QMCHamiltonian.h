@@ -22,7 +22,6 @@
 #include "Configuration.h"
 #include "QMCDrivers/WalkerProperties.h"
 #include <QMCHamiltonians/OperatorBase.h>
-#include "QMCHamiltonians/NonLocalECPotential.h"
 #if !defined(REMOVE_TRACEMANAGER)
 #include <Estimators/TraceManager.h>
 #endif
@@ -32,6 +31,7 @@ namespace qmcplusplus
 class MCWalkerConfiguration;
 class NewTimer;
 class HamiltonianFactory;
+class NonLocalECPotential;
 
 /**  Collection of Local Energy Operators
  *
@@ -278,34 +278,18 @@ public:
   /** set non local moves options
    * @param cur the xml input
    */
-  void setNonLocalMoves(xmlNodePtr cur)
-  {
-    if (nlpp_ptr != nullptr)
-      nlpp_ptr->setNonLocalMoves(cur);
-  }
+  void setNonLocalMoves(xmlNodePtr cur);
 
   void setNonLocalMoves(const std::string& non_local_move_option,
                                         const double tau,
                                         const double alpha,
-                                        const double gamma)
-  {
-    if (nlpp_ptr != nullptr)
-      nlpp_ptr->setNonLocalMoves(non_local_move_option,
-                                        tau,
-                                        alpha,
-                                        gamma);
-  }
+                                        const double gamma);
+
   /** make non local moves
    * @param P particle set
    * @return the number of accepted moves
    */
-  int makeNonLocalMoves(ParticleSet& P)
-  {
-    if (nlpp_ptr == nullptr)
-      return 0;
-    else
-      return nlpp_ptr->makeNonLocalMovesPbyP(P);
-  }
+  int makeNonLocalMoves(ParticleSet& P);
 
   static std::vector<int> flex_makeNonLocalMoves(RefVector<QMCHamiltonian>& h_list, RefVector<ParticleSet>& p_list);
   /** evaluate energy 
