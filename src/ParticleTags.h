@@ -131,6 +131,5 @@ struct ParticleTags
   static std::string role_tag;
   /*@}*/
 
-not really sure what this horror is even needed for
 };
 #endif
